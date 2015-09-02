@@ -62,7 +62,7 @@ namespace StudyOnline.Controllers
         public ActionResult GetLatestPackage()
         {
             var temp = db.UploadFile.Where(t => t.Extension == ".apk").OrderByDescending(t => t.AddDate).First();
-            var data = new { temp.Size, temp.Path, temp.Info, temp.VersionName };
+            var data = new { PackageSize = temp.Size, PackagePath = temp.Path, UpgradeInfo = temp.Info, VersionName = temp.VersionName };
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
