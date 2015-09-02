@@ -1,0 +1,77 @@
+﻿@using Webdiyer.WebControls.Mvc;
+@using StudyOnline.Models;
+@using StudyOnline.Utils;
+@model StudyOnline.Models.Document
+
+@{
+    Layout = null;
+    PagedList<UploadFile> models = ViewBag.UploadFiles;
+}
+<form id="pagerForm" method="post" action="@Url.Action("DocsList")">
+    <input type="hidden" name="pageNum" value="@models.CurrentPageIndex" />
+    <input type="hidden" name="numPerPage" value="@models.PageSize" />
+    <input type="hidden" name="orderField" value="${param.orderField}" />
+    <input type="hidden" name="orderDirection" value="${param.orderDirection}" />
+</form>
+<div class="pageHeader">
+    <form rel="pagerForm" onsubmit="return navTabSearch(this);" action="@Url.Action("DocsList")" method="post">
+        <div class="searchBar">
+            <ul class="searchContent">
+                <li>
+                    <label>关键字：</label>
+                    <input type="text" name="keywords" />
+                </li>
+
+            </ul>
+
+            <div class="subBar">
+                <ul>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
+                    @*<li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>*@
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="pageContent">
+    <div class="panelBar">
+        <ul class="toolBar">
+            <li><a class="create" href='@Url.Action("ApkCreate")' target="dialog" rel="AdminDocCreate" title="新建版本" width="600" height="480" mask="true"><span>新建</span></a></li>
+            <li><a class="delete" href='@Url.Action("ApkDelete", new {id="{id}"})' target="ajaxTodo" title="确定要删除吗？" warn="请选择"><span>删除</span></a></li>
+            <li><a class="update" href='@Url.Action("ApkCreate", new {id="{id}"})' target="dialog" rel="AdminDocCreate" title="修改版本" width="800" height="600" mask="true" warn="请选择"><span>修改</span></a></li>
+            @*<li class="line">line</li>
+                <li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targettype="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
+                <li><a class="icon" href="javascript:$.printBox('w_list_print')"><span>打印</span></a></li>*@
+        </ul>
+    </div>
+
+    <div id="w_list_print">
+        <table class="list" style="width:100%;" targettype="navTab" asc="asc" desc="desc" layouth="116">
+            <thead>
+
+                <tr>
+                    <th width="50" align="center">序号</th>
+                    <th align="center">版本名称</th>
+                    <th align="center">更新信息</th>
+                    <th align="center">文件路径</th>
+                    <th align="center">添加日期</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{int i = 0;}
+                @foreach (var item in models)
+                {
+                    <tr target="id" rel="@item.Id">
+                        <td align="center">@(++i)</td>
+                        <td>@item.VersionName</td>
+                        <td>@item.Info</td>
+                        <td>@item.Path</td>
+                        <td align="center">@item.AddDate</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.PanelBar(models, 10)
+</div>

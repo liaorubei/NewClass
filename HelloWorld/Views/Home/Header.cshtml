@@ -1,0 +1,32 @@
+﻿@using StudyOnline.Models;
+@{
+
+}
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+@*<script>
+    $(function () {
+
+        var opts = {
+            srcs: [@(Html.Raw(srcs))],
+            urls: ['http://www.baidu.com', 'http://www.baidu.com', 'http://www.baidu.com', 'http://www.baidu.com', 'http://www.baidu.com']
+        };
+        //$(".loop").loop(opts);
+    });
+</script>*@
+<div id="header">
+    <div class="logo">
+        <div class="title">
+            <span>@Html.ActionLink("我要学中文", "index")</span>
+        </div>
+        <div class="nav">
+            <span><a href='@Url.Action("Index")'>首页</a></span>
+        </div>
+    </div>
+    <div class="loop">
+        <div style="float:right; position:absolute;bottom:0px;right:0px;">
+            <img src="@Url.Content("/Images/erweima.png")" alt="手机端" style="width:100px;height:100px;" />
+        </div>
+        <img src="@Url.Content("/Images/logo.png")" alt=""  style="width:100%;height:100%"/>
+   
+    </div>
+</div>

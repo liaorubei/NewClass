@@ -1,0 +1,36 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Player</title>
+    <script src="~/Scripts/jwplayer/jwplayer.js"></script>
+    <style>
+        .jwlogo { display: none; }
+    </style>
+</head>
+<body>
+    <div>
+        <div id="myElement">Loading the player...</div>
+
+        <script type="text/javascript">
+            var player = jwplayer("myElement").setup({
+                file: "/File/father.mp3",
+                width: 800,
+                height: 26,
+                autostart: true, repeat: true, controls: {}
+
+            });
+
+            console.log("player=" + player);
+
+        </script>
+
+        <button onclick="player.pause();">暂停</button>
+    </div>
+</body>
+</html>

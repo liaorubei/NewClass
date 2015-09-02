@@ -1,0 +1,6 @@
+﻿.loop { width: 800px; height: 125px; margin: auto; position: relative; overflow: hidden; }
+.loop .imgs img { width: 800px; height: 125px; border: 0; }
+.loop .ctrl { position: absolute; right: 10px; bottom: 10px; z-index: 100;}
+.loop .ctrl li { float: left; color: #FF7300; text-align: center; line-height: 16px; width: 16px; height: 16px; cursor: pointer; overflow: hidden; margin: 3px 1px; border: 1px solid #FF7300; background-color: #fff; }
+.loop .ctrl li.on { color: #fff; line-height: 21px; width: 21px; height: 21px; font-size: 16px; margin: 0 1px; border: 0; background-color: #FF7300; font-weight: bold; }
+

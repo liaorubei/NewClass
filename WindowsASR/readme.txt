@@ -1,0 +1,2 @@
+﻿C#语音识别项目,主要涉及类为SpeechRecognitionEngine或者SpeechRecognizer,但是SpeechRecognitionEngine类有更加细腻的设置,可以动态来选择或者设置输入,如文件,流,或者音频输入
+由于识别率太低,没有实际作用

@@ -1,0 +1,327 @@
+﻿@using StudyOnline.Models;
+@using StudyOnline.Utils;
+@using Kfstorm.LrcParser;
+@using System.Text.RegularExpressions;
+@model Document
+@{
+    Layout = null;
+    Lyric lrcs = ViewBag.Lrcs;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>我要学中文</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="~/Content/main.css" rel="stylesheet" />
+    <link href="~/Content/loop.css" rel="stylesheet" />
+</head>
+<body>
+    <div>
+        @Html.Action("Header")
+        <div id="content">
+
+            <div class="article">
+                <p style="padding:15px 0;font-size:20px; text-align:center;">
+                    <a href="@Url.Action("Detail")">
+                        @Model.Title
+                    </a>
+                </p>
+                <p style="text-align:center;">
+                    <span style="padding-right:25px;">level:[@Model.Level.LevelName]</span>
+                    <span>Date:[@Model.AddDate]</span>
+                </p>
+                <br />
+                <div id="music">音频加载中......</div>
+                <div>
+                    <div class="control">
+                        <span id="spanReveal" class="menu" title=""><span class="on">显</span><span>/</span><span>隐</span></span>
+                        <span id="spanSwitch" class="menu" title=""><span class="on">中</span><span>/</span><span>英</span></span>
+                        <span id="spanLooped" class="menu" title=""><span></span><span>1</span><span></span></span>
+                    </div>
+
+
+                    <div id="maincontent" style="width:100%;max-height:800px;overflow-y:scroll;">
+                        <ul>
+                            @{var dict = lrcs.Lines.OrderBy(t => t.Key.TotalMilliseconds);
+                            Regex regex = new Regex(@"\<[\s\S]*\>");
+                            }
+                            @foreach (var item in dict)
+                            {
+                                <li value="@(item.Key.TotalMilliseconds/1000)">
+                                    <p class="cn">@(item.Value.IndexOf('<') > 0 ? item.Value.Substring(0, item.Value.IndexOf('<')) : item.Value)</p>
+                                    <p class="en" style="padding-bottom:10px;display:none;">@(regex.Match(item.Value).Value.Replace("<", "").Replace(">", ""))</p>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <div class="conment" style="padding:15px 0px;">
+                    <ul id="allComments">
+                        @{int i = 1; var comments = Model.Comment.OrderByDescending(m => m.Id);}
+                        @foreach (var item in comments)
+                        {
+                            <li>
+                                <div>
+                                    <div class="rate">
+                                        <span class="score0"><span class="score@(item.Score)"></span></span>
+                                        <span class="serial">#@(i++)</span>
+                                    </div>
+                                    <div class="mark">
+                                        @item.MainBody
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                    <form action="@Url.Action("Detail")" method="post">
+                        <table>
+                            <tr>
+                                <td class="firstcol">
+                                    <span>评分：</span>
+                                </td>
+                                <td>
+                                    <div id="rate">
+                                        <input type="hidden" name="score" value="5" />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="firstcol">
+                                    <span>感受：</span>
+                                </td>
+                                <td><textarea id="mainbody" name="mainbody"></textarea><input type="button" id="submit" name="submit" value="提交" /></td>
+                            </tr>
+                        </table>
+                        <iframe id="targetIframe" name="targetIframe" style="display:none;"></iframe>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <div id="footer">
+            <p>Copyright&copy;@DateTime.Now.Year - <a href="http://www.woaixue.com">******有限公司</a></p>
+        </div>
+    </div>
+    <div id="divInfo" style=" position:absolute; display:none;">
+        <div id="youdaoDictCenter" style="height: 114px;">
+            <div id="result" class="no-x-scroll" style="border-color: rgb(140, 165, 197);width:250px;">
+                <div id="title">
+                    <span id="query"></span>
+                    <span id="phonetic"></span>
+                    <a id="moreDetail" href="http://dict.youdao.com/search" target="_blank" hidefocus="true" title="查看详细释义">详细</a>
+                    <a id="addMyWords" href="javascript:;" target="_blank" hidefocus="true" title="添加到单词本">添加</a>
+                </div>
+
+                <div id="translation">
+                    <h3 class='sub-item'>字面翻译<span>┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈</span></h3>
+                    <p>
+                        中国预计其权力
+                    </p>
+                </div>
+                <div id="basic">
+                </div>
+                <div id="web">
+                    <h3 class='sub-item'>网络释义<span>┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈</span></h3>
+                    <p>
+                        <span class='web-item'>比作</span><span class='split'></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="~/Scripts/jquery.raty.js"></script>
+<script src="~/Scripts/loop.js"></script>
+<script src="~/Scripts/jwplayer/jwplayer.js"></script>
+<script language="javascript">
+    $(function () {
+        var oneLoop = false;//是否开启单句循环
+        var loopA = 0;//单句循环起点,默认起点
+        var loopB;//单句循环终点,默认为音频长度
+
+        var player = jwplayer("music").setup({ file: "@(Model.SoundPath)", width: 800, height: 26, autostart: true, repeat: "always" });
+
+        //播放事件,用来绑定相关业务处理代码,可以取得音频播放的当前进度
+        player.onTime(function (e) {
+            console.log(e.position);
+            //如果开启了单句循环功能,那么当这一句完毕的时候,跳回这一句的开始位置
+            if (oneLoop && (e.position + 0.2 >= loopB || e.position < loopA)) {
+                player.seek(loopA);
+            }
+
+            $("#maincontent ul li").each(function () {
+                var $li = $(this);
+
+                var value = $(this).attr("value");
+
+                //在这里要求判断length>0,因为jQuery对象一直都不为空
+                var nextValue = $(this).next().length > 0 ? $(this).next().attr("value") : e.duration;
+
+                if (value < e.position && e.position < nextValue) {
+                    $li.addClass("on");
+                } else {
+                    $li.removeClass("on");
+                }
+            });
+        });
+
+        //重置AB端功能,当点击单句循环和点击播放某个单句时,都要重置AB段
+        function resetAB($ele) {
+            loopA = $ele.attr("value");
+            var $n = $ele.next();
+            loopB = $n.length > 0 ? $n.attr("value") : player.getDuration();
+        }
+
+        //单句循环功能,要求配合onTime方法使用
+        $("#spanLooped").click(function () {
+            oneLoop = !oneLoop;
+            if (oneLoop) {
+                $(this).addClass("on");
+                resetAB($("#maincontent ul li.on"));
+            } else {
+                $(this).removeClass("on");
+            }
+        });
+
+        //隐藏.显示文档正文内容功能
+        $("#spanReveal").toggle(function () {
+            $(this).find("span").first().removeClass("on");
+            $(this).find("span").last().addClass("on");
+            $("#maincontent").slideUp();
+        }, function () {
+            $(this).find("span").last().removeClass("on");
+            $(this).find("span").first().addClass("on");
+            $("#maincontent").slideDown();
+        });
+
+        //英文字幕显示或隐藏功能
+        $("#spanSwitch").toggle(function () {
+            $(this).find("span").last().addClass("on");
+            $(".en").slideDown();
+        }, function () {
+            $(this).find("span").last().removeClass("on");
+            $(".en").slideUp();
+        });
+
+        //当鼠标按下时,翻译提示窗口应该隐藏
+        $("#content").mousedown(function () {
+            $("#divInfo").hide();
+        });
+
+
+        //取词翻译,并点击当前句子,马上播放功能,如果有选择,则翻译,否则马上音频跳转
+        $("#maincontent ul li").mouseup(function (e) {
+            var a;
+            if (document.selection && document.selection.createRange) {
+                a = document.selection.createRange().text;
+                //适用于其他浏览器
+            } else if (window.getSelection) {
+                a = window.getSelection();
+            }
+            //如果取得的对象的起点和终点不是重合的,那么就请求API.注:isCollapsed(“起点”和“结束点”是否重合。)
+            if (!a.isCollapsed) {
+                var url = "http://fanyi.youdao.com/openapi.do?keyfrom=woaixue&key=1509420040&type=data&doctype=jsonp&callback=?&version=1.2&q=" + a.toString();
+                $.getJSON(url, function (data) {
+                    //在显示数据之前要先清除旧数据
+                    clearData();
+                    showData(data, e);
+                });
+            } else {
+                //音频跳转,即如果鼠标没有选择任何内容(即没有进行取词翻译时),则让播放器重置AB端,并跳转进度播放
+                resetAB($(this));
+                player.seek(loopA);
+            }
+        });
+
+
+        //根据翻译结果对象来绑定数据并显示结果 data为结果对象,e为鼠标参数(可取得鼠标位置)
+        function showData(data, e) {
+            $("#query").html(data.query);
+            $("#moreDetail").attr("href", "http://dict.youdao.com/search?q=" + data.query);
+            $("#translation").html("<h3 class='sub-item'>字面翻译<span>┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈</span></h3><p>" + data.translation + "</p>").show();
+
+            if (data.web) {
+                var $h = $("<h3 class='sub-item'>网络释义<span>┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈</span></h3>");
+                var $p = $("<p></p>");
+                var len = data.web[0].value.length;
+                for (var i = 0; i < len; i++) {
+                    $p.append("<span class='web-item'>" + data.web[0].value[i] + "</span>");
+                    if (i + 1 < len) {
+                        $p.append("<span class='split'></span>");
+                    }
+                }
+                $("#web").append($h).append($p);
+            }
+
+            if (data.basic) {
+                //基本释义
+                var explains = "";
+                for (var i in data.basic.explains) {
+                    explains += "<p>" + data.basic.explains[i] + "</p>";
+                }
+                $("#basic").html(explains);
+                $("#translation").hide();
+
+                //音标
+                $("#phonetic").html("[" + data.basic.phonetic + "]");
+            }
+
+            //根据鼠标位置显示翻译结果,注:这块窗口会在鼠标按下时隐藏,另外由方法$("#content").mousedown()控制
+            $("#divInfo").css({ top: e.pageY - 50, left: e.pageX + 25 }).show();
+        }
+
+        //取词翻译结果显示窗口数据重置(清空)
+        function clearData() {
+            $("#moreDetail").attr("value", "");
+            $("#query,#phonetic").html("");
+            $("#web,#basic,#translation").html("");
+        }
+
+        //评论AJAX提交功能
+        $("#submit").click(function () {
+            var url = $("form").attr("action");
+            var dat = $("form").serializeArray();
+            $.post(url, dat, function (data) {
+                if (data.status == 200) {
+                    var $li = $("<li><div><div class='rate'></div><div class='mark'></div></div></li>");
+                    var rate = "<span class='score0'><span class='score" + data.score + "'></span></span><span class='serial'></span>";
+                    var mark = data.mainbody;
+                    $li.find(".rate").html(rate);
+                    $li.find(".mark").html(mark);
+                    $li.prependTo("#allComments");
+                    $(".serial").each(function (i) {
+                        $(this).html("#" + (i + 1));
+                    });
+
+                    //表单复原
+                    $("#rate").raty({ path: "/Content/raty", hints: [1, 2, 3, 4, 6], score: 0 });
+                    $("#mainbody").val("");
+                }
+            }, "json");
+        });
+
+        //添加到单词本AJAX提交功能
+        $("#addMyWords").click(function () {
+            var url = '@Url.Action("AddVocab")';
+            var dat = { Query: $("#query").html(), Phonetic: $("#phonetic").html(), Translation: $("#translation").find("p").html() };
+            $.post(url, dat, function (data) {
+                if (data.status == 200) {
+                    //添加成功,窗口清空并隐藏
+                    alert("添加成功");
+                    clearData();
+                    $("#divInfo").hide();
+
+                } else {
+                    alert(data.message);
+                }
+            }, "json");
+
+        });
+
+        //评分功能插件
+        $("#rate").raty({ path: "/Content/raty", hints: [1, 2, 3, 4, 6] });
+    });
+</script>

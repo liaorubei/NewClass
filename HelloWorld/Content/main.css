@@ -1,0 +1,121 @@
+﻿body, ul, li, h1, h2, h3, h4, h5, h6, p, form, dl, dt, dd { margin: 0px; padding: 0px; font-size: 12px; font-weight: normal; font-family: Verdana,Arial,Helvetica,sans-serif; }
+a { text-decoration: none; }
+a:hover { color: #ff0000; }
+ul { list-style: none; }
+img { border-style: none; }
+body { background: url(../Images/background.png) repeat; margin: auto; }
+
+#header { width: 800px; height: 125px; margin: auto; }
+#header .logo { /*background: #ff0000;*/ position: absolute; z-index: 1; height: 125px; }
+#header .logo .title { padding: 45px 0 0 45px; }
+#header .logo .title span { font-size: 35px; font-weight: 800; }
+#header .logo .nav { padding: 10px; }
+#header .logo .nav span { padding: 10px 3px; }
+
+
+
+#content { margin: auto; width: 800px; min-height: 500px; }
+#footer { text-align: center; width: 100%; background-color: #F0EEEF; border-top: solid 1px #E2E0E1; padding: 25px 0; }
+
+#side { width: 198px; float: left; min-height: 498px; border: 1px solid #ccc; }
+#side ul { list-style: none; padding: 15px; }
+#side ul li a { text-align: center; line-height: 30px; width: 166px; border: solid 1px #D6D6D6; border-bottom-color: #969696; border-radius: 5px; background-color: #F1F1F1; font-size: 12px; display: inline-block; margin: 5px 0px; color: #B26646; background: -webkit-gradient(linear,left top,left bottom,from(#F9F9F9),to(#E4E4E4)); background: -moz-linear-gradient(top,#F9F9F9,#E4E4E4); }
+
+
+#main { float: right; width: 585px; padding: 15px 0 15px 15px; }
+#main ul li { border-bottom: 1px dotted #ddd; padding-top: 15px; }
+.fy { text-align: center; padding: 15px; }
+.fy .fye, .fy .fyed { background: #F7F7F7; border: solid 1px #D6D6D6; border-bottom-color: #969696; border-radius: 5px; padding: 2px 12px; display: inline-block; margin: 0px 5px; background: -webkit-gradient(linear,left top,left bottom,from(#F9F9F9),to(#E5E5E5)); background: -moz-linear-gradient(top,#F9F9F9,#E5E5E5); }
+.fy .fyed, .fy .fye:hover { color: #FFF; background-color: #476B77; border-color: #476B77; background: -webkit-gradient(linear,left top,left bottom,from(#476B77),to(#476B77)); background: -moz-linear-gradient(top,#476B77,#476B77); }
+
+
+.article .title { padding: 0px 15px; }
+.control { line-height: 25px; background: #D6D6D6; border: 1px solid #969696; height: 27px; }
+
+.control .menu { background: #9BC5D3; margin: 1px 2px; cursor: pointer; height: 25px; width: 40px; text-align: center; float: left; }
+.control span.on { color: #ff00ff; }
+#spanLooped { background: url(images/noneloop.png); }
+#spanLooped.on { background: url(images/oneloop.png); }
+
+
+#maincontent ul li.on { color: #f0f; }
+#maincontent ul li.on .en { color: #000; }
+#maincontent p { font-size: 15px; line-height: 1.5; font-family: "宋体",Georgia,Century,Times,serif; text-indent: 2em; }
+
+.conment ul { background: #fff; padding: 10px; }
+.conment li { border-bottom: 1px dashed #eee; }
+.conment li div { padding: 5px; }
+.conment .score0 { background: url(raty/star-off.png) repeat-x; padding: 0px 40px; position: relative; font-size: 13px; }
+.conment .score1 { position: absolute; top: 0; left: 0; background: url(raty/star-on.png) repeat-x; padding: 8px 8px; font-size: 13px; }
+.conment .score2 { position: absolute; top: 0; left: 0; background: url(raty/star-on.png) repeat-x; padding: 8px 16px; font-size: 13px; }
+.conment .score3 { position: absolute; top: 0; left: 0; background: url(raty/star-on.png) repeat-x; padding: 8px 24px; font-size: 13px; }
+.conment .score4 { position: absolute; top: 0; left: 0; background: url(raty/star-on.png) repeat-x; padding: 8px 32px; font-size: 13px; }
+.conment .score5 { position: absolute; top: 0; left: 0; background: url(raty/star-on.png) repeat-x; padding: 8px 40px; font-size: 13px; }
+.conment .serial { float: right; }
+.conment table { width: 100%; background: #F9F9F9; }
+.conment td { vertical-align: top; }
+.conment .firstcol { width: 80px; text-align: center; }
+.conment span { font-size: 15px; }
+.conment textarea { width: 600px; height: 50px; }
+.conment input { float: right; font-size: 25px; margin-top: 21px; padding: 0 15px; float: right; width: 90px; height: 35px; border: 0 none; outline: 0 none; background: #4595e6; color: #fafafa; font: normal 14px/34px 'Microsoft YaHei',arial; text-align: center; cursor: pointer; }
+
+
+#scrollPics { height: 125px; width: 800px; margin-bottom: 10px; overflow: hidden; position: relative; }
+#scrollPics img { width: 800px; }
+#scrollPics .num { position: absolute; right: 5px; bottom: 5px; }
+#scrollPics .num li { float: left; color: #FF7300; text-align: center; line-height: 16px; width: 16px; height: 16px; cursor: pointer; overflow: hidden; margin: 3px 1px; border: 1px solid #FF7300; background-color: #fff; }
+#scrollPics .num li.on { color: #fff; line-height: 21px; width: 21px; height: 21px; font-size: 16px; margin: 0 1px; border: 0; background-color: #FF7300; font-weight: bold; }
+
+/*播放器Logo隐藏代码*/
+.jwlogo { display: none; }
+
+
+
+/*body, div, p, span, ul, li, h1, h2, h3, form, table, tr, td, img { margin: 0; border: 0; padding: 0; }
+a:focus { outline: 0; }
+input:focus { outline: 0; }
+textarea { resize: none; }
+.hidden { display: none; }
+.invisible { visibility: hidden; }
+.clear:after { content: ""; display: block; clear: both; }
+.has-layout { overflow: auto; zoom: 1; }
+.no-scroll { overflow: hidden; }
+.no-x-scroll { overflow-x: hidden; overflow-y: auto; }
+.left { float: left; }
+.right { float: right; }
+.no-select { user-select: none; -webkit-user-select: none; -moz-user-select: none; }
+html { overflow: hidden; }
+body { font-size: 12px; font-family: arial,sans-serif; }
+input, textarea { margin: 0; border: 0; padding: 0; }
+.bg-sprite { background: url(bg.png) no-repeat 0 0; }
+.sprite { background: url(dicter.png) no-repeat 0 0; }*/
+#youdaoDictBg { width: 320px; height: 240px; }
+#youdaoDictBg #bgTop { background-position: left top; height: 120px; }
+#youdaoDictBg #bgTopRight { background-position: right top; float: right; width: 160px; height: 120px; }
+#youdaoDictBg #bgBottom { background-position: left bottom; height: 120px; }
+#youdaoDictBg #bgBottomRight { background-position: right bottom; float: right; width: 160px; height: 120px; }
+#youdaoDictMain { position: absolute; left: 0; top: 0; height: 240px; }
+#youdaoDictTop { padding-left: 4px; height: 20px; text-align: left; color: #61859A; font-weight: bold; }
+#dictIcon { background-position: 0 0; float: left; margin-top: 4px; width: 16px; height: 16px; }
+#dictTitle { float: left; margin: 4px 0 0 5px; height: 16px; line-height: 16px; }
+#youdaoDictCenter { padding: 0 3px; height: 220px; }
+#youdaoDictCenter #inputLine { height: 28px; }
+#inputLine form { height: 28px; }
+#inputLine #youdaoDictQueryText { float: left; margin: 3px 0 2px; border: 1px #8CA5C5 solid; padding-left: 5px; height: 21px; line-height: 21px; }
+#inputLine #youdaoDictQueryButton { background-color: #EEE; float: left; margin: 3px 0 2px 2px; border: 1px #8CA5C5 solid; width: 64px; height: 23px; }
+
+#youdaoDictCenter { padding-top: 3px; }
+#youdaoDictCenter #result { background-color: #FFF; margin-bottom: 3px; border: 1px #8CA5C5 solid; padding: 0 5px; line-height: 18px; color: #313131; }
+#result a:link, #result a:visited { text-decoration: none; color: #2779B6; }
+#result p { margin: 3px 0; }
+#result #translation { margin-top: 3px; }
+#noResult #noResultTip li { margin-left: 20px; }
+#result #title { margin: 3px 0 3px; font-size: 14px; }
+#title #phonetic { margin-left: 10px; color: #666; font-size: 12px; font-weight: normal; font-family: "lucida sans unicode",arial,sans-serif; }
+#title a { margin-left: 10px; font-size: 12px; font-weight: normal; font-family: "宋体"; float: right; }
+#result .sub-item { overflow: hidden; white-space: nowrap; _white-space: normal; margin-right: 15px; height: 18px; line-height: 18px; color: #959595; font-size: 12px; font-weight: normal; }
+#result .sub-item span { color: #CECECE; font-family: "宋体"; }
+#result span.split { background-color: #959595; display: inline-block; margin: 0 8px; width: 1px; height: 8px; line-height: 8px; font-size: 0; }
+
+#result #copyright { margin: 3px 15px 0 0; }
+#result .bottom-link { float: right; margin: 0 5px; }

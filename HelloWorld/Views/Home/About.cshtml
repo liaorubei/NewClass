@@ -1,0 +1,233 @@
+﻿@{
+    ViewBag.Title = "About";
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>我要学中文</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="icon" href="favicon.ico?1" type="image/x-icon" />
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="~/Content/ui.css" rel="stylesheet" />
+    <link href="~/Content/uicss.css" rel="stylesheet" />
+    <link href="~/Content/y.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="http://www.yxsss.com/public/js/gol.js?233"></script>
+    <script type="text/javascript">var _ = 0, _3 = false, _d = '';</script>
+    <script type="text/javascript" src="/ui/p/p.js"></script>
+
+</head>
+<body>
+
+    <div class="yu-top">
+        <div class="bd">
+            <div class="bd1">
+                <h2><a href="/ui/">我要学中文</a></h2>
+                <ul>
+                    <li><a href="/ui/" class="cd">首页</a></li>
+                    <li><a href="/ui/form">表单验证</a></li>
+                    <li><a href="/ui/ui">ui提示</a></li>
+                    <li><a href="/ui/a">基本方法</a></li>
+                    <li><a href="/ui/demo">演示</a></li>
+                    <li><a href="/ui/other">其他</a></li>
+                    <li><a href="/ui/lyan">留言板</a></li>
+                    <li><a href="/ui/g">G-html5</a></li>
+                    <li><a href="/ui/down.php">下载</a></li>
+                </ul>
+            </div>
+            <div class="bd2">
+                <div style="position:relative"><a href="javascript:;" onclick="ckdl(0)">登录</a>  <a href="javascript:;" onclick="ckdl(1)">注册</a> <a href="http://www.yxsss.com" target="_blank">易寻首页</a> </div>
+                <p>易U QQ群:248861958</p>
+                <form action="/sg.php" dcss="f3" method="get"><input type="hidden" name="fp" class="f1" value="0"><input name="tag" type="text" class="f1 f3" value="请输入标签" def="请输入标签"><input type="submit" class="f2" value="GO"></form>
+            </div>
+        </div>
+    </div>
+    <div class="yu-bd">
+        <div class="bd1">
+            <div class="bd3"><h3>易U升级版 <a href="/g">G</a> 方法更丰富，调用更简单；欢迎使用！</h3></div>
+            <div class="bd3">
+                <h2>易U</h2>
+                <p>
+                    <strong>12KB让你：</strong><br>
+                    验证表单不需要写一个js；
+                    美化浏览器的各种提示；<br>
+                    ajax、移动|创建|删除元素、js读写cookies、无刷新上传图片……
+                </p>
+            </div>
+            <dl id="ui-nr">
+                <dt><strong>常见问题</strong></dt>
+                <dd>
+                    <p><i></i>• 怎么调用<strong>易U</strong>？</p>
+                    <pre class="prettyprint lang-html">&lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;head&gt;
+&lt;title&gt;易U&lt;/title&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;
+&lt;!--
+在 head 内加入
+&lt;link href="./yu.css" rel="stylesheet" type="text/css" /&gt;
+&lt;script type="text/javascript" src="./yu.js"&gt;&lt;/script&gt;
+--&gt;
+&lt;link href="./yu.css" rel="stylesheet" type="text/css" /&gt;
+&lt;script type="text/javascript" src="./yu.js"&gt;&lt;/script&gt;
+&lt;/head&gt;</pre>
+                </dd>
+                <dd>
+                    <p><i></i>• 怎么初始化？</p>
+                    <pre class="prettyprint lang-html">&lt;script type="text/javascript"&gt;
+/*
+ 在body结束标签前加入 F.st();
+*/
+F.st();//自动验证页面内的所有表单
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+                </dd>
+                <dd>
+                    <p><i></i>• 怎么设置alert提示的显示时间？</p>
+                    <pre class="prettyprint lang-html">&lt;script type=&quot;text/javascript&quot;&gt;
+	/*第二个可选参数是设置提示显示时间，单位是毫秒，默认是2000。如显示6秒设置如下*/
+	ui.alert('提示内容',6000);
+&lt;/script&gt;</pre>
+                </dd>
+                <dd>
+                    <p><i></i>• 如可去掉success后面的遮蔽层？</p>
+                    <pre class="prettyprint lang-html">&lt;script type=&quot;text/javascript&quot;&gt;
+	/*第三个可选参数控制是否有遮蔽层，默认是true。如显无遮蔽层成功提示*/
+	ui.success('保存成功！',2000,false);
+&lt;/script&gt;</pre>
+                </dd>
+                <dd>
+                    <p><i></i>• 怎么设置弹出窗口的大小？</p>
+                    <pre class="prettyprint lang-html">&lt;script type="text/javascript"&gt;
+/* 第六个可选参数数组格式，控制窗口的宽度高度 [宽度，高度]，默认是自动auto。如宽500px,高度100px*/
+ui.box('窗口标题','&lt;p&gt;这里是内容&lt;p&gt;','',true,false,[500,100]);
+// 高自动 宽300
+ui.box('窗口标题','&lt;p&gt;这里是内容&lt;p&gt;','',true,false,[300,false]);
+// 宽自动 高500
+ui.box('窗口标题','&lt;p&gt;这里是内容&lt;p&gt;','',true,false,[false,500]);
+&lt;/script&gt;</pre>
+                </dd>
+                <dd>
+                    <p><i></i>• 当移动元素的css属性为 position:fixed 怎么设置移动？</p>
+                    <pre class="prettyprint lang-html">&lt;div&gt;
+	&lt;h1 id="movv"&gt;顶顶顶顶顶顶&lt;/h1&gt;
+    &lt;p&gt;内容内容内容内容&lt;br&gt;内容内容内容内容&lt;br&gt;内容内容内容内容&lt;br&gt;内容内容内容内容&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;script type="text/javascript"&gt;
+/*
+ 第三个可选参数控制当滚动条滚动是静止还是根据滚动条滚动即 absolute  或者 fixed ，默认是 absolute 
+ 如：当滚动条滚动时 移动层 静止
+ 注意：ie6以下浏览器不支持 fixed;
+*/
+ui.move('movv',false,'fixed');
+//移动层随滚动条滚动
+ui.move('movv');
+&lt;/script&gt;</pre>
+                </dd>
+                <dd>
+                    <p><i></i>• 怎么关闭ui.box弹出的窗口？</p>
+                    <pre class="prettyprint lang-html">&lt;div id="ssss"&gt;
+	&lt;p&gt;内容内容内容&lt;br&gt;内容内容内容&lt;br&gt;内容内容内容&lt;br&gt;内容内容内容&lt;br&gt;内容内容内容&lt;br&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;a href="javascript:;" onClick="this.parentNode.parentNode.parentNode.children[2].onclick();"&gt;关闭窗口&lt;/a&gt; &lt;input type="button"  value="点这里也关闭" onclick="B.close();"&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;script type="text/javascript"&gt;
+/*
+ 找到关闭按钮节点 调用 onclick(); 就关闭窗口
+ 或者 调用创建窗口的close() 方法
+*/
+B=ui.box('弹出窗口标题',A.$('ssss'));
+&lt;/script&gt;</pre>
+                </dd>
+                </dd>
+                <dd>
+                    <p><i></i>• 表单必填项怎么设置验证？</p>
+                    <pre class="prettyprint lang-html">&lt;!--
+	req="true" 表示用户名为必填项，当用户名为空是提示为：
+	提示语默认是 元素的父级的上一个元素的内容。下面的提示为 用户名不能为空；
+	自定义提示提示信息看 属性ts
+--&gt;
+&lt;form action="" method="post"&gt;
+&lt;table&gt;
+	&lt;tr&gt;&lt;td&gt;用户名：&lt;/td&gt;&lt;td&gt;&lt;input type="text" req="true"&gt;&lt;/td&gt;&lt;/tr&gt;
+	&lt;tr&gt;&lt;td colspan="2"&gt;&lt;input type="submit" value="提交"&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/form&gt;</pre>
+
+                </dd>
+                </dd>
+                <dd>
+                    <p><i></i>• 怎么设置验证指定格式的表单内容？</p>
+                    <pre class="prettyprint lang-html">
+&lt;!--
+exp="这里填写正则表达式" 表示当内容不为空时，用正则表达式验证当前元素里面的内容
+如：必填 邮箱格式 自定义提示语
+--&gt;
+&lt;form action="javascript:;" method="post"&gt;
+&lt;table&gt;
+	&lt;tr&gt;&lt;td&gt;email：&lt;/td&gt;&lt;td&gt;&lt;input type="text" ts="邮箱格式不正确" req="true" exp="^[\w\-_\.]+[\w\-]+(\.[a-zA-Z]{2,6}){1,2}$"&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td colspan="2"&gt;&lt;input type="submit" value="提交"&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+
+                </dd>
+            </dl>
+        </div> <div class="bd2">
+            <ul>
+                <li class="d"><b>ui</b> <span>ui提示</span></li>
+                <li><a href="/ui/ui#alert">alert：警告提示</a></li>
+                <li><a href="/ui/ui#alert">error：错误提示</a></li>
+                <li><a href="/ui/ui#alert">success：成功提示</a></li>
+                <li><a href="/ui/ui#alert">notice：注意提示</a></li>
+                <li><a href="/ui/ui#confirm">confirm：确认提示</a></li>
+                <li><a href="/ui/ui#prompt">prompt：录入提示</a></li>
+                <li><a href="/ui/ui#box">box：窗口</a></li>
+                <li><a href="/ui/ui#move">move：移动元素</a></li>
+                <li class="d"><b>F</b> <span>表单验证</span></li>
+                <li><a href="/ui/form#on">on：绑定事件在元素上</a></li>
+                <li><a href="/ui/form#addcss">addcss：添加css类</a></li>
+                <li><a href="/ui/form#addcss">remove：删除css类</a></li>
+                <li><a href="/ui/form#css">css：默认css类</a></li>
+                <li><a href="/ui/form#st">st：初始化</a></li>
+                <li class="d"><b>A</b> <span>基本方法</span></li>
+                <li><a href="/ui/a#$">$：获取id</a></li>
+                <li><a href="/ui/a#$$">$$：创建元素</a></li>
+                <li><a href="/ui/a#r">r：产生随机数</a></li>
+                <li><a href="/ui/a#d">d：删除元素</a></li>
+                <li><a href="/ui/a#wc">wc：写入cookie</a></li>
+                <li><a href="/ui/a#wc">rc：读取cookie</a></li>
+                <li><a href="/ui/a#s">s：当前元素的上一个元素</a></li>
+                <li><a href="/ui/a#s">x：当前元素的上一个元素素</a></li>
+                <li><a href="/ui/a#aj">aj：ajax</a></li>
+                <li><a href="/ui/a#wz">wz：获取元素的位置</a></li>
+                <li><a href="/ui/a#fnr">fnr：序列化form的内容</a></li>
+                <li><a href="/ui/a#fnr">fsnr：序列化多个form的内容</a></li>
+            </ul>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <script type="text/javascript">
+        (function () {
+            var ps = A.$('ui-nr').getElementsByTagName('dd');
+            for (var i = 0, l = ps.length; i < l; i++) {
+                if (ps[i].children[0].tagName.toLowerCase() == 'p')
+                    ps[i].children[0].onclick = function () {
+                        var t = A.x(this), c = this.children[0];
+                        if (F.hascss(t, 'pre')) {
+                            c.className = '';
+                            F.remove(t, 'pre');
+                        } else {
+                            F.addcss(t, 'pre');
+                            c.className = 'i';
+                        }
+                    }
+            }
+        })();
+        prettyPrint();
+    </script>
+    <div class="foot" id="btoot"><hr><p>京ICP备12040723号 <a href="http://admin.yxsss.com/yw12.html">关于易寻</a> <a href="http://m.yxsss.com/">手机版</a> </p></div><div id="umxx"></div><div id="totop" title="回到顶部"></div>
+    <script type="text/javascript" src="http://www.yxsss.com/public/js/y.js?233"></script>
+    <script type="text/javascript" src="http://www.yxsss.com/public/js/t.js?233"></script>
+</body>
+</html><!---0.0077331066131592-->

@@ -1,0 +1,57 @@
+﻿@using StudyOnline.Models;
+@using Webdiyer.WebControls.Mvc;
+
+@{
+    Layout = null;
+    List<Level> levels = ViewBag.Levels;
+
+    PagedList<Document> documents = ViewBag.Documents;
+}
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <title>我要学中文</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="~/Content/main.css" rel="stylesheet" />
+    <link href="~/Content/loop.css" rel="stylesheet" />
+</head>
+<body>
+    @Html.Action("Header")
+
+    <div id="content">
+        <div id="side">
+            <ul>
+                @foreach (var item in levels)
+                {
+                    <li><a href='@Url.Action("Index", new { level = item.Id })'>@item.LevelName</a> </li>
+                }
+            </ul>
+        </div>
+        <div id="main">
+            <ul>
+                @foreach (var item in documents)
+                {
+                    <li>
+                        <a href='@Url.Action("Index", new { level = item.LevelId })'><span style="color:#B26646;">[@item.Level.LevelName]</span></a>
+                        <a href="@Url.Action("Detail", new { id = item.Id })">@item.Title<span style="color:#57b4b7;padding-left:10px;">(@item.AddDate.Value.ToString("yyyy-MM-dd"))</span></a>
+                    </li>
+                }
+            </ul>
+            @Html.Pager(documents, new PagerOptions() { AutoHide = true, ShowFirstLast = false, AlwaysShowFirstLastPageNumber = false, CssClass = "end fy", CurrentPagerItemWrapperFormatString = "<span class='fyed'>{0}</span>", PagerItemWrapperFormatString = "<span class='fye'>{0}</span>", NumericPagerItemCount = 5, PageIndexParameterName = "index", PagerItemsSeperator = "" })
+        </div>
+    </div>
+    <div id="footer">
+        <p>Copyright&copy;@DateTime.Now.Year - <a href="http://www.woaixue.com" target="_blank">******有限公司</a></p>
+    </div>
+</body>
+</html>
+
+@*<!--分页代码原型-->
+    <div class="end fy" style="display:none;">
+        <a class="fyed" id="dq_page">1</a>
+        <a href="#" class="fye">2</a>
+        <a href="#" class="fye">3</a>…
+        <a href="#" class="fye">100</a>
+        <a href="#" class="fye">下一页</a>
+    </div>*@

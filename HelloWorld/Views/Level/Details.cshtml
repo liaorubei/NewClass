@@ -1,0 +1,22 @@
+﻿@model HelloWorld.Models.Level
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Level</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.LevelName)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.LevelName)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

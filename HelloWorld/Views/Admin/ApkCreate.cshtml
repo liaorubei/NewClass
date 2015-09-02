@@ -1,0 +1,66 @@
+﻿@model StudyOnline.Models.UploadFile
+
+@{
+    Layout = null;
+}
+<style type="text/css" media="screen">
+    .uploadify { margin-bottom: 0; display: inline-block; }
+    .uploadify-button { border: none; border-radius: 0; }
+    /*.uploadify-queue { display: none; }*/
+</style>
+<div class="pageContent">
+    <form method="post" enctype="multipart/form-data" action='@Url.Action("ApkCreate")' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone);">
+        <div class="pageFormContent nowrap" layouth="58">
+            <table class="formTable">
+                <tr>
+                    <th>版本名称</th>
+                    <td>
+                        <input type="text" name="VersionName" style="width:99%" class="required" value="@Model.VersionName" />
+                        <input type="hidden" name="Id" value="@Model.Id" />
+                    </td>
+                </tr>
+                <tr>
+                    <th style="vertical-align:top;padding-top:10px;">更新日志</th>
+                    <td><textarea name="Info" style="width:99%;height:250px;" class="required">@Model.Info</textarea></td>
+                </tr>
+                    <tr>
+                        <th style="vertical-align:top;padding-top:10px;">目标文件</th>
+                        <td>
+                            <span>
+                                @if (!String.IsNullOrEmpty(Model.Path))
+                                {
+                                    <span class="fileList">
+                                        <input type="hidden" name="Path" value="@Model.Path" />
+                                        <input type='hidden' name='Size' value='@Model.Size' />
+                                        <input type='hidden' name='Extension' value='@Model.Extension' />
+                                        <span>@Model.Path</span>
+                                        <a href="javascript:;" class="close" title="移除" onclick='$(this).parent().remove();'></a>
+                                    </span>
+                                }
+                            </span>
+                            <input id="Path" type="file" name="file" uploaderoption="{swf:'/Content/uploadify/scripts/uploadify.swf',uploader:'/Admin/UploadifyFull',buttonText:'请选择文件',auto:true,multi:false,onUploadSuccess:successApkCreate}" />
+                        </td>
+                    </tr>
+            </table>
+            <script>
+                /*uploadifySuccess*/
+                function successApkCreate(file, data, response) {
+                    var o = $.parseJSON(data);
+                    var $c = $("#Path").prev();
+                    $c.html("<span class='fileList'></span>");
+                    var input = "<input type='hidden' name='Path' value='" + o.filePath + "'/><input type='hidden' name='Size' value='" + o.Size + "' /><input type='hidden' name='Extension' value='" + o.Extension + "' />";
+                    var span = "<span>" + o.fileName + "</span>";
+                    var a = "<a href=\"javascript:;\" class=\"close\" title=\"移除\" onclick='$(this).parent().remove();'></a>";
+                    $c.children().append(input).append(span).append(a);
+                }
+            </script>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+
+</div>
