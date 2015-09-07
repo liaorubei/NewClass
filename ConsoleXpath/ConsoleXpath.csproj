@@ -41,6 +41,10 @@
     <Reference Include="Kfstorm.LrcParser">
       <HintPath>..\packages\Kfstorm.LrcParser.1.0.3\lib\portable-net40+sl50+win+wpa81+wp80\Kfstorm.LrcParser.dll</HintPath>
     </Reference>
+    <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />

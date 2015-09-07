@@ -1,4 +1,5 @@
-﻿using StudyOnline.Models;
+﻿using NAudio.Wave;
+using StudyOnline.Models;
 using StudyOnline.Utils;
 using System;
 using System.Collections.Generic;
@@ -153,6 +154,26 @@ namespace StudyOnline.Controllers
 
             file.SaveAs(info.FullName);
             var data = new { fileName = fileName, filePath = filePath };
+            return Json(data);
+        }
+
+        [HttpPost]
+        public ActionResult UploadifyAudio(HttpPostedFileBase file)
+        {
+            String fileName = "";
+            String filePath = String.Format("/{0}/{1}/{2}{3}", "File", DateTime.Now.ToString("yyyyMMdd"), Guid.NewGuid(), Path.GetExtension(file.FileName));
+            FileInfo info = new FileInfo(Server.MapPath("~" + filePath));
+            if (!info.Directory.Exists)
+            {
+                info.Directory.Create();
+            }
+
+            Mp3FileReader reader = new Mp3FileReader(file.InputStream);
+            double Duration = reader.TotalTime.TotalMilliseconds;
+
+            fileName = file.FileName;
+            file.SaveAs(info.FullName);
+            var data = new { fileName = fileName, filePath = filePath, Duration, Length = file.ContentLength };
             return Json(data);
         }
 

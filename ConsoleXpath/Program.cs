@@ -5,24 +5,30 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Kfstorm.LrcParser;
+using NAudio.Wave;
 
 namespace ConsoleXpath
 {
+
+
     /// <summary>
     /// 本程序意在用来爬取散文,主要API为HtmlAgilityPack,HtmlWeb,HtmlDocument
     /// </summary>
     class Program
     {
+
+
         static void Main(string[] args)
         {
-            newParse();
+            FileInfo info = new FileInfo("");
+            //      info.Length;
 
+            Mp3FileReader reader = new Mp3FileReader(@"D:\TTPmusic\huanzi.mp3");
+            TimeSpan duration = reader.TotalTime;
 
-
-
-
+            Console.WriteLine("{0}:{1}", duration.Minutes, duration.Seconds);
+            Console.WriteLine("TotalMilliseconds=" + duration.TotalMilliseconds);
             Console.ReadLine();
 
         }
