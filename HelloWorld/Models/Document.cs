@@ -26,6 +26,8 @@ namespace StudyOnline.Models
         public string Contents { get; set; }
         public string SoundPath { get; set; }
         public Nullable<System.DateTime> AddDate { get; set; }
+        public Nullable<double> Duration { get; set; }
+        public Nullable<double> Length { get; set; }
     
         public virtual ICollection<Comment> Comment { get; set; }
         public virtual Level Level { get; set; }

@@ -29,7 +29,14 @@ namespace StudyOnline.Controllers
         public ActionResult DocsByLevel(int levelId)
         {
             var temp = db.Document.Where(t => t.LevelId == levelId).OrderByDescending(t => t.AddDate).ToList();
-            var data = temp.Select(t => new { t.Id, t.Title, t.SoundPath });
+            var data = temp.Select(t => new { t.Id, t.Title, t.SoundPath, t.Duration, t.Length });
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult DocsByLevelId(int id)
+        {
+            var temp = db.Document.Where(t => t.LevelId == id).OrderByDescending(t => t.AddDate).ToList();
+            var data = temp.Select(t => new { t.Id, t.Title, t.SoundPath, t.Duration, t.Length });
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 

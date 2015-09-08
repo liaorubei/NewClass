@@ -1,7 +1,11 @@
 ﻿using Kfstorm.LrcParser;
+using NAudio.FileFormats.Mp3;
+using NAudio.Wave;
 using StudyOnline.Models;
 using StudyOnline.Utils;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web.Mvc;
@@ -103,5 +107,30 @@ namespace StudyOnline.Controllers
             String path = Server.MapPath("~" + file.Path);
             return File(path, "application/vnd.android", "com.voc.woyaoxue.apk");
         }
+
+        public ActionResult InitAudioDuration()
+        {
+            var docs = db.Document.Where(t => t.Duration == null);
+            List<Double> durs = new List<double>();
+            foreach (var item in docs)
+            {
+                FileInfo info = new FileInfo(Server.MapPath("~" + item.SoundPath));
+                if (info.Exists)
+                {
+                    //FileStream stream = info.Open(FileMode.Open);
+                    //Mp3Frame frame = Mp3Frame.LoadFromStream(stream);
+
+                    //WaveFormat sourceFormat = new Mp3WaveFormat(frame.SampleRate, frame.ChannelMode == ChannelMode.Mono ? 1 : 2, frame.FrameLength, frame.BitRate);
+                    //Mp3FileReader reader = new Mp3FileReader(stream, builder => (new DmoMp3FrameDecompressor(sourceFormat)));
+
+                    //item.Duration = reader.TotalTime.TotalMilliseconds;
+                    //durs.Add(item.Duration ?? 0);
+                    item.Length = info.Length;
+                }
+            }
+            int result = db.SaveChanges();
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

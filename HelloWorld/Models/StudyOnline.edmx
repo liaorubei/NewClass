@@ -25,6 +25,8 @@
           <Property Name="Contents" Type="nvarchar(max)" />
           <Property Name="SoundPath" Type="nvarchar" MaxLength="250" />
           <Property Name="AddDate" Type="datetime" />
+          <Property Name="Duration" Type="float" />
+          <Property Name="Length" Type="float" />
         </EntityType>
         <EntityType Name="Level">
           <Key>
@@ -134,6 +136,8 @@
           <Property Name="AddDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Comment" Relationship="StudyOnlineModel.FK_Comment_Document" FromRole="Document" ToRole="Comment" />
           <NavigationProperty Name="Level" Relationship="StudyOnlineModel.FK_Document_Level" FromRole="Document" ToRole="Level" />
+          <Property Name="Duration" Type="Double" />
+          <Property Name="Length" Type="Double" />
         </EntityType>
         <Association Name="FK_Comment_Document">
           <End Type="StudyOnlineModel.Document" Role="Document" Multiplicity="0..1" />
@@ -198,7 +202,9 @@
     <EntitySetMapping Name="Document">
       <EntityTypeMapping TypeName="IsTypeOf(StudyOnlineModel.Document)">
         <MappingFragment StoreEntitySet="Document">
-          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Length" ColumnName="Length" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="LevelId" ColumnName="LevelId" />
           <ScalarProperty Name="Title" ColumnName="Title" />
           <ScalarProperty Name="Lyrics" ColumnName="Lyrics" />

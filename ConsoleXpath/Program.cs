@@ -7,31 +7,34 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Kfstorm.LrcParser;
 using NAudio.Wave;
+using NAudio.FileFormats.Mp3;
 
 namespace ConsoleXpath
 {
 
-
-    /// <summary>
-    /// 本程序意在用来爬取散文,主要API为HtmlAgilityPack,HtmlWeb,HtmlDocument
-    /// </summary>
     class Program
     {
 
-
         static void Main(string[] args)
         {
-            FileInfo info = new FileInfo("");
-            //      info.Length;
+            FileInfo info = new FileInfo(@"D:\TTPmusic\huanzi.mp3");
+            Stream input = info.Open(FileMode.Open);
+            Mp3Frame frame = Mp3Frame.LoadFromStream(input);
+            Mp3WaveFormat waveFormat = new Mp3WaveFormat(frame.SampleRate, frame.ChannelMode == ChannelMode.Mono ? 1 : 2, frame.FrameLength, frame.BitRate);
+            Mp3FileReader mp3 = new Mp3FileReader(info.FullName, ff => (new DmoMp3FrameDecompressor(waveFormat)));
 
-            Mp3FileReader reader = new Mp3FileReader(@"D:\TTPmusic\huanzi.mp3");
-            TimeSpan duration = reader.TotalTime;
+            Console.WriteLine(mp3.TotalTime.TotalMilliseconds);//283585
 
-            Console.WriteLine("{0}:{1}", duration.Minutes, duration.Seconds);
-            Console.WriteLine("TotalMilliseconds=" + duration.TotalMilliseconds);
+            Mp3FileReader d = new Mp3FileReader(input);
+            WaveOut wave = new WaveOut();
+            wave.Init(mp3);
+            wave.Play();
+
+            Console.WriteLine("{0}:{1}", mp3.TotalTime.Minutes, mp3.TotalTime.Seconds);
             Console.ReadLine();
-
         }
+
+
 
         private static void newParse()
         {
