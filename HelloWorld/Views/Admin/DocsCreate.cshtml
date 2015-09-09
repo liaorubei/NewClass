@@ -11,7 +11,7 @@
 <style type="text/css" media="screen">
     .uploadify { margin-bottom: 0; display: inline-block; }
     .uploadify-button { border: none; border-radius: 0; }
-    .uploadify-queue { display: none; }
+    /*.uploadify-queue { display: none; }*/
 </style>
 
 <div class="pageContent">
@@ -55,9 +55,10 @@
                             @if (!String.IsNullOrEmpty(Model.SoundPath))
                             {
                                 <span class="fileList">
-                                    <input type="hidden" name="SoundPath" value="@Model.SoundPath" />
+                                    <input type='hidden' name='SoundPath' value='@Model.SoundPath' />
+                                    <input type='hidden' name='Length' value='@Model.Length' />
                                     <span>@Model.SoundPath</span>
-                                    <a href="javascript:;" class="close" title="移除" onclick='$(this).parent().remove();'></a>
+                                    <a href='javascript:;' class='close' title='移除' onclick='$(this).parent().remove();'></a>
                                 </span>
                             }
                         </span>
@@ -86,13 +87,13 @@
                     var o = $.parseJSON(data);
                     var $c = $("#SoundPath").prev();
                     $c.html("<span class='fileList'></span>");
-                    var input = "<input type='hidden' name='SoundPath' value='" + o.filePath + "'/>";
-                    var span = "<span>" + o.filePath + "</span>";
+                    var input = "<input type='hidden' name='SoundPath' value='" + o.filePath + "'/><input type='hidden' name='Length' value='"+o.Length+"' />";
+                    var span = "<span>" + o.fileName + "</span>";
                     var a = "<a href=\"javascript:;\" class=\"close\" title=\"移除\" onclick='$(this).parent().remove();'></a>";
                     $c.children().append(input).append(span).append(a);
                 }
 
-          
+
             </script>
 
 

@@ -153,7 +153,7 @@ namespace StudyOnline.Controllers
             fileName = file.FileName;
 
             file.SaveAs(info.FullName);
-            var data = new { fileName = fileName, filePath = filePath };
+            var data = new { fileName = fileName, filePath = filePath, Length = file.ContentLength };
             return Json(data);
         }
 
