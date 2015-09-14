@@ -7,25 +7,27 @@
 }
 @*<h2 class="contentTitle">表单验证</h2>*@
 
-
 <style type="text/css" media="screen">
-    .uploadify { margin-bottom: 0; display: inline-block; }
-    .uploadify-button { border: none; border-radius: 0; }
+    .uploadify {
+        margin-bottom: 0;
+        display: inline-block;
+    }
+
+    .uploadify-button {
+        border: none;
+        border-radius: 0;
+    }
     /*.uploadify-queue { display: none; }*/
 </style>
-
 <div class="pageContent">
-
     <form method="post" action='@Url.Action("DocsCreate")' class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
-        <div class="pageFormContent nowrap" layouth="58">
-
-
+        <div class="pageFormContent nowrap" layouth="56">
             <table class="formTable">
                 <tr>
-                    <th>标题</th>
-                    <td><input type="text" name="Title" style="width:500px" class="required" value="@Model.Title" /></td>
+                    <th style="width:100px;">标题(原文)</th>
+                    <td><input type="text" name="Title" style="width:99%" class="required" value="@Model.Title" /></td>
                     <th>级别</th>
-                    <td style="width:100px;">
+                    <td style="width:200px;">
                         <select class="combox required" name="LevelId">
                             @foreach (var item in levels)
                             {
@@ -34,23 +36,23 @@
                         </select>
                     </td>
                 </tr>
-
                 <tr>
-                    <th style="vertical-align:top;padding-top:10px;">正文</th>
-                    <td colspan="3"><textarea name="Contents" style="width:99%;height:100px;">@Model.Contents</textarea></td>
-                </tr>
-                <tr>
-
-                    <th style="vertical-align:top;padding-top:10px;">歌词</th>
-                    <td colspan="3">
-                        <textarea name="Lyrics" style="width:99%;height:300px;">@Model.Lyrics</textarea>
+                    <th>标题(翻译)</th>
+                    <td><input type="text" name="TitleTwo" style="width:99%" class="required" value="@Model.TitleTwo" /></td>
+                    <th>时长</th>
+                    <td style="width:200px;">
+                        <input type="text" style="width:96%" name="LengthString" class="required" value="@Model.LengthString" />
                     </td>
                 </tr>
                 <tr>
-
+                    <th style="vertical-align:top;padding-top:10px;">歌词</th>
+                    <td colspan="3">
+                        <textarea name="Lyrics" style="height:350px;width:99%" class="required">@Model.Lyrics</textarea>
+                    </td>
+                </tr>
+                <tr>
                     <th>音频文件</th>
                     <td colspan="3">
-
                         <span>
                             @if (!String.IsNullOrEmpty(Model.SoundPath))
                             {
@@ -62,51 +64,10 @@
                                 </span>
                             }
                         </span>
-
-
-                        <input id="SoundPath" type="file" name="file"
-                               uploaderoption="{
-			swf:'/Content/uploadify/scripts/uploadify.swf',
-			uploader:'/Admin/Uploadify',
-			buttonText:'请选择文件',
-			auto:true,
-            multi:false,
-			onUploadSuccess:successA
-		}" />
-
+                        <input id="SoundPath" type="file" name="file" uploaderoption="{swf:'/Content/uploadify/scripts/uploadify.swf',uploader:'/Admin/Uploadify',buttonText:'请选择文件',auto:true,multi:false,onUploadSuccess:successA}" />
                     </td>
                 </tr>
-
             </table>
-
-            <div id="mmusic" style="display:none;"></div>
-
-            <script>
-                /*uploadifySuccess*/
-                function successA(file, data, response) {
-                    var o = $.parseJSON(data);
-                    var $c = $("#SoundPath").prev();
-                    $c.html("<span class='fileList'></span>");
-                    var input = "<input type='hidden' name='SoundPath' value='" + o.filePath + "'/><input type='hidden' name='Length' value='"+o.Length+"' />";
-                    var span = "<span>" + o.fileName + "</span>";
-                    var a = "<a href=\"javascript:;\" class=\"close\" title=\"移除\" onclick='$(this).parent().remove();'></a>";
-                    $c.children().append(input).append(span).append(a);
-                }
-
-
-            </script>
-
-
-
-
-
-
-
-
-
-
-         
-
         </div>
         <div class="formBar">
             <ul>
@@ -115,13 +76,16 @@
             </ul>
         </div>
     </form>
-
 </div>
-
-
-@*<script type="text/javascript">
-        function customvalidXxx(element) {
-            if ($(element).val() == "xxx") return false;
-            return true;
-        }
-    </script>*@
+<script>
+    /*uploadifySuccess*/
+    function successA(file, data, response) {
+        var o = $.parseJSON(data);
+        var $c = $("#SoundPath").prev();
+        $c.html("<span class='fileList'></span>");
+        var input = "<input type='hidden' name='SoundPath' value='" + o.filePath + "'/><input type='hidden' name='Length' value='" + o.Length + "'/>";
+        var span = "<span>" + o.fileName + "</span>";
+        var a = "<a href=\"javascript:;\" class=\"close\" title=\"移除\" onclick='$(this).parent().remove();'></a>";
+        $c.children().append(input).append(span).append(a);
+    }
+</script>

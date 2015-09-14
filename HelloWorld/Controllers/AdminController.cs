@@ -68,9 +68,10 @@ namespace StudyOnline.Controllers
                 oldDoc.LevelId = doc.LevelId;
                 oldDoc.Title = doc.Title;
                 oldDoc.Lyrics = doc.Lyrics;
-                oldDoc.Contents = doc.Contents;
-                oldDoc.SoundPath = doc.SoundPath;
-                oldDoc.AddDate = DateTime.Now;
+                oldDoc.SoundPath = doc.SoundPath;//音频路径
+                oldDoc.Length = doc.Length;//文件长度
+                oldDoc.TitleTwo = doc.TitleTwo;//文件的标题（翻译）
+                oldDoc.LengthString = doc.LengthString;//音频文件的播放长度
             }
             else
             {

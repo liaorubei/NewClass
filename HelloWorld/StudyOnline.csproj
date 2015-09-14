@@ -673,7 +673,9 @@
     <Content Include="File\com.newclass.woyaoxue.apk" />
     <Content Include="Areas\Api\Views\Web.config" />
     <None Include="Properties\PublishProfiles\custom.pubxml" />
+    <None Include="Properties\PublishProfiles\voc2015 - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\voc2015 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\voc2015 - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\voc2015 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Images\background.png" />

@@ -27,6 +27,8 @@
           <Property Name="AddDate" Type="datetime" />
           <Property Name="Duration" Type="float" />
           <Property Name="Length" Type="float" />
+          <Property Name="TitleTwo" Type="varchar" MaxLength="250" />
+          <Property Name="LengthString" Type="varchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="Level">
           <Key>
@@ -138,6 +140,8 @@
           <NavigationProperty Name="Level" Relationship="StudyOnlineModel.FK_Document_Level" FromRole="Document" ToRole="Level" />
           <Property Name="Duration" Type="Double" />
           <Property Name="Length" Type="Double" />
+          <Property Name="TitleTwo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="LengthString" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_Comment_Document">
           <End Type="StudyOnlineModel.Document" Role="Document" Multiplicity="0..1" />
@@ -202,7 +206,9 @@
     <EntitySetMapping Name="Document">
       <EntityTypeMapping TypeName="IsTypeOf(StudyOnlineModel.Document)">
         <MappingFragment StoreEntitySet="Document">
-          <ScalarProperty Name="Length" ColumnName="Length" />
+          <ScalarProperty Name="LengthString" ColumnName="LengthString" />
+                <ScalarProperty Name="TitleTwo" ColumnName="TitleTwo" />
+                <ScalarProperty Name="Length" ColumnName="Length" />
                 <ScalarProperty Name="Duration" ColumnName="Duration" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="LevelId" ColumnName="LevelId" />

@@ -28,6 +28,8 @@ namespace StudyOnline.Models
         public Nullable<System.DateTime> AddDate { get; set; }
         public Nullable<double> Duration { get; set; }
         public Nullable<double> Length { get; set; }
+        public string TitleTwo { get; set; }
+        public string LengthString { get; set; }
     
         public virtual ICollection<Comment> Comment { get; set; }
         public virtual Level Level { get; set; }

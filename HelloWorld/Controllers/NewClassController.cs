@@ -29,14 +29,14 @@ namespace StudyOnline.Controllers
         public ActionResult DocsByLevel(int levelId)
         {
             var temp = db.Document.Where(t => t.LevelId == levelId).OrderByDescending(t => t.AddDate).ToList();
-            var data = temp.Select(t => new { t.Id, t.Title, t.SoundPath, t.Duration, t.Length });
+            var data = temp.Select(t => new { t.Id, t.Title,t.TitleTwo, t.SoundPath, t.Duration, t.Length ,t.LengthString});
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult DocsByLevelId(int id)
         {
             var temp = db.Document.Where(t => t.LevelId == id).OrderByDescending(t => t.AddDate).ToList();
-            var data = temp.Select(t => new { t.Id, t.Title, t.SoundPath, t.Duration, t.Length });
+            var data = temp.Select(t => new { t.Id, t.Title,t.TitleTwo, t.SoundPath, t.Duration, t.Length,t.LengthString });
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
@@ -62,7 +62,7 @@ namespace StudyOnline.Controllers
                 lines.Add(line);
             }
 
-            var data = new { temp.Id, temp.Title, Lyrics = lines.Select(t => new { TimeLabel = t.TimeLabel.TotalMilliseconds, t.Original, t.Translate }), temp.SoundPath };
+            var data = new { temp.Id, temp.Title,temp.TitleTwo, Lyrics = lines.Select(t => new { TimeLabel = t.TimeLabel.TotalMilliseconds, t.Original, t.Translate }), temp.SoundPath,temp.Length,temp.Duration,temp.LengthString };
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
