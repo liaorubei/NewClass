@@ -33,9 +33,9 @@ namespace StudyOnline.Controllers
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult DocsByLevelId(int id)
+        public ActionResult DocsByLevelId(int id, int? skip, int? take)
         {
-            var temp = db.Document.Where(t => t.LevelId == id).OrderByDescending(t => t.AddDate).ToList();
+            var temp = db.Document.Where(t => t.LevelId == id).OrderByDescending(t => t.AddDate).Skip(skip ?? 0).Take(take ?? 20).ToList();
             var data = temp.Select(t => new { t.Id, t.Title, t.TitleTwo, t.SoundPath, t.Duration, t.Length, t.LengthString, DateString = (t.AddDate == null ? "" : t.AddDate.Value.ToString("yyyy-MM-dd")) });
             return Json(data, JsonRequestBehavior.AllowGet);
         }
