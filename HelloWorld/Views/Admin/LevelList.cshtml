@@ -81,6 +81,8 @@
                 <tr>
                     <th width="50" align="center">序号</th>
                     <th>分类名称</th>
+                    <th>权重（客户端)</th>
+                    <th>显示（客户端）</th>
                 </tr>
             </thead>
             <tbody>
@@ -90,6 +92,8 @@
                     <tr target="id" rel="@item.Id">
                         <td align="center">@(++i)</td>
                         <td>@item.LevelName</td>
+                        <td align="center">@item.Sort</td>
+                        <td align="center">@((item.Show??0)==0?"否":"是")</td>
                     </tr>
                 }
 

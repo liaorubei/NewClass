@@ -30,8 +30,10 @@ namespace StudyOnline.Models
         public Nullable<double> Length { get; set; }
         public string TitleTwo { get; set; }
         public string LengthString { get; set; }
+        public Nullable<int> FolderId { get; set; }
     
         public virtual ICollection<Comment> Comment { get; set; }
         public virtual Level Level { get; set; }
+        public virtual Folder Folder { get; set; }
     }
 }

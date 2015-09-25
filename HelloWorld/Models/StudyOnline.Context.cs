@@ -29,5 +29,6 @@ namespace StudyOnline.Models
         public DbSet<Level> Level { get; set; }
         public DbSet<Document> Document { get; set; }
         public DbSet<UploadFile> UploadFile { get; set; }
+        public DbSet<Folder> Folder { get; set; }
     }
 }

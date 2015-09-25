@@ -283,6 +283,9 @@
     <Compile Include="Models\Document.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Folder.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Level.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>

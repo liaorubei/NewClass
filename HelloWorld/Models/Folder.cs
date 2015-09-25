@@ -12,17 +12,15 @@ namespace StudyOnline.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Level
+    public partial class Folder
     {
-        public Level()
+        public Folder()
         {
             this.Document = new HashSet<Document>();
         }
     
         public int Id { get; set; }
-        public string LevelName { get; set; }
-        public Nullable<int> Sort { get; set; }
-        public Nullable<int> Show { get; set; }
+        public string Name { get; set; }
     
         public virtual ICollection<Document> Document { get; set; }
     }

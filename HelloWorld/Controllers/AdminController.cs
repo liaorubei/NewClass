@@ -122,6 +122,8 @@ namespace StudyOnline.Controllers
             {
                 Level oldLevel = entities.Level.FirstOrDefault(l => l.Id == level.Id);
                 oldLevel.LevelName = level.LevelName;
+                oldLevel.Sort = level.Sort;
+                oldLevel.Show = level.Show;
             }
             else
             {
@@ -140,6 +142,53 @@ namespace StudyOnline.Controllers
             var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminLevelList", rel = "", callbackType = "", forwardUrl = "" };
             return Json(data);
         }
+
+        public ActionResult FolderIndex()
+        {
+            PagedList<Folder> folders = entities.Folder.OrderByDescending(t => t.Id).ToPagedList(1, 20);
+            ViewBag.Folders = folders;
+            return View();
+        }
+
+        public ActionResult FolderCreate(int? id)
+        {
+            if (id == null)
+            {
+                ViewData.Model = new Folder() { Id = 0 };
+            }
+            else
+            {
+                ViewData.Model = entities.Folder.Find(id);
+            }
+
+            return View();
+        }
+
+        public ActionResult FolderCreate(Folder folder)
+        {
+            if (folder.Id > 0)
+            {
+                Folder contextEntity = entities.Folder.Find(folder.Id);
+                contextEntity.Name = folder.Name;
+            }
+            else
+            {
+                entities.Folder.Add(folder);
+            }
+            entities.SaveChanges();
+            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminFolderIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
+            return Json(data);
+        }
+
+        public ActionResult FolderDelete(int? id)
+        {
+            Folder folder = entities.Folder.Find(id);
+            entities.Folder.Remove(folder);
+            entities.SaveChanges();
+            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminFolderIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
+            return Json(data);
+        }
+
 
         [HttpPost]
         public ActionResult Uploadify(HttpPostedFileBase file)

@@ -29,6 +29,14 @@
           <Property Name="Length" Type="float" />
           <Property Name="TitleTwo" Type="varchar" MaxLength="250" />
           <Property Name="LengthString" Type="varchar" MaxLength="250" />
+          <Property Name="FolderId" Type="int" />
+        </EntityType>
+        <EntityType Name="Folder">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Level">
           <Key>
@@ -36,6 +44,8 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="LevelName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Sort" Type="int" />
+          <Property Name="Show" Type="int" />
         </EntityType>
         <EntityType Name="UploadFile">
           <Key>
@@ -63,6 +73,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Document_Folder">
+          <End Role="Folder" Type="Self.Folder" Multiplicity="0..1" />
+          <End Role="Document" Type="Self.Document" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Folder">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Document">
+              <PropertyRef Name="FolderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Document_Level">
           <End Role="Level" Type="Self.Level" Multiplicity="1" />
           <End Role="Document" Type="Self.Document" Multiplicity="*" />
@@ -78,11 +100,16 @@
         <EntityContainer Name="StudyOnlineModelStoreContainer">
           <EntitySet Name="Comment" EntityType="Self.Comment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Document" EntityType="Self.Document" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Folder" EntityType="Self.Folder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Level" EntityType="Self.Level" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UploadFile" EntityType="Self.UploadFile" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Comment_Document" Association="Self.FK_Comment_Document">
             <End Role="Document" EntitySet="Document" />
             <End Role="Comment" EntitySet="Comment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Document_Folder" Association="Self.FK_Document_Folder">
+            <End Role="Folder" EntitySet="Folder" />
+            <End Role="Document" EntitySet="Document" />
           </AssociationSet>
           <AssociationSet Name="FK_Document_Level" Association="Self.FK_Document_Level">
             <End Role="Level" EntitySet="Level" />
@@ -110,6 +137,8 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="LevelName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Document" Relationship="StudyOnlineModel.FK_Document_Level" FromRole="Level" ToRole="Document" />
+          <Property Name="Sort" Type="Int32" />
+          <Property Name="Show" Type="Int32" />
         </EntityType>
         <EntityContainer Name="StudyOnlineEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Comment" EntityType="Self.Comment" />
@@ -124,6 +153,11 @@
             <End Role="Document" EntitySet="Document" />
           </AssociationSet>
           <EntitySet Name="UploadFile" EntityType="StudyOnlineModel.UploadFile" />
+          <EntitySet Name="Folder" EntityType="StudyOnlineModel.Folder" />
+          <AssociationSet Name="FK_Document_Folder" Association="StudyOnlineModel.FK_Document_Folder">
+            <End Role="Folder" EntitySet="Folder" />
+            <End Role="Document" EntitySet="Document" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Document">
           <Key>
@@ -142,6 +176,8 @@
           <Property Name="Length" Type="Double" />
           <Property Name="TitleTwo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="LengthString" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FolderId" Type="Int32" />
+          <NavigationProperty Name="Folder" Relationship="StudyOnlineModel.FK_Document_Folder" FromRole="Document" ToRole="Folder" />
         </EntityType>
         <Association Name="FK_Comment_Document">
           <End Type="StudyOnlineModel.Document" Role="Document" Multiplicity="0..1" />
@@ -179,6 +215,26 @@
           <Property Name="Extension" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="VersionName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="Folder">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Document" Relationship="StudyOnlineModel.FK_Document_Folder" FromRole="Folder" ToRole="Document" />
+        </EntityType>
+        <Association Name="FK_Document_Folder">
+          <End Type="StudyOnlineModel.Folder" Role="Folder" Multiplicity="0..1" />
+          <End Type="StudyOnlineModel.Document" Role="Document" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Folder">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Document">
+              <PropertyRef Name="FolderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -198,7 +254,9 @@
     <EntitySetMapping Name="Level">
       <EntityTypeMapping TypeName="IsTypeOf(StudyOnlineModel.Level)">
         <MappingFragment StoreEntitySet="Level">
-          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Show" ColumnName="Show" />
+                <ScalarProperty Name="Sort" ColumnName="Sort" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="LevelName" ColumnName="LevelName" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -206,7 +264,8 @@
     <EntitySetMapping Name="Document">
       <EntityTypeMapping TypeName="IsTypeOf(StudyOnlineModel.Document)">
         <MappingFragment StoreEntitySet="Document">
-          <ScalarProperty Name="LengthString" ColumnName="LengthString" />
+          <ScalarProperty Name="FolderId" ColumnName="FolderId" />
+                <ScalarProperty Name="LengthString" ColumnName="LengthString" />
                 <ScalarProperty Name="TitleTwo" ColumnName="TitleTwo" />
                 <ScalarProperty Name="Length" ColumnName="Length" />
                 <ScalarProperty Name="Duration" ColumnName="Duration" />
@@ -229,6 +288,14 @@
                 <ScalarProperty Name="Info" ColumnName="Info" />
                 <ScalarProperty Name="Path" ColumnName="Path" />
                 <ScalarProperty Name="Size" ColumnName="Size" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Folder">
+            <EntityTypeMapping TypeName="StudyOnlineModel.Folder">
+              <MappingFragment StoreEntitySet="Folder">
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
