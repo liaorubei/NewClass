@@ -47,6 +47,24 @@ namespace StudyOnline.Controllers
             return Json(m, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// 取得文件夹，以及指定Level下文件夹下文件的数量
+        /// </summary>
+        /// <param name="levelId"></param>
+        /// <returns></returns>
+        public ActionResult Folders(int levelId)
+        {
+            var data = db.Folder.ToList();
+            var m = data.Select(t => new { t.Id, t.Name, DocsCount = t.Document.Where(o => o.LevelId == levelId).Count() });
+            return Json(m, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult Folders()
+        {
+            var data = db.Folder.ToList();
+            var m = data.Select(t => new { t.Id, t.Name, DocsCount = t.Document.Count });
+            return Json(m, JsonRequestBehavior.AllowGet);
+        }
         public ActionResult DocById(int id)
         {
             var temp = db.Document.Find(id);
