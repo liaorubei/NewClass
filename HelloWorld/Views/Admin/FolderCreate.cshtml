@@ -1,0 +1,32 @@
+﻿@model StudyOnline.Models.Folder
+
+@{
+    Layout = null;
+}
+
+<style>
+    span.error {
+        width: auto;
+    }
+</style>
+<div class="pageContent">
+    <form method="post" action='@Url.Action("FolderCreate")' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone);">
+        <div class="pageFormContent nowrap" layouth="58">
+            <dl style="width:auto;">
+                <dt style="width:80px;">文件夹名称：</dt>
+                <dd style="width:auto;">
+                    <input type="hidden" name="Id"   value="@Model.Id" />
+                    <input type="text"   name="Name" value="@Model.Name" class="required" placeholder="请输入" />
+                </dd>
+            </dl>
+    
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="button">      <div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+
+</div>

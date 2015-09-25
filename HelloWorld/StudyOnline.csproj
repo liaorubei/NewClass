@@ -655,6 +655,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Scripts\dwz\dwz.min.js" />
+    <Content Include="Scripts\jquery-1.8.3.min.js" />
+    <Content Include="Scripts\jquery-1.9.1.min.js" />
+    <Content Include="SQLQuery1.sql" />
     <Content Include="有道翻译API申请.png" />
     <EntityDeploy Include="Models\StudyOnline.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
@@ -1095,6 +1098,8 @@
     <Content Include="Views\Api\Index.cshtml" />
     <Content Include="Views\Admin\ApkIndex.cshtml" />
     <Content Include="Views\Admin\ApkCreate.cshtml" />
+    <Content Include="Views\Admin\FolderIndex.cshtml" />
+    <Content Include="Views\Admin\FolderCreate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

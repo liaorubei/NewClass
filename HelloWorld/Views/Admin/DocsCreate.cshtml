@@ -4,6 +4,9 @@
 @{
     Layout = null;
     List<Level> levels = ViewBag.Levels;
+    levels.Insert(0, new Level() { Id = -1, LevelName = "-请选择-" });
+    List<Folder> folders = ViewBag.Folders;
+    folders.Insert(0, new Folder() { Id = -1, Name = "-请选择-" });
 }
 @*<h2 class="contentTitle">表单验证</h2>*@
 
@@ -25,20 +28,31 @@
             <table class="formTable">
                 <tr>
                     <th style="width:100px;">标题(原文)</th>
-                    <td><input type="text" name="Title" style="width:99%" class="required" value="@Model.Title" /></td>
+                    <td colspan="5"><input type="text" name="Title" style="width:99%" class="required" value="@Model.Title" /></td>
+                </tr>
+                <tr>
+                    <th style="width:100px;">标题(译文)</th>
+                    <td colspan="5"><input type="text" name="TitleTwo" style="width:99%" class="required" value="@Model.TitleTwo" /></td>
+                </tr>
+                <tr>
                     <th>级别</th>
                     <td style="width:200px;">
-                        <select class="combox required" name="LevelId">
+                        <select class="required" name="LevelId" style="text-align:center;">
                             @foreach (var item in levels)
                             {
-                                <option value="@item.Id" @(Model.LevelId == item.Id ? "selected='selected'" : "")>@item.LevelName</option>
+                                <option value="@(item.Id>0?item.Id+"":"")" @(Model.LevelId == item.Id ? "selected='selected'" : "")>@item.LevelName</option>
                             }
                         </select>
                     </td>
-                </tr>
-                <tr>
-                    <th>标题(翻译)</th>
-                    <td><input type="text" name="TitleTwo" style="width:99%" class="required" value="@Model.TitleTwo" /></td>
+                    <th>文件夹</th>
+                    <td style="width:200px;">
+                        <select class="required" name="FolderId">
+                            @foreach (var item in folders)
+                            {
+                                <option value="@(item.Id >0 ? item.Id + "" : "")" @(Model.FolderId == item.Id ? "selected='selected'" : "")>@item.Name</option>
+                            }
+                        </select>
+                    </td>
                     <th>时长</th>
                     <td style="width:200px;">
                         <input type="text" style="width:96%" name="LengthString" class="required" value="@Model.LengthString" />
@@ -46,13 +60,13 @@
                 </tr>
                 <tr>
                     <th style="vertical-align:top;padding-top:10px;">歌词</th>
-                    <td colspan="3">
+                    <td colspan="5">
                         <textarea name="Lyrics" style="height:350px;width:99%" class="required">@Model.Lyrics</textarea>
                     </td>
                 </tr>
                 <tr>
                     <th>音频文件</th>
-                    <td colspan="3">
+                    <td colspan="5">
                         <span>
                             @if (!String.IsNullOrEmpty(Model.SoundPath))
                             {

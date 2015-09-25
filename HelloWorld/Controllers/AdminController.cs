@@ -22,6 +22,7 @@ namespace StudyOnline.Controllers
 
         public ActionResult Player() { return View(); }
 
+        //文档相关
         public ActionResult DocsList(FormCollection form)
         {
             foreach (var item in form.AllKeys)
@@ -55,7 +56,11 @@ namespace StudyOnline.Controllers
                 ViewData.Model = new Document() { Id = 0 };
             }
             List<Level> levels = entities.Level.OrderBy(l => l.Id).ToList();
+            List<Folder> folders = entities.Folder.OrderBy(o => o.Id).ToList();
+
             ViewBag.Levels = levels;
+            ViewBag.Folders = folders;
+
             return View();
         }
         [HttpPost]
@@ -95,6 +100,7 @@ namespace StudyOnline.Controllers
             return Json(data);
         }
 
+        //分类相关
         public ActionResult LevelList(FormCollection form)
         {
             PagedList<Level> levels = entities.Level.OrderBy(l => l.Id).ToPagedList(1, 20);
@@ -143,6 +149,7 @@ namespace StudyOnline.Controllers
             return Json(data);
         }
 
+        //文件夹相关
         public ActionResult FolderIndex()
         {
             PagedList<Folder> folders = entities.Folder.OrderByDescending(t => t.Id).ToPagedList(1, 20);
@@ -164,12 +171,16 @@ namespace StudyOnline.Controllers
             return View();
         }
 
-        public ActionResult FolderCreate(Folder folder)
+        [HttpPost]
+        public ActionResult FolderCreate(Folder folder, List<int> docIds)
         {
             if (folder.Id > 0)
             {
                 Folder contextEntity = entities.Folder.Find(folder.Id);
                 contextEntity.Name = folder.Name;
+                // context.Database.ExecuteSqlCommand("UPDATE dbo.Posts SET Rating = 5 WHERE Author = @p0", userSuppliedAuthor);
+                // context.Database.ExecuteSqlCommand("UPDATE dbo.Posts SET Rating = 5 WHERE Author = @author", new SqlParameter("@author", userSuppliedAuthor));
+                // entities.Database.ExecuteSqlCommand("",);
             }
             else
             {
@@ -185,7 +196,7 @@ namespace StudyOnline.Controllers
             Folder folder = entities.Folder.Find(id);
             entities.Folder.Remove(folder);
             entities.SaveChanges();
-            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminFolderIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
+            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminFolderIndex", rel = "", callbackType = "", forwardUrl = "" };
             return Json(data);
         }
 
