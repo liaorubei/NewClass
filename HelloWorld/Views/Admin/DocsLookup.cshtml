@@ -1,0 +1,72 @@
+﻿@using StudyOnline.Models;
+@using Webdiyer.WebControls.Mvc;
+@using StudyOnline.Utils;
+@model StudyOnline.Models.Document
+
+@{
+    Layout = null;
+    PagedList<Document> docs = ViewBag.Docs;
+    List<Level> levels = ViewBag.Levels;
+    levels.Insert(0, new Level() { LevelName = "-请选择-" });
+    int levelId = ViewBag.LevelId;
+}
+<form id="pagerForm" action='@Url.Action("DocsLookup")'>
+    <input type="hidden" name="pageNum" value="@docs.CurrentPageIndex" />
+    <input type="hidden" name="numPerPage" value="@docs.PageSize" />
+</form>
+
+<div class="pageHeader">
+    <form rel="pagerForm" method="post" action='@Url.Action("DocsLookup")' onsubmit="return dwzSearch(this, 'dialog');">
+        <div class="searchBar">
+            <ul class="searchContent">
+                <li>
+                    <label>关键字：</label>
+                    <input type="text" name="keyword" value="@(ViewBag.KeyWord)" />
+                </li>
+                <li>
+                    <label>文章级别：</label>
+                    <select class="combox" name="levelId">
+                        @foreach (var item in levels)
+                        {
+                            <option value="@item.Id" @(levelId == item.Id ? "selected='selected'" : "")>@item.LevelName</option>
+                        }
+                    </select>
+                </li>
+            </ul>
+            <div class="subBar">
+                <ul>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">查询</button></div></div></li>
+                    <li><div class="button"><div class="buttonContent"><button type="button" multLookup="document" warn="请选择">确定</button></div></div></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+    <table class="table" layoutH="118" targetType="dialog" width="100%">
+        <thead>
+            <tr>
+                <th width="50"><input type="checkbox" class="checkboxCtrl" group="document" /></th>
+                <th>序号</th>
+                <th>标题</th>
+                <th>级别</th>
+                <th>日期</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int i = 0;}
+            @foreach (var item in docs)
+            {
+                <tr>
+                    <td><input type="checkbox" name="document" value="{DocsIds:'@item.Id', Titles:'@item.Title'}" /></td>
+                    <td>@(++i)</td>
+                    <td>@item.Title</td>
+                    <td>@item.Level.LevelName</td>
+                    <td>@item.AddDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @Html.PanelBar(docs, 10)
+</div>

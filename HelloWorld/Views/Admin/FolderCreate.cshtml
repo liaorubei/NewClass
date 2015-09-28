@@ -15,11 +15,21 @@
             <dl style="width:auto;">
                 <dt style="width:80px;">文件夹名称：</dt>
                 <dd style="width:auto;">
-                    <input type="hidden" name="Id"   value="@Model.Id" />
-                    <input type="text"   name="Name" value="@Model.Name" class="required" placeholder="请输入" />
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <input type="text" name="Name" value="@Model.Name" class="required" placeholder="请输入" />
                 </dd>
             </dl>
-    
+            <div class="divider"></div>
+            <dl style="width:auto;">
+                <dt style="width:80px;">
+                    选择文章：<a class="btnLook" href='@Url.Action("DocsLookup")' lookupGroup="document">选择</a>
+                </dt>
+                <dd style=" width:50%;">
+                    <input type="hidden" name="document.DocsIds" value="@(String.Join(",",Model.Document.Select(o => o.Id)))" />
+                    <textarea name="document.Titles" style="width:450px;height:200px;">@(String.Join(",", Model.Document.Select(o => o.Title)))</textarea>
+                </dd>
+            </dl>
+
         </div>
         <div class="formBar">
             <ul>

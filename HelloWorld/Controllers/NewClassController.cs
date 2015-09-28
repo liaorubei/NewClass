@@ -2,6 +2,7 @@
 using StudyOnline.Utils;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using Webdiyer.WebControls.Mvc;
@@ -50,21 +51,25 @@ namespace StudyOnline.Controllers
         /// <summary>
         /// 取得文件夹，以及指定Level下文件夹下文件的数量
         /// </summary>
-        /// <param name="levelId"></param>
+        /// <param name="levelId">如果levelId不大于0,则取所有等级的数据</param>
         /// <returns></returns>
         public ActionResult Folders(int levelId)
         {
+            System.Func<Document, bool> predicate = null;
+            if (levelId > 0)
+            {
+                predicate = o => o.LevelId == levelId;
+            }
+            else
+            {
+                predicate = o => true;
+            }
+
             var data = db.Folder.ToList();
-            var m = data.Select(t => new { t.Id, t.Name, DocsCount = t.Document.Where(o => o.LevelId == levelId).Count() });
+            var m = data.Select(t => new { t.Id, t.Name, DocsCount = t.Document.Where(predicate).Count() });
             return Json(m, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult Folders()
-        {
-            var data = db.Folder.ToList();
-            var m = data.Select(t => new { t.Id, t.Name, DocsCount = t.Document.Count });
-            return Json(m, JsonRequestBehavior.AllowGet);
-        }
         public ActionResult DocById(int id)
         {
             var temp = db.Document.Find(id);

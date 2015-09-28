@@ -3,6 +3,7 @@ using StudyOnline.Models;
 using StudyOnline.Utils;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -25,25 +26,68 @@ namespace StudyOnline.Controllers
         //文档相关
         public ActionResult DocsList(FormCollection form)
         {
-            foreach (var item in form.AllKeys)
-            {
-
-                Console.WriteLine("key=" + item);
-            }
-
-            Func<Document, bool> predicate = d => true;
-
+            //分页处理
             int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 20);
             int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
 
-            PagedList<Document> docs = entities.Document.Where(predicate).OrderByDescending(d => d.AddDate).OrderByDescending(t => t.AddDate).ToPagedList(pageIndex, pageSize);
+            //检索处理
+            Func<Document, bool> predicateKeyWord = d => true;
+            Func<Document, bool> predicateLevelId = d => true;
+            String keyword = form["keyword"];
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                predicateKeyWord = o => o.Title.Contains(keyword) || o.TitleTwo.Contains(keyword) || o.Contents.Contains(keyword);
+            }
+            int levelId = ConvertUtil.ToInt32(form["levelId"], -1);
+            if (levelId > 0)
+            {
+                predicateLevelId = o => o.LevelId == levelId;
+            }
+
+            //数据和分页检索条件处理
+            PagedList<Document> docs = entities.Document.Where(predicateKeyWord).Where(predicateLevelId).OrderByDescending(d => d.AddDate).OrderByDescending(t => t.AddDate).ToPagedList(pageIndex, pageSize);
             ViewBag.Docs = docs;
 
             List<Level> levels = entities.Level.ToList();
-            ViewBag.Levels = levels;
 
+            ViewBag.Levels = levels;
+            ViewBag.KeyWord = keyword;//关键字
+            ViewBag.LevelId = levelId;//文章级别
             return View();
         }
+
+        public ActionResult DocsLookup(FormCollection form)
+        {
+            //分页处理
+            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 20);
+            int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
+
+            //检索处理
+            Func<Document, bool> predicateKeyWord = d => true;
+            Func<Document, bool> predicateLevelId = d => true;
+            String keyword = form["keyword"];
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                predicateKeyWord = o => o.Title.Contains(keyword) || o.TitleTwo.Contains(keyword) || o.Contents.Contains(keyword);
+            }
+            int levelId = ConvertUtil.ToInt32(form["levelId"], -1);
+            if (levelId > 0)
+            {
+                predicateLevelId = o => o.LevelId == levelId;
+            }
+
+            //数据和分页检索条件处理
+            PagedList<Document> docs = entities.Document.Where(predicateKeyWord).Where(predicateLevelId).Where(o => o.FolderId == null).OrderByDescending(d => d.AddDate).OrderByDescending(t => t.AddDate).ToPagedList(pageIndex, pageSize);
+            ViewBag.Docs = docs;
+
+            List<Level> levels = entities.Level.ToList();
+
+            ViewBag.Levels = levels;
+            ViewBag.KeyWord = keyword;//关键字
+            ViewBag.LevelId = levelId;//文章级别
+            return View();
+        }
+
 
         public ActionResult DocsCreate(int? id)
         {
@@ -172,21 +216,31 @@ namespace StudyOnline.Controllers
         }
 
         [HttpPost]
-        public ActionResult FolderCreate(Folder folder, List<int> docIds)
+        public ActionResult FolderCreate(Folder folder, String DocsIds, FormCollection form)
         {
             if (folder.Id > 0)
             {
                 Folder contextEntity = entities.Folder.Find(folder.Id);
                 contextEntity.Name = folder.Name;
-                // context.Database.ExecuteSqlCommand("UPDATE dbo.Posts SET Rating = 5 WHERE Author = @p0", userSuppliedAuthor);
-                // context.Database.ExecuteSqlCommand("UPDATE dbo.Posts SET Rating = 5 WHERE Author = @author", new SqlParameter("@author", userSuppliedAuthor));
-                // entities.Database.ExecuteSqlCommand("",);
             }
             else
             {
                 entities.Folder.Add(folder);
             }
             entities.SaveChanges();
+
+            // context.Database.ExecuteSqlCommand("UPDATE dbo.Posts SET Rating = 5 WHERE Author = @p0", userSuppliedAuthor);
+            // context.Database.ExecuteSqlCommand("UPDATE dbo.Posts SET Rating = 5 WHERE Author = @author", new SqlParameter("@author", userSuppliedAuthor));
+
+            //首先清除原来的数据
+            entities.Database.ExecuteSqlCommand("update document set folderId=null where folderId=@folderId", new SqlParameter("@folderId", folder.Id));
+
+            //再保存新的数据
+            if (!String.IsNullOrEmpty(form["document.DocsIds"]))
+            {
+                entities.Database.ExecuteSqlCommand("update document set folderId=@folderId where id in(" + form["document.DocsIds"] + ")", new SqlParameter("@folderId", folder.Id));
+            }
+
             var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminFolderIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
             return Json(data);
         }

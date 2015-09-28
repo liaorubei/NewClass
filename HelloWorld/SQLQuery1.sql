@@ -1,4 +1,6 @@
-﻿--alter table Level add Sort int,Show int;
+﻿
+
+--alter table Level add Sort int,Show int;
 
 --alter table document add FolderId int
 
@@ -10,6 +12,6 @@
 
 select * from Level
 
-select id,title,folderid from document
+select id,title,folderid from document where id in(492,493,494)
 
 select * from Folder
