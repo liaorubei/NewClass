@@ -60,9 +60,9 @@
                 <tr>
                     <th width="50" align="center">序号</th>
                     <th>文章标题</th>
-                    <th>文章级别</th>
-                    <th>音频路径</th>
-                    <th>添加日期</th>
+                    <th align="center" width="150">文件夹</th>
+                    <th align="center" width="150">文章级别</th>                  
+                    <th align="center" width="150">添加日期</th>
                 </tr>
             </thead>
             <tbody>
@@ -72,8 +72,8 @@
                     <tr target="id" rel="@item.Id">
                         <td align="center">@(++i)</td>
                         <td>@item.Title</td>
-                        <td>@item.Level.LevelName</td>
-                        <td>@item.SoundPath</td>
+                        <td align="center">@(item.Folder==null?"":item.Folder.Name)</td>
+                        <td align="center">@item.Level.LevelName</td>                       
                         <td align="center">@item.AddDate</td>
                     </tr>
                 }
