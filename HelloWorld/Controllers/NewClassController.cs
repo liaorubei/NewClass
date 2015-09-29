@@ -1,5 +1,6 @@
 ﻿using StudyOnline.Models;
 using StudyOnline.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -18,15 +19,6 @@ namespace StudyOnline.Controllers
             return Content("dsfsadfsdf");
         }
 
-        public ActionResult Docs()
-        {
-            var data = db.Document.Where(t => t.Id > 0).OrderByDescending(t => t.AddDate).ToPagedList(1, 10);
-
-            var d = from o in data select new { o.Id, o.Title, o.SoundPath };
-            var m = data.Select(t => new { id = t.Id, title = t.Title, soundPath = t.SoundPath, levelId = t.LevelId });
-            return Json(m, JsonRequestBehavior.AllowGet);
-        }
-
         public ActionResult DocsByLevel(int levelId)
         {
             var temp = db.Document.Where(t => t.LevelId == levelId).OrderByDescending(t => t.AddDate).ToList();
@@ -37,6 +29,25 @@ namespace StudyOnline.Controllers
         public ActionResult DocsByLevelId(int id, int? skip, int? take)
         {
             var temp = db.Document.Where(t => t.LevelId == id).OrderByDescending(t => t.AddDate).Skip(skip ?? 0).Take(take ?? 20).ToList();
+            var data = temp.Select(t => new { t.Id, t.Title, t.TitleTwo, t.SoundPath, t.Duration, t.Length, t.LengthString, DateString = (t.AddDate == null ? "" : t.AddDate.Value.ToString("yyyy-MM-dd")) });
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetDocs(int? folderId, int? levelId, int? skip, int? take)
+        {
+            Expression<Func<Document, bool>> predicateFolder = o => true;
+            Expression<Func<Document, bool>> predicateLevel = o => true;
+
+            if (folderId != null && folderId > 0)
+            {
+                predicateFolder = o => o.FolderId == folderId;
+            }
+
+            if (levelId != null && levelId > 0)
+            {
+                predicateLevel = o => o.LevelId == levelId;
+            }
+            var temp = db.Document.Where(predicateFolder).Where(predicateLevel).OrderByDescending(t => t.AddDate).Skip(skip ?? 0).Take(take ?? 20).ToList();
             var data = temp.Select(t => new { t.Id, t.Title, t.TitleTwo, t.SoundPath, t.Duration, t.Length, t.LengthString, DateString = (t.AddDate == null ? "" : t.AddDate.Value.ToString("yyyy-MM-dd")) });
             return Json(data, JsonRequestBehavior.AllowGet);
         }
