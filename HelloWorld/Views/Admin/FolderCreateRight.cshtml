@@ -1,0 +1,67 @@
+﻿@using Webdiyer.WebControls.Mvc;
+@using StudyOnline.Models;
+@using StudyOnline.Utils;
+@model StudyOnline.Models.Folder
+
+@{
+    Layout = null;
+    PagedList<Document> docs = ViewBag.Documents;
+}
+<div class="pageHeader" style="border:1px #B8D0D6 solid">
+    <form id="pagerForm" onsubmit="return divSearch(this, 'jbsxBox3');" action="@Url.Action("FolderCreateRight")" method="post">
+        <input type="hidden" name="pageNum" value="@docs.CurrentPageIndex" />
+        <input type="hidden" name="numPerPage" value="@docs.PageSize" />
+        <div class="searchBar">
+            <table class="searchContent">
+                <tr>
+                    <td>
+                        关键字：<input type="text" name="keyword" value="@ViewBag.Keyword"/>
+                    </td>
+                    <td><div class="button"><div class="buttonContent"><button type="submit">检索</button></div></div></td>
+                    <td><div class="buttonActive"><div class="buttonContent"><button type="button" onclick="addDocumentToFolder();">添加</button></div></div></td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</div>
+
+<div style="border-left:1px #B8D0D6 solid;border-right:1px #B8D0D6 solid">
+
+    <table class="list" layoutH="200" style="width:98%">
+        <thead>
+            <tr>
+                <th width="22"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
+                <th width="35" align="center">序号</th>
+                <th>标题</th>
+                <th>文件夹</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{int i = 0; }
+            @foreach (var item in docs)
+            {
+            <tr>
+                <td><input name="ids" value="@item.Id" title="@item.Title" type="checkbox"></td>
+                <td align="center">@(++i)</td>
+                <td>@item.Title</td>
+                <td>@(item.Folder == null ? "" : item.Folder.Name)</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    <div class="panelBar">
+        <div class="pages">
+            <span>显示</span>
+            <select class="combox" name="numPerPage" @*onchange="dwzPageBreak({ targetType: 'dialog', numPerPage: this.value }, 'jbsxBox3')"*@>
+                <option value="20" @(docs.PageSize == 20 ? "selected='selected'" : "")>20</option>
+                <option value="50" @(docs.PageSize == 50 ? "selected='selected'" : "")>50</option>
+                <option value="100" @(docs.PageSize == 100 ? "selected='selected'" : "")>100</option>
+                <option value="200" @(docs.PageSize == 200 ? "selected='selected'" : "")>200</option>
+            </select>
+            <span>条，共@(docs.TotalItemCount)条</span>
+        </div>
+
+        <div class="pagination" targetType="dialog" rel="jbsxBox3" totalCount="@docs.TotalItemCount" numPerPage="@docs.PageSize" pageNumShown="5" currentPage="@docs.CurrentPageIndex"></div>
+
+    </div>
+</div>
