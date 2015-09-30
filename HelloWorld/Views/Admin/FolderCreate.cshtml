@@ -3,40 +3,25 @@
 @{
     Layout = null;
 }
+<div class="panel" style="width:25%;float:left;">
 
-<style>
-    span.error {
-        width: auto;
-    }
-</style>
-<div class="pageContent">
-    <form method="post" action='@Url.Action("FolderCreate")' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone);">
-        <div class="pageFormContent nowrap" layouth="58">
-            <dl style="width:auto;">
-                <dt style="width:80px;">文件夹名称：</dt>
-                <dd style="width:auto;">
-                    <input type="hidden" name="Id" value="@Model.Id" />
-                    <input type="text" name="Name" value="@Model.Name" class="required" placeholder="请输入" />
-                </dd>
-            </dl>
-            <div class="divider"></div>
-            <dl style="width:auto;">
-                <dt style="width:80px;">
-                    选择文章：<a class="btnLook" href='@Url.Action("DocsLookup")' lookupGroup="document">选择</a>
-                </dt>
-                <dd style=" width:50%;">
-                    <input type="hidden" name="document.DocsIds" value="@(String.Join(",",Model.Document.Select(o => o.Id)))" />
-                    <textarea name="document.Titles" style="width:450px;height:200px;">@(String.Join(",", Model.Document.Select(o => o.Title)))</textarea>
-                </dd>
-            </dl>
+    <h1>标题</h1>
 
-        </div>
-        <div class="formBar">
-            <ul>
-                <li><div class="button">      <div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
-                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
-            </ul>
-        </div>
-    </form>
+    <div>
+
+        内容
+
+    </div>
+
+</div>
+<div class="panel" style="width:75%;margin-left:25%;">
+
+    <h1>标题</h1>
+
+    <div>
+
+        内容
+
+    </div>
 
 </div>
