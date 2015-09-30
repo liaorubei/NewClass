@@ -1,96 +1,117 @@
-﻿@model StudyOnline.Models.Folder
+﻿@using Webdiyer.WebControls.Mvc;
+@using StudyOnline.Models;
+@using StudyOnline.Utils;
+@model StudyOnline.Models.Folder
 
 @{
     Layout = null;
+    PagedList<Document> docs = ViewBag.Documents;
 }
+<script>
+    function addDocumentToFolder() {
+
+        
+
+
+
+
+
+
+
+        $("#folderAddedDocuments").append("<h1>添加了一个</h1>");
+    }
+
+</script>
+
+
 <div class="panel" style="width:25%;float:left;">
 
-    <h1>标题</h1>
+    <h1>文章列表</h1>
 
     <div>
-
-
-
+        <div id="folderAddedDocuments" class="unitBox">
+        <span  class="docsList" >
+            <input type="hidden"         name="name" value=" " />
+            <span>sdfasdfsdfsdfsdfsadfsdfsf</span>
+            <a href="javascript:;" class="close" title="移除" onclick="$(this).parent().remove();"></a>
+        </span>
+            <span class="docsList">
+                <input type="hidden" name="name" value=" " />
+                <span>sdfasdfsdfsdfsdfsadfsdfsf</span>
+                <a href="javascript:;" class="close" title="移除" onclick="$(this).parent().remove();"></a>
+            </span>
+            <span class="docsList">
+                <input type="hidden" name="name" value=" " />
+                <span>sdfasdfsdfsdfsdfsadfsdfsf</span>
+                <a href="javascript:;" class="close" title="移除" onclick="$(this).parent().remove();"></a>
+            </span>
+        </div>
     </div>
 
 </div>
 <div class="panel" style="width:74%;margin-left:26%;">
-
-    <h1>标题</h1>
-
+    <h1>所有文章</h1>
     <div>
-
-
-        <div class="pageHeader">
-            <form onsubmit="return navTabSearch(this);" action="demo_page1.html" method="post">
-                <div class="searchBar">
-                    <ul class="searchContent">
-                        <li>
-                            <label>我的客户：</label>
-                            <input type="text" />
-                        </li>
-                        <li>
-                            <select class="combox" name="province">
-                                <option value="">所有省市</option>
-                                <option value="北京">北京</option>
-                                <option value="上海">上海</option>
-                                <option value="天津">天津</option>
-                                <option value="重庆">重庆</option>
-                                <option value="广东">广东</option>
-                            </select>
-                        </li>
-                    </ul>
-                    <div class="subBar">
-                        <ul>
-                            <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
-                            <li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </form>
+        <div id="jbsxBox3" class="unitBox">
+            @Html.Action("FolderCreateRight")
         </div>
 
-        <table class="list" layoutH="200">
-            <thead>
-                <tr>
-                    <th width="50">序号</th>
-                    <th width="120">标题</th>
-                    <th>级别</th>
-                    <th width="100">文件夹</th>
-                </tr>
-            </thead>
-            <tbody>
 
-                <tr target="sid_user" rel="9">
-                    <td>天津农信社</td>
-                    <td>A120113196309052434</td>
-                    <td>天津市华建装饰工程有限公司</td>
-                    <td>联社营业部</td>
-                </tr>
-                <tr target="sid_user" rel="9">
-                    <td>天津农信社</td>
-                    <td>A120113196309052434</td>
-                    <td>天津市华建装饰工程有限公司</td>
-                    <td>联社营业部</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="panelBar">
-            <div class="pages">
-                <span>显示</span>
-                <select class="combox" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="200">200</option>
-                </select>
-                <span>条，共${totalCount}条</span>
+        @*<div class="pageHeader">
+                <form onsubmit="return navTabSearch(this);" action="demo_page1.html" method="post">
+                    <div class="searchBar">
+                        <ul class="searchContent">
+                            <li>
+                                <label>我的客户：</label>
+                                <input type="text" />
+                            </li>
+                            <li>
+                                <select class="combox" name="province">
+                                    <option value="">所有省市</option>
+                                    <option value="北京">北京</option>
+                                    <option value="上海">上海</option>
+                                    <option value="天津">天津</option>
+                                    <option value="重庆">重庆</option>
+                                    <option value="广东">广东</option>
+                                </select>
+                            </li>
+                        </ul>
+                        <div class="subBar">
+                            <ul>
+                                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
+                                <li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
             </div>
 
-            <div class="pagination" targetType="navTab" totalCount="200" numPerPage="20" pageNumShown="5" currentPage="1"></div>
+            <table class="list" layoutH="200">
+                <thead>
+                    <tr>
+                        <th width="50">序号</th>
+                        <th width="120">标题</th>
+                        <th>级别</th>
+                        <th width="100">文件夹</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int i = 0;}
+                    @foreach (var item in docs)
+                    {
+                        <tr>
+                            <td>@(++i)</td>
+                            <td>@item.Title</td>
+                            <td>@item.Level.LevelName</td>
+                            <td>@(item.Folder == null ? "" : item.Folder.Name)</td>
+                        </tr>
+                    }
 
-        </div>
+
+                </tbody>
+            </table>
+
+            @Html.PanelBar(docs, 5)*@
 
 
 

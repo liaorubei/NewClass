@@ -34,5 +34,27 @@ namespace StudyOnline.Utils
             builder.AppendLine("</div>");
             return new MvcHtmlString(builder.ToString());
         }
+
+        public static MvcHtmlString NavTabPages<T>(this HtmlHelper helper, PagedList<T> list, int pagenumshown,String targetType)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("<div class='panelBar'>");
+            builder.AppendLine("    <div class='pages'>");
+            builder.AppendLine("        <span>显示</span>");
+            builder.AppendLine("        <select name=\"numPerPage\" onchange=\"dwzPageBreak({targetType:'"+targetType+ "', numPerPage:this.value})\">");
+            builder.AppendLine(String.Format("            <option value='20'   {0}>20</option>", list.PageSize == 20 ? " selected='selected'" : ""));
+            builder.AppendLine(String.Format("            <option value='50'   {0}>50</option>", list.PageSize == 50 ? " selected='selected'" : ""));
+            builder.AppendLine(String.Format("            <option value='80'   {0}>80</option>", list.PageSize == 80 ? " selected='selected'" : ""));
+            builder.AppendLine(String.Format("            <option value='100' {0}>100</option>", list.PageSize == 100 ? "selected='selected'" : ""));
+            builder.AppendLine(String.Format("            <option value='200' {0}>200</option>", list.PageSize == 200 ? "selected='selected'" : ""));
+            builder.AppendLine("        </select>");
+            builder.AppendLine(String.Format("        <span>条，共{0}条</span>", list.TotalItemCount));
+            builder.AppendLine("    </div>");
+            builder.AppendLine(String.Format("    <div class=\"pagination\" targettype='{0}' totalcount='{1}' numperpage='{2}' pagenumshown='{3}' currentpage='{4}'></div>",targetType, list.TotalItemCount, list.PageSize, pagenumshown, list.CurrentPageIndex));
+            builder.AppendLine("</div>");
+            return new MvcHtmlString(builder.ToString());
+        }
     }
+
+
 }

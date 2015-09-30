@@ -201,7 +201,7 @@ namespace StudyOnline.Controllers
             return View();
         }
 
-        public ActionResult FolderCreate(int? id)
+        public ActionResult FolderCreate(int? id, FormCollection form)
         {
             if (id == null)
             {
@@ -212,8 +212,44 @@ namespace StudyOnline.Controllers
                 ViewData.Model = entities.Folder.Find(id);
             }
 
+            //分页处理
+            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 20);
+            int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
+            PagedList<Document> docs = entities.Document.OrderByDescending(o => o.AddDate).Where(o => true).ToPagedList(pageIndex, pageSize);
+            ViewBag.Documents = docs;
+
+
+
+
+
+
             return View();
         }
+
+        public ActionResult FolderCreateRight(FormCollection form)
+        {
+
+            //分页处理
+            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 20);
+            int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
+
+
+            System.Linq.Expressions.Expression<Func<Document, bool>> predicate = o => true;
+            if (!String.IsNullOrEmpty(form["keyword"]))
+            {
+                String keyword = form["keyword"];
+                predicate = o => o.Title.Contains(keyword);
+                ViewBag.Keyword = form["keyword"];
+            }
+
+
+            PagedList<Document> docs = entities.Document.OrderByDescending(o => o.AddDate).Where(predicate).ToPagedList(pageIndex, pageSize);
+            ViewBag.Documents = docs;
+            return View();
+
+        }
+
+
 
         [HttpPost]
         public ActionResult FolderCreate(Folder folder, String DocsIds, FormCollection form)

@@ -204,3 +204,8 @@ body, #splitBar { background:#e5edef;}
 .pageFormContent .fileList a.close { background: url(./images/tabs/tabspage_icon.png) no-repeat;padding:10px 20px 0 0;}
 .pageFormContent .fileList a.close:hover { background: url(./images/tabs/tabspage_icon.png) no-repeat;padding:10px 20px 0 0;  background-position: 0 -50px;}
 
+/*文件夹添加文件*/
+.docsList {
+display:inline-block;width:175px;padding:5px;}
+.docsList a.close { background: url(./images/tabs/tabspage_icon.png) no-repeat;padding:10px 20px 0 0;}
+.docsList a.close:hover { background: url(./images/tabs/tabspage_icon.png) no-repeat;padding:10px 20px 0 0;  background-position: 0 -50px;}
