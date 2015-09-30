@@ -7,18 +7,19 @@
     Layout = null;
     PagedList<Document> docs = ViewBag.Docs;
     List<Level> levels = ViewBag.Levels;
-    levels.Insert(0,new Level() {LevelName="-请选择-"});
+    levels.Insert(0, new Level() { LevelName = "-请选择-" });
     int levelId = ViewBag.LevelId;
 }
-<form id="pagerForm" method="post" action="@Url.Action("DocsList")">
-    <input type="hidden" name="pageNum" value="@docs.CurrentPageIndex" />
-    <input type="hidden" name="numPerPage" value="@docs.PageSize" />
+@*<form id="pagerForm" method="post" action="@Url.Action("DocsList")">
 
-    @*<input type="hidden" name="orderField" value="${param.orderField}" />
-        <input type="hidden" name="orderDirection" value="${param.orderDirection}" />*@
-</form>
+
+    <input type="hidden" name="orderField" value="${param.orderField}" />
+        <input type="hidden" name="orderDirection" value="${param.orderDirection}" />
+</form>*@
 <div class="pageHeader">
-    <form rel="pagerForm" onsubmit="return navTabSearch(this);" action="@Url.Action("DocsList")" method="post">
+    <form id="pagerForm" onsubmit="return navTabSearch(this);" action="@Url.Action("DocsList")" method="post">
+        <input type="hidden" name="pageNum" value="@docs.CurrentPageIndex" />
+        <input type="hidden" name="numPerPage" value="@docs.PageSize" />
         <div class="searchBar">
             <ul class="searchContent">
                 <li>
@@ -30,7 +31,7 @@
                     <select class="combox" name="levelId">
                         @foreach (var item in levels)
                         {
-                            <option value="@item.Id" @(levelId == item.Id ? "selected='selected'" : "")>@item.LevelName</option>
+                        <option value="@item.Id" @(levelId == item.Id ? "selected='selected'" : "")>@item.LevelName</option>
                         }
                     </select>
                 </li>
@@ -61,7 +62,7 @@
                     <th width="50" align="center">序号</th>
                     <th>文章标题</th>
                     <th align="center" width="150">文件夹</th>
-                    <th align="center" width="150">文章级别</th>                  
+                    <th align="center" width="150">文章级别</th>
                     <th align="center" width="150">添加日期</th>
                 </tr>
             </thead>
@@ -72,8 +73,8 @@
                     <tr target="id" rel="@item.Id">
                         <td align="center">@(++i)</td>
                         <td>@item.Title</td>
-                        <td align="center">@(item.Folder==null?"":item.Folder.Name)</td>
-                        <td align="center">@item.Level.LevelName</td>                       
+                        <td align="center">@(item.Folder == null ? "" : item.Folder.Name)</td>
+                        <td align="center">@item.Level.LevelName</td>
                         <td align="center">@item.AddDate</td>
                     </tr>
                 }

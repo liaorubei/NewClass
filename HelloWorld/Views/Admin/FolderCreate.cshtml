@@ -9,18 +9,90 @@
 
     <div>
 
-        内容
+
 
     </div>
 
 </div>
-<div class="panel" style="width:75%;margin-left:25%;">
+<div class="panel" style="width:74%;margin-left:26%;">
 
     <h1>标题</h1>
 
     <div>
 
-        内容
+
+        <div class="pageHeader">
+            <form onsubmit="return navTabSearch(this);" action="demo_page1.html" method="post">
+                <div class="searchBar">
+                    <ul class="searchContent">
+                        <li>
+                            <label>我的客户：</label>
+                            <input type="text" />
+                        </li>
+                        <li>
+                            <select class="combox" name="province">
+                                <option value="">所有省市</option>
+                                <option value="北京">北京</option>
+                                <option value="上海">上海</option>
+                                <option value="天津">天津</option>
+                                <option value="重庆">重庆</option>
+                                <option value="广东">广东</option>
+                            </select>
+                        </li>
+                    </ul>
+                    <div class="subBar">
+                        <ul>
+                            <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
+                            <li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <table class="list" layoutH="200">
+            <thead>
+                <tr>
+                    <th width="50">序号</th>
+                    <th width="120">标题</th>
+                    <th>级别</th>
+                    <th width="100">文件夹</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr target="sid_user" rel="9">
+                    <td>天津农信社</td>
+                    <td>A120113196309052434</td>
+                    <td>天津市华建装饰工程有限公司</td>
+                    <td>联社营业部</td>
+                </tr>
+                <tr target="sid_user" rel="9">
+                    <td>天津农信社</td>
+                    <td>A120113196309052434</td>
+                    <td>天津市华建装饰工程有限公司</td>
+                    <td>联社营业部</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="panelBar">
+            <div class="pages">
+                <span>显示</span>
+                <select class="combox" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                </select>
+                <span>条，共${totalCount}条</span>
+            </div>
+
+            <div class="pagination" targetType="navTab" totalCount="200" numPerPage="20" pageNumShown="5" currentPage="1"></div>
+
+        </div>
+
+
 
     </div>
 
