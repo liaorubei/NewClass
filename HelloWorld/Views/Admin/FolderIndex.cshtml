@@ -32,12 +32,13 @@
 <div class="pageContent">
     <div class="panelBar">
         <ul class="toolBar">
-            <li><a class="create" href='@Url.Action("FolderCreate")' target="dialog" rel="AdminFolderCreate" title="新建文件夹" width="800" height="600" mask="true"><span>添加</span></a></li>
+            <li><a class="create" href='@Url.Action("FolderCreate")' target="dialog" rel="AdminFolderCreate" title="新建合集" width="600" height="400" mask="true"><span>添加</span></a></li>
             <li><a class="delete" href='@Url.Action("FolderDelete",new {id="{id}"})' target="ajaxTodo" title="确定要删除吗？" warn="请选择"><span>删除</span></a></li>
-            <li><a class="update" href='@Url.Action("FolderCreate",new {id="{id}"})' target="dialog" rel="AdminFolderCreate" title="修改文件夹" width="800" height="600" mask="true" warn="请选择"><span>修改</span></a></li>
-            @*<li class="line">line</li>
-                <li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targettype="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
-                <li><a class="icon" href="javascript:$.printBox('w_list_print')"><span>打印</span></a></li>*@
+            <li><a class="update" href='@Url.Action("FolderCreate",new {id="{id}"})' target="dialog" rel="AdminFolderCreate" title="修改合集" width="600" height="400" mask="true" warn="请选择"><span>修改</span></a></li>
+            @*<li><a class="icon" href='@Url.Action("FolderCreate___",new {id="{id}"})' target="dialog" rel="AdminFolderCreate" title="合集编辑" width="800" height="600" mask="true" warn="请选择"><span>修改</span></a></li>
+    <li class="line">line</li>
+        <li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targettype="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
+        <li><a class="icon" href="javascript:$.printBox('w_list_print')"><span>打印</span></a></li>*@
         </ul>
     </div>
     <table class="list" style="width:100%;" targettype="navTab" asc="asc" desc="desc" layouth="116">
@@ -45,6 +46,7 @@
             <tr>
                 <th width="50" align="center">序号</th>
                 <th>文件夹名称</th>
+                <th>文件夹级别</th>
             </tr>
         </thead>
         <tbody>
@@ -54,6 +56,7 @@
                 <tr target="id" rel="@item.Id">
                     <td align="center">@(++i)</td>
                     <td>@item.Name</td>
+                    <td>@(item.Level==null?"":item.Level.LevelName)</td>
                 </tr>
             }
 

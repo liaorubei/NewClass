@@ -21,7 +21,9 @@ namespace StudyOnline.Models
     
         public int Id { get; set; }
         public string Name { get; set; }
+        public Nullable<int> LevelId { get; set; }
     
         public virtual ICollection<Document> Document { get; set; }
+        public virtual Level Level { get; set; }
     }
 }

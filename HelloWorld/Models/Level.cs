@@ -17,6 +17,7 @@ namespace StudyOnline.Models
         public Level()
         {
             this.Document = new HashSet<Document>();
+            this.Folder = new HashSet<Folder>();
         }
     
         public int Id { get; set; }
@@ -25,5 +26,6 @@ namespace StudyOnline.Models
         public Nullable<int> Show { get; set; }
     
         public virtual ICollection<Document> Document { get; set; }
+        public virtual ICollection<Folder> Folder { get; set; }
     }
 }

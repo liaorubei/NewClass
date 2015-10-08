@@ -60,24 +60,20 @@ namespace StudyOnline.Controllers
         }
 
         /// <summary>
-        /// 取得文件夹，以及指定Level下文件夹下文件的数量
+        /// 取得指定levelId下的文件夹,如果levelId为空,则获取所有的文件夹
         /// </summary>
-        /// <param name="levelId">如果levelId不大于0,则取所有等级的数据</param>
+        /// <param name="levelId">指定等级的Id</param>
         /// <returns></returns>
-        public ActionResult Folders(int levelId)
+        public ActionResult Folders(int? levelId)
         {
-            System.Func<Document, bool> predicate = null;
-            if (levelId > 0)
+            Func<Folder, bool> predicate = o => true;
+            if (levelId != null)
             {
                 predicate = o => o.LevelId == levelId;
             }
-            else
-            {
-                predicate = o => true;
-            }
 
-            var data = db.Folder.ToList();
-            var m = data.Select(t => new { t.Id, t.Name, DocsCount = t.Document.Where(predicate).Count() });
+            var data = db.Folder.Where(predicate).OrderByDescending(o => o.Id);
+            var m = data.Select(o => new { o.Id, o.Name, o.LevelId, DocsCount = o.Document.Count });
             return Json(m, JsonRequestBehavior.AllowGet);
         }
 

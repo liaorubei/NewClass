@@ -37,6 +37,7 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="LevelId" Type="int" />
         </EntityType>
         <EntityType Name="Level">
           <Key>
@@ -97,6 +98,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Folder_Level">
+          <End Role="Level" Type="Self.Level" Multiplicity="0..1" />
+          <End Role="Folder" Type="Self.Folder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Level">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Folder">
+              <PropertyRef Name="LevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="StudyOnlineModelStoreContainer">
           <EntitySet Name="Comment" EntityType="Self.Comment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Document" EntityType="Self.Document" Schema="dbo" store:Type="Tables" />
@@ -114,6 +127,10 @@
           <AssociationSet Name="FK_Document_Level" Association="Self.FK_Document_Level">
             <End Role="Level" EntitySet="Level" />
             <End Role="Document" EntitySet="Document" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Folder_Level" Association="Self.FK_Folder_Level">
+            <End Role="Level" EntitySet="Level" />
+            <End Role="Folder" EntitySet="Folder" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -139,6 +156,7 @@
           <NavigationProperty Name="Document" Relationship="StudyOnlineModel.FK_Document_Level" FromRole="Level" ToRole="Document" />
           <Property Name="Sort" Type="Int32" />
           <Property Name="Show" Type="Int32" />
+          <NavigationProperty Name="Folder" Relationship="StudyOnlineModel.FK_Folder_Level" FromRole="Level" ToRole="Folder" />
         </EntityType>
         <EntityContainer Name="StudyOnlineEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Comment" EntityType="Self.Comment" />
@@ -157,6 +175,10 @@
           <AssociationSet Name="FK_Document_Folder" Association="StudyOnlineModel.FK_Document_Folder">
             <End Role="Folder" EntitySet="Folder" />
             <End Role="Document" EntitySet="Document" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Folder_Level" Association="StudyOnlineModel.FK_Folder_Level">
+            <End Role="Level" EntitySet="Level" />
+            <End Role="Folder" EntitySet="Folder" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Document">
@@ -222,6 +244,8 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Document" Relationship="StudyOnlineModel.FK_Document_Folder" FromRole="Folder" ToRole="Document" />
+          <Property Name="LevelId" Type="Int32" />
+          <NavigationProperty Name="Level" Relationship="StudyOnlineModel.FK_Folder_Level" FromRole="Folder" ToRole="Level" />
         </EntityType>
         <Association Name="FK_Document_Folder">
           <End Type="StudyOnlineModel.Folder" Role="Folder" Multiplicity="0..1" />
@@ -232,6 +256,18 @@
             </Principal>
             <Dependent Role="Document">
               <PropertyRef Name="FolderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Folder_Level">
+          <End Type="StudyOnlineModel.Level" Role="Level" Multiplicity="0..1" />
+          <End Type="StudyOnlineModel.Folder" Role="Folder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Level">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Folder">
+              <PropertyRef Name="LevelId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -295,6 +331,7 @@
           <EntitySetMapping Name="Folder">
             <EntityTypeMapping TypeName="StudyOnlineModel.Folder">
               <MappingFragment StoreEntitySet="Folder">
+                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

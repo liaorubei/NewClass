@@ -13,6 +13,7 @@
         <EntityTypeShape EntityType="StudyOnlineModel.UploadFile" Width="1.5" PointX="5" PointY="1.25" />
         <EntityTypeShape EntityType="StudyOnlineModel.Folder" Width="1.5" PointX="5.375" PointY="4.875" />
         <AssociationConnector Association="StudyOnlineModel.FK_Document_Folder" />
+        <AssociationConnector Association="StudyOnlineModel.FK_Folder_Level" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

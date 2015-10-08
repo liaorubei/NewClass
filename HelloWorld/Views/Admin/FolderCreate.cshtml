@@ -5,116 +5,34 @@
 
 @{
     Layout = null;
-    PagedList<Document> docs = ViewBag.Documents;
+    List<Level> levels = ViewBag.Levels;
+    levels.Insert(0, new Level() { Id = 0, LevelName = "-请选择-" });
 }
-<script>
-    function addDocumentToFolder() {
+<div class="pageContent">
 
-        
-
-
-
-
-
-
-
-        $("#folderAddedDocuments").append("<h1>添加了一个</h1>");
-    }
-
-</script>
-
-
-<div class="panel" style="width:25%;float:left;">
-
-    <h1>文章列表</h1>
-
-    <div>
-        <div id="folderAddedDocuments" class="unitBox">
-        <span  class="docsList" >
-            <input type="hidden"         name="name" value=" " />
-            <span>sdfasdfsdfsdfsdfsadfsdfsf</span>
-            <a href="javascript:;" class="close" title="移除" onclick="$(this).parent().remove();"></a>
-        </span>
-            <span class="docsList">
-                <input type="hidden" name="name" value=" " />
-                <span>sdfasdfsdfsdfsdfsadfsdfsf</span>
-                <a href="javascript:;" class="close" title="移除" onclick="$(this).parent().remove();"></a>
-            </span>
-            <span class="docsList">
-                <input type="hidden" name="name" value=" " />
-                <span>sdfasdfsdfsdfsdfsadfsdfsf</span>
-                <a href="javascript:;" class="close" title="移除" onclick="$(this).parent().remove();"></a>
-            </span>
-        </div>
-    </div>
-
-</div>
-<div class="panel" style="width:74%;margin-left:26%;">
-    <h1>所有文章</h1>
-    <div>
-        <div id="jbsxBox3" class="unitBox">
-            @Html.Action("FolderCreateRight")
-        </div>
-
-
-        @*<div class="pageHeader">
-                <form onsubmit="return navTabSearch(this);" action="demo_page1.html" method="post">
-                    <div class="searchBar">
-                        <ul class="searchContent">
-                            <li>
-                                <label>我的客户：</label>
-                                <input type="text" />
-                            </li>
-                            <li>
-                                <select class="combox" name="province">
-                                    <option value="">所有省市</option>
-                                    <option value="北京">北京</option>
-                                    <option value="上海">上海</option>
-                                    <option value="天津">天津</option>
-                                    <option value="重庆">重庆</option>
-                                    <option value="广东">广东</option>
-                                </select>
-                            </li>
-                        </ul>
-                        <div class="subBar">
-                            <ul>
-                                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
-                                <li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </form>
+    <form method="post" action='@Url.Action("FolderCreate")' class="pageForm" onsubmit="return validateCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent" layoutH="58">
+            <div class="unit">
+                <label>全集名称：</label>
+                <input type="text" name="Name" class="required" value="@Model.Name" />
             </div>
+            <div class="unit">
+                <label>合集级别：</label>
 
-            <table class="list" layoutH="200">
-                <thead>
-                    <tr>
-                        <th width="50">序号</th>
-                        <th width="120">标题</th>
-                        <th>级别</th>
-                        <th width="100">文件夹</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{ int i = 0;}
-                    @foreach (var item in docs)
+                <select class="required" name="LevelId">
+                    @foreach (var item in levels)
                     {
-                        <tr>
-                            <td>@(++i)</td>
-                            <td>@item.Title</td>
-                            <td>@item.Level.LevelName</td>
-                            <td>@(item.Folder == null ? "" : item.Folder.Name)</td>
-                        </tr>
+                        <option value="@(item.Id==0?"":item.Id+"")" @(Model.LevelId == item.Id ? "selected='selected'" : "")>@item.LevelName</option>
                     }
-
-
-                </tbody>
-            </table>
-
-            @Html.PanelBar(docs, 5)*@
-
-
-
-    </div>
+                </select>
+            </div>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+            </ul>
+        </div>
+    </form>
 
 </div>

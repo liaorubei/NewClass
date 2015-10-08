@@ -203,6 +203,10 @@ namespace StudyOnline.Controllers
 
         public ActionResult FolderCreate(int? id, FormCollection form)
         {
+            List<Level> levels = entities.Level.ToList();
+            ViewBag.Levels = levels;
+
+
             if (id == null)
             {
                 ViewData.Model = new Folder() { Id = 0 };
@@ -224,6 +228,41 @@ namespace StudyOnline.Controllers
 
 
             return View();
+        }
+
+
+
+
+
+        [HttpPost]
+        public ActionResult FolderCreate(Folder folder, String DocsIds, FormCollection form)
+        {
+            if (folder.Id > 0)
+            {
+                Folder contextEntity = entities.Folder.Find(folder.Id);
+                contextEntity.Name = folder.Name;
+                contextEntity.LevelId = folder.LevelId;
+            }
+            else
+            {
+                entities.Folder.Add(folder);
+            }
+            entities.SaveChanges();
+
+            // context.Database.ExecuteSqlCommand("UPDATE dbo.Posts SET Rating = 5 WHERE Author = @p0", userSuppliedAuthor);
+            // context.Database.ExecuteSqlCommand("UPDATE dbo.Posts SET Rating = 5 WHERE Author = @author", new SqlParameter("@author", userSuppliedAuthor));
+
+            //首先清除原来的数据
+            //  entities.Database.ExecuteSqlCommand("update document set folderId=null where folderId=@folderId", new SqlParameter("@folderId", folder.Id));
+
+            //再保存新的数据
+            //if (!String.IsNullOrEmpty(form["document.DocsIds"]))
+            //{
+            //    entities.Database.ExecuteSqlCommand("update document set folderId=@folderId where id in(" + form["document.DocsIds"] + ")", new SqlParameter("@folderId", folder.Id));
+            //}
+
+            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminFolderIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
+            return Json(data);
         }
 
         public ActionResult FolderCreateRight(FormCollection form)
@@ -249,38 +288,6 @@ namespace StudyOnline.Controllers
 
         }
 
-
-
-        [HttpPost]
-        public ActionResult FolderCreate(Folder folder, String DocsIds, FormCollection form)
-        {
-            if (folder.Id > 0)
-            {
-                Folder contextEntity = entities.Folder.Find(folder.Id);
-                contextEntity.Name = folder.Name;
-            }
-            else
-            {
-                entities.Folder.Add(folder);
-            }
-            entities.SaveChanges();
-
-            // context.Database.ExecuteSqlCommand("UPDATE dbo.Posts SET Rating = 5 WHERE Author = @p0", userSuppliedAuthor);
-            // context.Database.ExecuteSqlCommand("UPDATE dbo.Posts SET Rating = 5 WHERE Author = @author", new SqlParameter("@author", userSuppliedAuthor));
-
-            //首先清除原来的数据
-            entities.Database.ExecuteSqlCommand("update document set folderId=null where folderId=@folderId", new SqlParameter("@folderId", folder.Id));
-
-            //再保存新的数据
-            if (!String.IsNullOrEmpty(form["document.DocsIds"]))
-            {
-                entities.Database.ExecuteSqlCommand("update document set folderId=@folderId where id in(" + form["document.DocsIds"] + ")", new SqlParameter("@folderId", folder.Id));
-            }
-
-            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminFolderIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
-            return Json(data);
-        }
-
         public ActionResult FolderDelete(int? id)
         {
             Folder folder = entities.Folder.Find(id);
@@ -289,6 +296,39 @@ namespace StudyOnline.Controllers
             var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminFolderIndex", rel = "", callbackType = "", forwardUrl = "" };
             return Json(data);
         }
+
+
+        public ActionResult FolderUpdate(int? id, FormCollection form)
+        {
+
+            List<Level> levels = entities.Level.ToList();
+            ViewBag.Levels = levels;
+
+
+            if (id == null)
+            {
+                ViewData.Model = new Folder() { Id = 0 };
+            }
+            else
+            {
+                ViewData.Model = entities.Folder.Find(id);
+            }
+
+            //分页处理
+            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 20);
+            int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
+            PagedList<Document> docs = entities.Document.OrderByDescending(o => o.AddDate).Where(o => true).ToPagedList(pageIndex, pageSize);
+            ViewBag.Documents = docs;
+
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult FolderUpdate(List<int> ids) { return View(); }
+
+
+
 
 
         [HttpPost]

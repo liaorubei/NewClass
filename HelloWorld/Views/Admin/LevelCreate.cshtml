@@ -3,36 +3,18 @@
 @{
     Layout = null;
 }
-
-<style>
-    span.error {
-        width: auto;
-    }
-</style>
 <div class="pageContent">
-    <form method="post" action='@Url.Action("LevelCreate")' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone);">
-        <div class="pageFormContent nowrap" layouth="58">
-            <dl style="width:auto;">
-                <dt style="width:80px;">分类名称：</dt>
-                <dd style="width:auto;">
-                    <input type="hidden"     name="Id" value="@Model.Id" />
-                    <input type="text" name="LevelName" value="@Model.LevelName" class="required" placeholder="请输入" />
-                </dd>
-            </dl>
-            <dl style="width:auto;">
-                <dt style="width:80px;">权重(客户端)：</dt>
-                <dd style="width:auto;">
-                     <input type="text" name="Sort" value="@Model.Sort" class="required digits" placeholder="请输入" />
-                </dd>
-            </dl>
-            <dl style="width:auto;">
-                <dt style="width:80px;">显示(客户端)：</dt>
-                <dd style="width:auto;">
-                    <input type="radio" name="Show" value="1" @(Model.Show==1?"checked='checked'":"") />是
-                    <input type="radio" name="Show" value="0" @(Model.Show==1?"":"checked='checked'") />否
 
-                </dd>
-            </dl>
+    <form method="post" action="demo/common/ajaxDone.html" class="pageForm" onsubmit="return validateCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent" layoutH="58">
+            <div class="unit">
+                <label>用户名：</label>
+                <input type="text" name="username" size="30" class="required" />
+            </div>
+            <div class="unit">
+                <label>密码：</label>
+                <input type="password" name="password" size="30" class="required" />
+            </div>
         </div>
         <div class="formBar">
             <ul>
