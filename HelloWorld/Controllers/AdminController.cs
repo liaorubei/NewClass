@@ -298,34 +298,24 @@ namespace StudyOnline.Controllers
         }
 
 
-        public ActionResult FolderUpdate(int? id, FormCollection form)
+        public ActionResult FolderSelect(int id)
         {
-
-            List<Level> levels = entities.Level.ToList();
-            ViewBag.Levels = levels;
-
-
-            if (id == null)
-            {
-                ViewData.Model = new Folder() { Id = 0 };
-            }
-            else
-            {
-                ViewData.Model = entities.Folder.Find(id);
-            }
-
-            //分页处理
-            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 20);
-            int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
-            PagedList<Document> docs = entities.Document.OrderByDescending(o => o.AddDate).Where(o => true).ToPagedList(pageIndex, pageSize);
-            ViewBag.Documents = docs;
-
-
+            ViewData.Model = entities.Folder.Find(id);
             return View();
         }
 
         [HttpPost]
-        public ActionResult FolderUpdate(List<int> ids) { return View(); }
+        public ActionResult FolderSelect(int Id, List<int> ids)
+        {
+            entities.Database.ExecuteSqlCommand("UPDATE Document SET FolderId=null WHERE FolderId=@folderId", new SqlParameter("@folderId", Id));
+            if (ids != null)
+            {
+                String sqlIn = String.Join(",", ids);
+                entities.Database.ExecuteSqlCommand("UPDATE Document SET FolderId=@folderId WHERE Id in(" + sqlIn + ")", new SqlParameter("@folderId", Id));
+            }
+            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminFolderIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
+            return Json(data);
+        }
 
 
 

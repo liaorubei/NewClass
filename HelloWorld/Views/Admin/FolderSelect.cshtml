@@ -1,0 +1,76 @@
+﻿@using Webdiyer.WebControls.Mvc;
+@using StudyOnline.Models;
+@using StudyOnline.Utils;
+@model StudyOnline.Models.Folder
+
+@{
+    Layout = null;
+}
+<script>
+    function addDocumentToFolder() {
+        var $current = $.pdialog.getCurrent();
+        var $added = $(".folderAdded", $current);
+
+        $(".folderSelect", $.pdialog.getCurrent()).each(function (i) {
+            var s = this;
+            if (s.checked) {
+                var isAdded = false;
+
+                $added.each(function () {
+                    var a = this;
+                    if (s.value == a.value) {
+                        isAdded = true;
+                    }
+                });
+                console.log(isAdded);
+                if (!isAdded) {
+                    var html = "<span class='docsList'><input class='folderAdded' type='hidden' name='ids' value='" + s.value + "' /><span>" + s.title + "</span>";
+                    html += "<a href='javascript:;' class='close' title='移除' onclick='$(this).parent().remove();'></a></span>";
+                    $("#folderAddedDocuments").append(html);
+                }
+            }
+        });
+    }
+</script>
+
+
+
+
+
+
+<div class="panel" style="width:25%;float:left;" defH="515">
+    <h1>文章列表</h1>
+    <div>
+        <form method="post" action='@Url.Action("FolderSelect")' class="pageForm" onsubmit="return validateCallback(this, dialogAjaxDone)">
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <div id="folderAddedDocuments" class="unitBox" style="height:470px;overflow:auto">
+                @foreach (var item in Model.Document)
+                {
+                    <span class='docsList'>
+                        <input class="folderAdded" type='hidden' name='ids' value='@item.Id' />
+                        <span>@item.Title</span>
+                        <a href='javascript:;' class='close' title='移除' onclick='$(this).parent().remove();'></a>
+                    </span>
+                }
+            
+            </div>
+            <div class="formBar">
+                <ul>
+                    <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+                </ul>
+            </div>
+        </form>
+
+    </div>
+</div>
+<div class="panel" style="width:74%;margin-left:26%;">
+    <h1>所有文章</h1>
+    <div>
+        <div id="jbsxBox3" class="unitBox">
+            @Html.Action("FolderCreateRight")
+        </div>
+
+    </div>
+
+</div>

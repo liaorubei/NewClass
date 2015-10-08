@@ -27,7 +27,7 @@
 
 <div style="border-left:1px #B8D0D6 solid;border-right:1px #B8D0D6 solid">
 
-    <table class="list" layoutH="200" style="width:98%">
+    <table class="list" layoutH="110" style="width:98%">
         <thead>
             <tr>
                 <th width="22"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
@@ -41,7 +41,7 @@
             @foreach (var item in docs)
             {
             <tr>
-                <td><input name="ids" value="@item.Id" title="@item.Title" type="checkbox"></td>
+                <td><input name="ids" class="folderSelect" value="@item.Id" title="@item.Title" type="checkbox"></td>
                 <td align="center">@(++i)</td>
                 <td>@item.Title</td>
                 <td>@(item.Folder == null ? "" : item.Folder.Name)</td>
