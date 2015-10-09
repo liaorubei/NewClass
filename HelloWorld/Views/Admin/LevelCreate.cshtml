@@ -5,21 +5,32 @@
 }
 <div class="pageContent">
 
-    <form method="post" action="demo/common/ajaxDone.html" class="pageForm" onsubmit="return validateCallback(this, dialogAjaxDone)">
+    <form method="post" action='@Url.Action("LevelCreate")' class="pageForm" onsubmit="return validateCallback(this, dialogAjaxDone)">
         <div class="pageFormContent" layoutH="58">
+            <input type="hidden" name="Id" value="@Model.Id" />
             <div class="unit">
-                <label>用户名：</label>
-                <input type="text" name="username" size="30" class="required" />
+                <label>分类名：</label>
+                <input type="text" name="LevelName" value="@Model.LevelName" class="required" />
             </div>
             <div class="unit">
-                <label>密码：</label>
-                <input type="password" name="password" size="30" class="required" />
+                <label>权重：</label>
+                <input type="text" name="Sort" value="@Model.Sort" class="required" />
+            </div>
+            <div class="unit">
+                <label>是否显示(安卓端)：</label>
+                <label><input type="radio" name="Show" value="1" @(Model.Show==1?"checked='checked'":"") />是</label>
+                <label><input type="radio" name="Show" value="0" @(Model.Show==0?"checked='checked'":"") />否</label>
+            </div>
+            <div class="unit">
+                <label>是否显示(浏览器)：</label>
+                <label><input type="radio" name="ShowBrowser" value="1" @(Model.ShowBrowser == 1?"checked='checked'":"") />是</label>
+                <label><input type="radio" name="ShowBrowser" value="0" @(Model.ShowBrowser == 0?"checked='checked'":"") />否</label>
             </div>
         </div>
         <div class="formBar">
             <ul>
-                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
                 <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
             </ul>
         </div>
     </form>

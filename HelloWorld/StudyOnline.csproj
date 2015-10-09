@@ -299,11 +299,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\StudyOnline1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>StudyOnline.edmx</DependentUpon>
-    </Compile>
     <Compile Include="Models\UploadFile.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
@@ -648,12 +643,6 @@
     <Content Include="Content\raty\star-on-big.png" />
     <Content Include="Content\raty\star-on.png" />
     <Content Include="Images\logo.png" />
-    <Content Include="libmp3lame.32.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="libmp3lame.64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Scripts\dwz\dwz.min.js" />
     <Content Include="Scripts\jquery-1.8.3.min.js" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
@@ -667,9 +656,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>StudyOnline.edmx</DependentUpon>
       <LastGenOutput>StudyOnline.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\StudyOnline.edmx.diagram">
-      <DependentUpon>StudyOnline.edmx</DependentUpon>
     </Content>
     <Content Include="Models\StudyOnline.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

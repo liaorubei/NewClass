@@ -24,6 +24,7 @@ namespace StudyOnline.Models
         public string LevelName { get; set; }
         public Nullable<int> Sort { get; set; }
         public Nullable<int> Show { get; set; }
+        public Nullable<int> ShowBrowser { get; set; }
     
         public virtual ICollection<Document> Document { get; set; }
         public virtual ICollection<Folder> Folder { get; set; }

@@ -47,6 +47,7 @@
           <Property Name="LevelName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Sort" Type="int" />
           <Property Name="Show" Type="int" />
+          <Property Name="ShowBrowser" Type="int" />
         </EntityType>
         <EntityType Name="UploadFile">
           <Key>
@@ -157,6 +158,7 @@
           <Property Name="Sort" Type="Int32" />
           <Property Name="Show" Type="Int32" />
           <NavigationProperty Name="Folder" Relationship="StudyOnlineModel.FK_Folder_Level" FromRole="Level" ToRole="Folder" />
+          <Property Name="ShowBrowser" Type="Int32" />
         </EntityType>
         <EntityContainer Name="StudyOnlineEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Comment" EntityType="Self.Comment" />
@@ -290,7 +292,8 @@
     <EntitySetMapping Name="Level">
       <EntityTypeMapping TypeName="IsTypeOf(StudyOnlineModel.Level)">
         <MappingFragment StoreEntitySet="Level">
-          <ScalarProperty Name="Show" ColumnName="Show" />
+          <ScalarProperty Name="ShowBrowser" ColumnName="ShowBrowser" />
+                <ScalarProperty Name="Show" ColumnName="Show" />
                 <ScalarProperty Name="Sort" ColumnName="Sort" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="LevelName" ColumnName="LevelName" />
@@ -357,6 +360,18 @@
       </DesignerInfoPropertySet>
     </Options>
     <!-- Diagram content (shape and connector positions) -->
-    <Diagrams></Diagrams>
+    <Diagrams>
+      <Diagram DiagramId="325ccf2a73f7478d9d8429afd9fd910f" Name="Diagram1">
+        <EntityTypeShape EntityType="StudyOnlineModel.Comment" Width="1.5" PointX="7.5" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="StudyOnlineModel.Level" Width="1.5" PointX="0.75" PointY="3.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="StudyOnlineModel.Document" Width="1.5" PointX="5.25" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="StudyOnlineModel.UploadFile" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="StudyOnlineModel.Folder" Width="1.5" PointX="3" PointY="7.875" IsExpanded="true" />
+        <AssociationConnector Association="StudyOnlineModel.FK_Comment_Document" ManuallyRouted="false" />
+        <AssociationConnector Association="StudyOnlineModel.FK_Document_Level" ManuallyRouted="false" />
+        <AssociationConnector Association="StudyOnlineModel.FK_Document_Folder" ManuallyRouted="false" />
+        <AssociationConnector Association="StudyOnlineModel.FK_Folder_Level" ManuallyRouted="false" />
+      </Diagram>
+    </Diagrams>
   </Designer>
 </edmx:Edmx>

@@ -19,8 +19,8 @@ namespace StudyOnline.Controllers
         private int pageSize = 14;
         public ActionResult Index(int? index, int? level)
         {
-            //取出文章等级数据,因为文章等级要一直显示
-            ViewBag.Levels = db.Level.ToList();
+            //取出文章等级数据,因为文章等级要一直显示(前提是要求在浏览器端显示)
+            ViewBag.Levels = db.Level.Where(o=>o.ShowBrowser==1).ToList();
 
             //过滤等级功能,如果没有则不过滤,如果不为空,说明要求按等级查询数据
             Expression<Func<Document, bool>> predicate = m => true;

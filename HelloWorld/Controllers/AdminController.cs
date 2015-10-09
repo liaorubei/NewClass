@@ -174,6 +174,7 @@ namespace StudyOnline.Controllers
                 oldLevel.LevelName = level.LevelName;
                 oldLevel.Sort = level.Sort;
                 oldLevel.Show = level.Show;
+                oldLevel.ShowBrowser = level.ShowBrowser;
             }
             else
             {

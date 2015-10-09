@@ -20,38 +20,10 @@
             <ul class="searchContent">
                 <li>
                     <label>分类名称：</label>
-                    <input type="text" name="keywords" placeholder="请输入要检索的关键字"/>
+                    <input type="text" name="keywords" placeholder="请输入要检索的关键字" />
                 </li>
-                @*<li>
-                    <select class="combox" name="province">
-                        <option value="">所有省市</option>
-                        <option value="北京">北京</option>
-                        <option value="上海">上海</option>
-                        <option value="天津">天津</option>
-                        <option value="重庆">重庆</option>
-                        <option value="广东">广东</option>
-                    </select>
-                </li>*@
             </ul>
-            <!--
-            <table class="searchContent">
-                <tr>
-                    <td>
-                        我的客户：<input type="text"/>
-                    </td>
-                    <td>
-                        <select class="combox" name="province">
-                            <option value="">所有省市</option>
-                            <option value="北京">北京</option>
-                            <option value="上海">上海</option>
-                            <option value="天津">天津</option>
-                            <option value="重庆">重庆</option>
-                            <option value="广东">广东</option>
-                        </select>
-                    </td>
-                </tr>
-            </table>
-            -->
+
             <div class="subBar">
                 <ul>
                     <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
@@ -65,12 +37,9 @@
 <div class="pageContent">
     <div class="panelBar">
         <ul class="toolBar">
-            <li><a class="create" href='@Url.Action("LevelCreate")' target="dialog" rel="AdminLevelCreate" title="新建分类" width="325" height="200" mask="true"><span>添加</span></a></li>
+            <li><a class="create" href='@Url.Action("LevelCreate")' target="dialog" rel="AdminLevelCreate" title="新建分类" width="800" height="600" mask="true"><span>添加</span></a></li>
+            <li><a class="update" href='@Url.Action("LevelCreate",new {id="{id}"})' target="dialog" rel="AdminLevelCreate" title="修改分类" width="800" height="600" mask="true" warn="请选择"><span>修改</span></a></li>
             <li><a class="delete" href='@Url.Action("LevelDelete",new {id="{id}"})' target="ajaxTodo" title="确定要删除吗？" warn="请选择"><span>删除</span></a></li>
-            <li><a class="update" href='@Url.Action("LevelCreate",new {id="{id}"})' target="dialog" rel="AdminLevelCreate" title="修改分类" width="325" height="200" mask="true" warn="请选择"><span>修改</span></a></li>
-            @*<li class="line">line</li>
-                <li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targettype="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
-                <li><a class="icon" href="javascript:$.printBox('w_list_print')"><span>打印</span></a></li>*@
         </ul>
     </div>
 
@@ -81,8 +50,9 @@
                 <tr>
                     <th width="50" align="center">序号</th>
                     <th>分类名称</th>
-                    <th>权重（客户端)</th>
-                    <th>显示（客户端）</th>
+                    <th>权重</th>
+                    <th>显示（安卓端）</th>
+                    <th>显示（浏览器）</th>
                 </tr>
             </thead>
             <tbody>
@@ -93,16 +63,12 @@
                         <td align="center">@(++i)</td>
                         <td>@item.LevelName</td>
                         <td align="center">@item.Sort</td>
-                        <td align="center">@((item.Show??0)==0?"否":"是")</td>
+                        <td align="center">@((item.Show ?? 0) == 0 ? "否" : "是")</td>
+                        <td align="center">@((item.ShowBrowser ?? 0) == 0 ? "否" : "是")</td>
                     </tr>
                 }
-
-
-
             </tbody>
         </table>
     </div>
-
-  @Html.PanelBar(levels,10)
+    @Html.PanelBar(levels, 10)
 </div>
-
