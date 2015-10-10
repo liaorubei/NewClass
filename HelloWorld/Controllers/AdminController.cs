@@ -33,26 +33,38 @@ namespace StudyOnline.Controllers
             //检索处理
             Func<Document, bool> predicateKeyWord = d => true;
             Func<Document, bool> predicateLevelId = d => true;
+            Func<Document, bool> predicateFolderId = o => true;
+
             String keyword = form["keyword"];
             if (!String.IsNullOrEmpty(keyword))
             {
                 predicateKeyWord = o => o.Title.Contains(keyword) || o.TitleTwo.Contains(keyword) || o.Contents.Contains(keyword);
             }
+
             int levelId = ConvertUtil.ToInt32(form["levelId"], -1);
             if (levelId > 0)
             {
                 predicateLevelId = o => o.LevelId == levelId;
             }
 
+            int folderId = ConvertUtil.ToInt32(form["folderId"], -1);
+            if (folderId > 0)
+            {
+                predicateFolderId = o => o.FolderId == folderId;
+            }
+
             //数据和分页检索条件处理
-            PagedList<Document> docs = entities.Document.Where(predicateKeyWord).Where(predicateLevelId).OrderByDescending(d => d.AddDate).OrderByDescending(t => t.AddDate).ToPagedList(pageIndex, pageSize);
+            PagedList<Document> docs = entities.Document.Where(predicateKeyWord).Where(predicateLevelId).Where(predicateFolderId).OrderByDescending(d => d.AddDate).OrderByDescending(t => t.AddDate).ToPagedList(pageIndex, pageSize);
             ViewBag.Docs = docs;
 
             List<Level> levels = entities.Level.ToList();
+            List<Folder> folders = entities.Folder.ToList();
 
             ViewBag.Levels = levels;
+            ViewBag.Folders = folders;
             ViewBag.KeyWord = keyword;//关键字
             ViewBag.LevelId = levelId;//文章级别
+            ViewBag.FolderId = folderId;//文件夹
             return View();
         }
 
@@ -115,6 +127,7 @@ namespace StudyOnline.Controllers
             {
                 Document oldDoc = entities.Document.FirstOrDefault(d => d.Id == doc.Id);
                 oldDoc.LevelId = doc.LevelId;
+                oldDoc.FolderId = doc.FolderId;
                 oldDoc.Title = doc.Title;
                 oldDoc.Lyrics = doc.Lyrics;
                 oldDoc.SoundPath = doc.SoundPath;//音频路径

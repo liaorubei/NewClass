@@ -101,7 +101,5 @@ namespace StudyOnline.Controllers
             var data = new { PackageSize = temp.Size, PackagePath = temp.Path, UpgradeInfo = temp.Info, VersionName = temp.VersionName };
             return Json(data, JsonRequestBehavior.AllowGet);
         }
-
-
     }
 }

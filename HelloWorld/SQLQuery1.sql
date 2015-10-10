@@ -6,13 +6,14 @@
 --alter table document add FolderId int
 --alter table document add CONSTRAINT [FK_Document_Folder] FOREIGN KEY (FolderId) REFERENCES Folder(Id)
 
+--create table Folder(Id int primary key identity(1,1),Name nvarchar(50) not null)
 --alter table Folder add LevelId int ;
 --alter table folder add constraint [FK_Folder_Level] foreign key (LevelId) references Level(Id)
 
---create table Folder(Id int primary key identity(1,1),Name nvarchar(50) not null)
 
 --update document set folderid=null where id>450;
 --update Level set ShowBrowser=1
+--update Document set LevelId=(select F.LevelId from Folder as F where F.Id=Document.FolderId)
 
 select * from Level
 

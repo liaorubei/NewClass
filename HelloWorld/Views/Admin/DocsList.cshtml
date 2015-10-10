@@ -9,13 +9,11 @@
     List<Level> levels = ViewBag.Levels;
     levels.Insert(0, new Level() { LevelName = "-请选择-" });
     int levelId = ViewBag.LevelId;
+
+    List<Folder> folders = ViewBag.Folders;
+    int folderId = ViewBag.FolderId;
 }
-@*<form id="pagerForm" method="post" action="@Url.Action("DocsList")">
 
-
-    <input type="hidden" name="orderField" value="${param.orderField}" />
-        <input type="hidden" name="orderDirection" value="${param.orderDirection}" />
-</form>*@
 <div class="pageHeader">
     <form id="pagerForm" onsubmit="return navTabSearch(this);" action="@Url.Action("DocsList")" method="post">
         <input type="hidden" name="pageNum" value="@docs.CurrentPageIndex" />
@@ -31,7 +29,17 @@
                     <select class="combox" name="levelId">
                         @foreach (var item in levels)
                         {
-                        <option value="@item.Id" @(levelId == item.Id ? "selected='selected'" : "")>@item.LevelName</option>
+                            <option value="@item.Id" @(levelId == item.Id ? "selected='selected'" : "")>@item.LevelName</option>
+                        }
+                    </select>
+                </li>
+                <li>
+                    <label>文件夹：</label>
+                    <select class="combox" name="folderId">
+                        <option value="">-请选择-</option>
+                        @foreach (var item in folders)
+                        {
+                            <option value="@item.Id" @(folderId == item.Id ? "selected='selected'" : "")>@item.Name</option>
                         }
                     </select>
                 </li>
@@ -57,11 +65,10 @@
     <div id="w_list_print">
         <table class="list" style="width:100%;" targettype="navTab" asc="asc" desc="desc" layouth="116">
             <thead>
-
                 <tr>
                     <th width="50" align="center">序号</th>
                     <th>文章标题</th>
-                    <th align="center" width="150">文件夹</th>
+                    <th>文件夹</th>
                     <th align="center" width="150">文章级别</th>
                     <th align="center" width="150">添加日期</th>
                 </tr>

@@ -34,6 +34,7 @@
                 <th width="35" align="center">序号</th>
                 <th>标题</th>
                 <th>文件夹</th>
+                <th>文章级别</th>
             </tr>
         </thead>
         <tbody>
@@ -45,6 +46,7 @@
                 <td align="center">@(++i)</td>
                 <td>@item.Title</td>
                 <td>@(item.Folder == null ? "" : item.Folder.Name)</td>
+                <td>@(item.Level==null?"":item.Level.LevelName)</td>
             </tr>
             }
         </tbody>
