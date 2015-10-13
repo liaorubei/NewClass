@@ -52,7 +52,7 @@ namespace StudyOnline.Controllers
         public ActionResult Levels()
         {
             var data = db.Level.ToList();
-            var m = data.Select(t => new { t.Id, t.LevelName, DocCount = t.Document.Count, t.Sort, t.Show });
+            var m = data.Select(t => new { t.Id, t.LevelName,Name=t.LevelName, DocCount = t.Document.Count, t.Sort, t.Show });
             return Json(m, JsonRequestBehavior.AllowGet);
         }
 
