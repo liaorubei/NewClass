@@ -45,14 +45,36 @@ namespace StudyOnline.Controllers
             }
 
             var temp = db.Document.Where(predicateFolder).OrderByDescending(t => t.AddDate).Skip(skip ?? 0).Take(take ?? 20).ToList();
-            var data = temp.Select(t => new { t.Id, t.Title, t.TitleTwo, t.SoundPath, t.Duration, t.Length, t.LengthString, DateString = (t.AddDate == null ? "" : t.AddDate.Value.ToString("yyyy-MM-dd")) });
+            var data = temp.Select(t => new
+            {
+                t.Id,
+                t.Title,
+                TitleOne = t.Title,
+                t.TitleTwo,
+                t.SoundPath,
+                t.Duration,
+                t.Length,
+                t.LengthString,
+                DateString = (t.AddDate == null ? "" : t.AddDate.Value.ToString("yyyy-MM-dd")),
+                Date = (t.AddDate == null ? "" : t.AddDate.Value.ToString("yyyy-MM-dd")),
+                Size = t.Length,
+                Time = t.Duration
+            });
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Levels()
         {
             var data = db.Level.ToList();
-            var m = data.Select(t => new { t.Id, t.LevelName, DocCount = t.Document.Count, t.Sort, t.Show });
+            var m = data.Select(t => new
+            {
+                t.Id,
+                t.LevelName,
+                Name = t.LevelName,
+                DocCount = t.Document.Count,
+                t.Sort,
+                t.Show
+            });
             return Json(m, JsonRequestBehavior.AllowGet);
         }
 
@@ -70,7 +92,13 @@ namespace StudyOnline.Controllers
             }
 
             var data = db.Folder.Where(predicate).OrderByDescending(o => o.Id);
-            var m = data.Select(o => new { o.Id, o.Name, o.LevelId, DocsCount = o.Document.Count });
+            var m = data.Select(o => new
+            {
+                o.Id,
+                o.Name,
+                o.LevelId,
+                DocsCount = o.Document.Count
+            });
             return Json(m, JsonRequestBehavior.AllowGet);
         }
 
@@ -89,7 +117,22 @@ namespace StudyOnline.Controllers
                 lines.Add(line);
             }
 
-            var data = new { temp.Id, temp.Title, temp.TitleTwo, Lyrics = lines.Select(t => new { TimeLabel = t.TimeLabel.TotalMilliseconds, t.Original, t.Translate }), temp.SoundPath, temp.Length, temp.Duration, temp.LengthString };
+            var data = new
+            {
+                temp.Id,
+                temp.Title,
+                TitleOne = temp.Title,
+                temp.TitleTwo,
+                Lyrics = lines.Select(t => new { TimeLabel = t.TimeLabel.TotalMilliseconds, t.Original, t.Translate }),
+                temp.SoundPath,
+                temp.Length,
+                temp.Duration,
+                temp.LengthString,
+                temp.AddDate,
+                Date = (temp.AddDate == null ? "" : temp.AddDate.Value.ToString("yyyy-MM-dd")),
+                Size = temp.Length,
+                Time = temp.LengthString
+            };
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
