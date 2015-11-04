@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="c19d561a901e469caedb896742306ea8" Name="Diagram1">
+        <EntityTypeShape EntityType="WoYaoXueModel.Comment" Width="1.5" PointX="7.75" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="WoYaoXueModel.Document" Width="1.5" PointX="3.625" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="WoYaoXueModel.Folder" Width="1.5" PointX="0.625" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WoYaoXueModel.Level" Width="1.5" PointX="0.75" PointY="3.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WoYaoXueModel.UploadFile" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <AssociationConnector Association="WoYaoXueModel.FK_Comment_Document" ManuallyRouted="false" />
+        <AssociationConnector Association="WoYaoXueModel.FK_Document_Folder" ManuallyRouted="false" />
+        <AssociationConnector Association="WoYaoXueModel.FK_Document_Level" ManuallyRouted="false" />
+        <AssociationConnector Association="WoYaoXueModel.FK_Folder_Level" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

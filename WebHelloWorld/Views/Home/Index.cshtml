@@ -1,0 +1,75 @@
+﻿@using WebHelloWorld.Models;
+@{
+    Layout = null;
+    List<Menu> menu = new List<Menu>();
+
+    for (int i = 0; i < 5; i++)
+    {
+        Menu p = new Menu() { Name = "父目录" + i };
+        p.Children = new List<Menu>();
+        for (int j = 0; j < 5; j++)
+        {
+            Menu c = new Menu() { Name = "子目录 " + i + " " + j };
+            p.Children.Add(c);
+        }
+        menu.Add(p);
+    }
+    menu.Add(new Menu() { Name = "单个菜单" });
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>管理后台</title>
+    <link href="~/jquery-easyui-1.4.3/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/jquery-easyui-1.4.3/themes/icon.css" rel="stylesheet" />
+    <script src="~/jquery-easyui-1.4.3/jquery.min.js"></script>
+    <script src="~/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+
+</head>
+
+
+<body class="easyui-layout">
+    <div data-options="region:'north'" style="height:50px"></div>
+    <div data-options="region:'south',split:true" style="height:50px;"></div>
+    <div data-options="region:'west',split:true" title="导航菜单" style="width:200px;">
+        <ul id="tt" class="easyui-tree">
+            @foreach (var item in menu)
+            {
+                <li>
+                    <span>@item.Name</span>
+                    @if (item.Children != null)
+                    {
+                        <ul>
+                            @foreach (var c in item.Children)
+                            {
+                                <li><span><a href="#" onclick="addtabs();">@c.Name</a></span></li>
+                            }
+                        </ul>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+    <div data-options="region:'center'">
+        <div id="tabs" class="easyui-tabs" fit="true" border="false">
+            <div title="主页">
+
+            </div>
+        </div>
+    </div>
+</body>
+
+
+</html>
+<script>
+    function addtabs() {
+        $('#tabs').tabs('add', {
+            title: 'New Tab',
+            content: 'Tab Body',
+            closable: true,
+            href: '@Url.Action("Index","Admin",null)'
+        });
+    }
+</script>

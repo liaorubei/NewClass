@@ -1,0 +1,14 @@
+﻿@model WebHelloWorld.Models.Menu
+
+@{
+    Layout = null;
+}
+
+<table class="easyui-treegrid" data-options="idField:'Id',treeField:'Name',url:'Admin/MenuSelect'">
+    <thead>
+        <tr>
+            <th data-options="field:'Id',width:180">Id</th>
+            <th data-options="field:'Name',width:60,align:'right'">Name</th>
+        </tr>
+    </thead>
+</table>

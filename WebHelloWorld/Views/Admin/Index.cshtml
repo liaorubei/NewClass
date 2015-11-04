@@ -1,0 +1,67 @@
+﻿@using WebHelloWorld.Models;
+@{
+    Layout = null;
+    List<Menu> menus = ViewBag.Menus;
+
+
+    menus.Add(new Menu() { Name = "菜单管理" });
+}
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>管理后台</title>
+    <link href="~/jquery-easyui-1.4.3/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/jquery-easyui-1.4.3/themes/icon.css" rel="stylesheet" />
+    <script src="~/jquery-easyui-1.4.3/jquery.min.js"></script>
+    <script src="~/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+
+</head>
+
+
+<body class="easyui-layout">
+    <div data-options="region:'north'" style="height:50px"></div>
+    <div data-options="region:'south',split:true" style="height:50px;"></div>
+    <div data-options="region:'west',split:true" title="导航菜单" style="width:200px;">
+        <ul id="tt" class="easyui-tree">
+            @foreach (var item in menus)
+            {
+                <li>
+                    <span>@item.Name</span>
+                    @if (item.Children != null)
+                    {
+                        <ul>
+                            @foreach (var c in item.Children)
+                            {
+                                <li><span><a href="#" title="@c.Name" onclick="addtabs();">@c.Name</a></span></li>
+                            }
+                        </ul>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+    <div data-options="region:'center'">
+        <div id="tabs" class="easyui-tabs" fit="true" border="false">
+            <div title="主页">
+
+            </div>
+        </div>
+    </div>
+</body>
+
+
+</html>
+<script>
+    function addtabs() {
+        $('#tabs').tabs('add', {
+            title: 'New Tab',
+            content: 'Tab Body',
+            closable: true,
+            href: '@Url.Action("MenuCreate","Admin",null)'
+        });
+    }
+</script>
