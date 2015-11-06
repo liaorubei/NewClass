@@ -27,5 +27,6 @@ namespace WebHelloWorld.Models
     
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<Menu> Menu { get; set; }
     }
 }

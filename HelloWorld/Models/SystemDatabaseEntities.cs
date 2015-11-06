@@ -13,5 +13,17 @@ namespace StudyOnline.Models
         public DbSet<Role> Roles { get; set; }
     }
 
+    public class SystemEntities : DbContext
+    {
+        static SystemEntities()
+        {
+            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<SystemEntities>());
+        }
+
+        
+        public DbSet<Menu> Menu { get; set; }
+
+    }
+
 
 }

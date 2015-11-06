@@ -1110,6 +1110,7 @@
     <Content Include="Views\Admin\MenuIndex.cshtml" />
     <Content Include="Views\Admin\Login.cshtml" />
     <Content Include="Views\Admin\MenuCreate.cshtml" />
+    <Content Include="Views\Admin\MenuLookup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -8,6 +8,8 @@
         <EntityTypeShape EntityType="HelloWorldModel.Role" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="HelloWorldModel.User" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <AssociationConnector Association="HelloWorldModel.UserRole" />
+        <EntityTypeShape EntityType="HelloWorldModel.Menu" Width="1.5" PointX="0.75" PointY="3.75" />
+        <AssociationConnector Association="HelloWorldModel.FK_Menu_MenuId" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

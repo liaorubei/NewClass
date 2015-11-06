@@ -1,53 +1,69 @@
-﻿@{
-    Layout = null;
-}
+﻿@using StudyOnline.Models;
+@model StudyOnline.Models.Menu
+    @{
+        Layout = null;
+    }
 
-<div class="pageContent">
+    <div class="pageContent">
 
-    <form method="post" action='' class="pageForm" onsubmit="return validateCallback(this, dialogAjaxDone)">
-        <div class="pageFormContent" layoutH="58">
+        <form method="post" action='@Url.Action("MenuCreate")' class="pageForm" onsubmit="return validateCallback(this, dialogAjaxDone)">
+            <div class="pageFormContent" layoutH="58">
 
-            <dl>
-                <dt>菜单名称：</dt>
-                <dd><input class="required" name="Name" type="text" /></dd>
+                <dl>
+                    <dt>菜单名称：</dt>
+                    <dd>
+                        <input type="hidden" name="Id" value="@Model.Id" />
+                        <input class="required" name="Name" type="text" value="@Model.Name" />
+                    </dd>
 
-            </dl>
-            <dl>
-                <dt>控制器：</dt>
-                <dd><input class="required" name="Name" type="text" /></dd>
+                </dl>
 
-            </dl><dl>
-                <dt>动作方法：</dt>
-                <dd><input class="required" name="Name" type="text" /></dd>
+                <dl>
+                    <dt>父级菜单：</dt>
+                    <dd><input name="menu.cityName" type="text" value="@Model.ParentId"/><a class="btnLook" href="@Url.Action("MenuLookup")" width="600" height="480" lookupGroup="menu">查找带回</a></dd>
+                </dl>
+                <dl>
+                    <dt>菜单权重：</dt>
+                    <dd><input name="Order" type="text" value="@Model.Order" /></dd>
+                </dl>
+                
+        
+                <dl>
+                    <dt>控制器：</dt>
+                    <dd><input  name="Controller" type="text" /></dd>
+                </dl>
+                <dl>
+                    <dt>动作方法：</dt>
+                    <dd><input  name="Action" type="text" /></dd>
 
-            </dl><dl>
-                <dt>按钮图标：</dt>
-                <dd><input class="required" name="Name" type="text" /></dd>
+                </dl><dl>
+                    <dt>按钮图标：</dt>
+                    <dd><input  name="Class" type="text" /></dd>
 
-            </dl><dl>
-                <dt>链接标题：</dt>
-                <dd><input class="required" name="Name" type="text" /></dd>
+                </dl><dl>
+                    <dt>链接标题：</dt>
+                    <dd><input  name="Title" type="text" /></dd>
 
-            </dl><dl>
-                <dt>链接类型：</dt>
-                <dd><input class="required" name="Name" type="text" /></dd>
+                </dl><dl>
+                    <dt>链接类型：</dt>
+                    <dd><input  name="Target" type="text" /></dd>
 
-            </dl><dl>
-                <dt>窗体宽度：</dt>
-                <dd><input class="required" name="Name" type="text" /></dd>
+                </dl><dl>
+                    <dt>窗体宽度：</dt>
+                    <dd><input  name="Width" type="text" /></dd>
 
-            </dl><dl>
-                <dt>窗体高度：</dt>
-                <dd><input class="required" name="Name" type="text" /></dd>
+                </dl><dl>
+                    <dt>窗体高度：</dt>
+                    <dd><input  name="Height" type="text" /></dd>
 
-            </dl>
-        </div>
-        <div class="formBar">
-            <ul>
-                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
-                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
-            </ul>
-        </div>
-    </form>
+                </dl>
+            </div>
+            <div class="formBar">
+                <ul>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+                    <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+                </ul>
+            </div>
+        </form>
 
-</div>
+    </div>

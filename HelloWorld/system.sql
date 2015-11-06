@@ -45,9 +45,13 @@ CREATE NONCLUSTERED INDEX [IX_RoleId] ON [UserRole]([RoleId] ASC);
 GO
 
 --创建菜单表
+--创建菜单表
 CREATE TABLE [Menu]
 (
-	[Id]   INT IDENTITY(1,1) NOT NULL,
-	[Name] NVARCHAR (256)    NOT NULL
-	constraint [PK_Menu] primary key (Id)
+	[Id] INT IDENTITY(1,1) NOT NULL,
+	[Name] NVARCHAR (256)    NOT NULL,
+	[ParentId] int ,
+	[Order] int,
+	constraint [PK_Menu] primary key (Id),
+	constraint [FK_Menu_MenuId] FOREIGN KEY ([ParentId]) REFERENCES [Menu] ([Id])
 )

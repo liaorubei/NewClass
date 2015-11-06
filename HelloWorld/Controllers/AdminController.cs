@@ -16,8 +16,10 @@ namespace StudyOnline.Controllers
     {
         private StudyOnlineEntities entities = new StudyOnlineEntities();
         private SystemDatabaseEntities sd = new SystemDatabaseEntities();
+        private SystemEntities sr = new SystemEntities();
         public ActionResult Index()
         {
+            ViewBag.Menus = sr.Menu.ToList();
             return View();
         }
 
@@ -334,21 +336,50 @@ namespace StudyOnline.Controllers
         #region 系统管理
         public ActionResult MenuIndex()
         {
-
+            ViewBag.Menus = sr.Menu.ToList();
             return View();
         }
+
+        public ActionResult MenuLookup() { return View();
+
+
+
+
+
+        }
+
+
+
+
+
+
+
         public ActionResult MenuCreate(int? id)
         {
-            sd.Users.Add(new User() { Id = Guid.NewGuid().ToString(), UserName = "admin", Password = "123456" });
-
-            sd.SaveChanges();
-
+            if (id == null)
+            {
+                ViewData.Model = new Menu() { Id = 0 };
+            }
+            else
+            {
+                ViewData.Model = sr.Menu.Find(id);
+            }
             return View();
-
-
-
         }
-
+        [HttpPost]
+        public ActionResult MenuCreate(Menu menu)
+        {
+            if (menu.Id > 0)
+            {
+            }
+            else
+            {
+                sr.Menu.Add(menu);
+            }
+            sr.SaveChanges();
+            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminMenuIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
+            return Json(data);
+        }
         #endregion
 
 
