@@ -301,6 +301,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\StudyOnline1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>StudyOnline.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Models\SystemDatabaseEntities.cs" />
     <Compile Include="Models\UploadFile.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
