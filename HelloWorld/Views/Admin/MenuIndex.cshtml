@@ -1,0 +1,81 @@
+﻿@using StudyOnline.Models;
+
+@{
+    Layout = null;
+    List<Menu> menus = new List<Menu>();
+    for (int i = 1; i < 8; i++)
+    {
+        Menu p = new Menu() { Id = i + "", Name = "菜单" + i };
+        p.Mecuc = new List<Menu>();
+        for (int m = 1; m < 6; m++)
+        {
+            Menu c = new Menu() { Id = i + "" + m, Name = "菜单" + i + m, ParentId = i + "" };
+            p.Mecuc.Add(c);
+        }
+        menus.Add(p);
+    }
+
+
+
+
+}
+@helper show(List<Menu> m)
+{
+if (m != null)
+{
+    foreach (var item in m)
+    {
+            <tr class="treegrid-@(item.Id) treegrid-parent-@(item.ParentId)">
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            @show(item.Mecuc)
+    }
+}
+
+
+}
+
+<div class="pageHeader">
+    <div class="searchBar">
+        <ul class="searchContent">
+            <li></li>
+        </ul>
+        <div class="subBar"></div>
+    </div>
+
+</div>
+<div class="pageContent">
+    <div class="panelBar">
+        <ul class="toolBar">
+            <li><a class="create" href='@Url.Action("MenuCreate")' target="dialog" rel="AdminMenuCreate" title="添加菜单" width="800" height="480" mask="true"><span>添加</span></a></li>
+            <li><a class="update" href="#"><span>修改</span></a></li>
+            <li><a class="delete" href="#"><span>删除</span></a></li>
+        </ul>
+    </div>
+    <div layoutH="88">
+        <table id="menuTree" class="list" style="width:100%;">
+            <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>菜单名称</th>
+                    <th>菜单图标</th>
+                    <th>控制器</th>
+                    <th>视图</th>
+                    <th>链接类型</th>
+                </tr>
+            </thead>
+            <tbody>
+                @show(menus)
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $("#menuTree").treegrid();
+</script>

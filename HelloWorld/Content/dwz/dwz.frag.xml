@@ -217,10 +217,10 @@
 
 <_PAGE_ id="navTabCM"><![CDATA[
 <ul id="navTabCM">
-	<li rel="reload">刷新标签页</li>
-	<li rel="closeCurrent">关闭标签页</li>
-	<li rel="closeOther">关闭其它标签页</li>
-	<li rel="closeAll">关闭全部标签页</li>
+	<li rel="reload"      >刷新当前</li>
+	<li rel="closeCurrent">关闭当前</li>
+	<li rel="closeOther"  >关闭其它</li>
+	<li rel="closeAll"    >关闭全部</li>
 </ul>
 ]]></_PAGE_>
 <_PAGE_ id="dialogCM"><![CDATA[

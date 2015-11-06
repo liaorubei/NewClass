@@ -289,6 +289,8 @@
     <Compile Include="Models\Level.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Menu.cs" />
+    <Compile Include="Models\Role.cs" />
     <Compile Include="Models\StudyOnline.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -299,9 +301,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SystemDatabaseEntities.cs" />
     <Compile Include="Models\UploadFile.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\ConvertUtil.cs" />
     <Compile Include="Utils\Helper.cs" />
@@ -544,6 +548,7 @@
     <Content Include="Content\images\noloop.png" />
     <Content Include="Content\images\noneloop.png" />
     <Content Include="Content\images\oneloop.png" />
+    <Content Include="Content\jquery.treegrid.css" />
     <Content Include="Content\loop.css" />
     <Content Include="Content\main.css" />
     <Content Include="Content\rate\rate.css" />
@@ -642,11 +647,18 @@
     <Content Include="Content\raty\star-off.png" />
     <Content Include="Content\raty\star-on-big.png" />
     <Content Include="Content\raty\star-on.png" />
+    <Content Include="Images\collapse.png" />
+    <Content Include="Images\expand.png" />
+    <Content Include="Images\file.png" />
+    <Content Include="Images\folder.png" />
     <Content Include="Images\logo.png" />
     <Content Include="Scripts\dwz\dwz.min.js" />
     <Content Include="Scripts\jquery-1.8.3.min.js" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
+    <Content Include="Scripts\jquery.treegrid.js" />
+    <Content Include="Scripts\jquery.treegrid.min.js" />
     <Content Include="SQLQuery1.sql" />
+    <Content Include="system.sql" />
     <Content Include="有道翻译API申请.png" />
     <EntityDeploy Include="Models\StudyOnline.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
@@ -1090,6 +1102,9 @@
     <Content Include="Views\Admin\FolderCreateRight.cshtml" />
     <Content Include="Views\Admin\FolderUpdate.cshtml" />
     <Content Include="Views\Admin\FolderSelect.cshtml" />
+    <Content Include="Views\Admin\MenuIndex.cshtml" />
+    <Content Include="Views\Admin\Login.cshtml" />
+    <Content Include="Views\Admin\MenuCreate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

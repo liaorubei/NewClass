@@ -15,7 +15,7 @@ namespace StudyOnline.Controllers
     public class AdminController : Controller
     {
         private StudyOnlineEntities entities = new StudyOnlineEntities();
-
+        private SystemDatabaseEntities sd = new SystemDatabaseEntities();
         public ActionResult Index()
         {
             return View();
@@ -331,7 +331,25 @@ namespace StudyOnline.Controllers
             return Json(data);
         }
 
+        #region 系统管理
+        public ActionResult MenuIndex()
+        {
 
+            return View();
+        }
+        public ActionResult MenuCreate(int? id)
+        {
+            sd.Users.Add(new User() { Id = Guid.NewGuid().ToString(), UserName = "admin", Password = "123456" });
+
+            sd.SaveChanges();
+
+            return View();
+
+
+
+        }
+
+        #endregion
 
 
 
@@ -439,5 +457,18 @@ namespace StudyOnline.Controllers
             var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminApkIndex", rel = "", callbackType = "", forwardUrl = "" };
             return Json(data);
         }
+
+
+
+
+
+        public ActionResult Login()
+        {
+            return View();
+        }
+
+
+
+
     }
 }

@@ -551,7 +551,7 @@ h3.contentTitle { margin-bottom: 5px; line-height: 25px; font-size: 13px; border
 
 /* rightMenu */
 #contextmenu { display: none; position: absolute; z-index: 500; left: 0; top: 0; }
-#contextmenu ul { list-style: none; padding: 1px; margin: 0; background-color: #fff; border: 1px solid #999; width: 150px; }
+#contextmenu ul { list-style: none; padding: 1px; margin: 0; background-color: #fff; border: 1px solid #999; width: 100px; }
 #contextmenu li { display: block; color: #000; padding: 3px; margin: 0; border: 1px solid #fff; background-color: transparent; text-align: left; cursor: default; }
 #contextmenu li.hover { border: 1px solid #0a246a; background-color: #b6bdd2; }
 #contextmenu li.disabled { color: #666; }
