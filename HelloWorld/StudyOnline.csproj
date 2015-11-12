@@ -264,13 +264,8 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Areas\Api\ApiAreaRegistration.cs" />
-    <Compile Include="Areas\Api\Controllers\LevelController.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\DocumentController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\LevelController.cs" />
     <Compile Include="Controllers\NewClassController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -627,7 +622,6 @@
     <Content Include="Content\uploadify\scripts\uploadify.swf" />
     <Content Include="Content\y.css" />
     <Content Include="favicon.ico" />
-    <Content Include="File\com.newclass.woyaoxue.png" />
     <Content Include="Global.asax" />
     <Content Include="Content\raty\background.gif" />
     <Content Include="Content\raty\cancel-off-big.png" />
@@ -679,8 +673,6 @@
       <DependentUpon>StudyOnline.edmx</DependentUpon>
       <LastGenOutput>StudyOnline.cs</LastGenOutput>
     </Content>
-    <Content Include="File\com.newclass.woyaoxue.apk" />
-    <Content Include="Areas\Api\Views\Web.config" />
     <None Include="Properties\PublishProfiles\custom.pubxml" />
     <None Include="Properties\PublishProfiles\voc2015 - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\voc2015 - FTP.pubxml" />
@@ -1064,15 +1056,6 @@
     <Content Include="Images\orderedList8.png" />
     <Content Include="Images\orderedList9.png" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Account\_ChangePasswordPartial.cshtml" />
-    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
-    <Content Include="Views\Account\_RemoveExternalLoginsPartial.cshtml" />
-    <Content Include="Views\Account\_SetPasswordPartial.cshtml" />
-    <Content Include="Views\Account\Login.cshtml" />
-    <Content Include="Views\Account\Manage.cshtml" />
-    <Content Include="Views\Account\Register.cshtml" />
-    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
-    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
@@ -1081,16 +1064,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Home\Detail.cshtml" />
-    <Content Include="Views\Level\Index.cshtml" />
-    <Content Include="Views\Level\Details.cshtml" />
-    <Content Include="Views\Level\Create.cshtml" />
-    <Content Include="Views\Level\Edit.cshtml" />
-    <Content Include="Views\Level\Delete.cshtml" />
-    <Content Include="Views\Document\Index.cshtml" />
-    <Content Include="Views\Document\Details.cshtml" />
-    <Content Include="Views\Document\Create.cshtml" />
-    <Content Include="Views\Document\Edit.cshtml" />
-    <Content Include="Views\Document\Delete.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Admin\Player.cshtml" />
     <Content Include="Views\Home\Header.cshtml" />
@@ -1098,7 +1071,6 @@
     <Content Include="Views\Admin\DocsCreate.cshtml" />
     <Content Include="Views\Admin\LevelList.cshtml" />
     <Content Include="Views\Admin\LevelCreate.cshtml" />
-    <Content Include="Views\Api\Index.cshtml" />
     <Content Include="Views\Admin\ApkIndex.cshtml" />
     <Content Include="Views\Admin\ApkCreate.cshtml" />
     <Content Include="Views\Admin\FolderIndex.cshtml" />
@@ -1114,8 +1086,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\Api\Models\" />
-    <Folder Include="Areas\Api\Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
