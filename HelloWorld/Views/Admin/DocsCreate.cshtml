@@ -58,6 +58,23 @@
                         <input type="text" style="width:96%" name="LengthString" class="required" value="@Model.LengthString" />
                     </td>
                 </tr>
+
+                <tr>
+
+
+                    <th>审核情况</th>
+                    <td style="width:200px;">
+                        <select class="required" name="AuditCase">
+                            <option value="@AuditCase.添加" @(Model.AuditCase == AuditCase.添加 ? "selected='selected'" : "")>添加</option>
+                            <option value="@AuditCase.修改" @(Model.AuditCase == AuditCase.修改 ? "selected='selected'" : "")>修改</option>
+                            <option value="@AuditCase.审核" @(Model.AuditCase == AuditCase.审核 ? "selected='selected'" : "")>审核</option>
+                        </select>
+                    </td>
+                    <th>审核时间</th>
+                    <td style="width:200px;">
+                        <input type="text" style="width:96%" name="AuditDate" class="date" value="@(Model.AuditDate==null?"":Model.AuditDate.Value.ToString("yyyy-MM-dd"))" />
+                    </td>
+                </tr>
                 <tr>
                     <th style="vertical-align:top;padding-top:10px;">歌词</th>
                     <td colspan="5">

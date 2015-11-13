@@ -56,9 +56,10 @@
 <div class="pageContent">
     <div class="panelBar">
         <ul class="toolBar">
-            <li><a class="create" href='@Url.Action("DocsCreate")'                      target="navTab" rel="AdminDocsCreate" title="新建文章"><span>添加</span></a></li>
+            <li><a class="create" href='@Url.Action("DocsCreate")' target="navTab" rel="AdminDocsCreate" title="新建文章"><span>添加</span></a></li>
             <li><a class="update" href='@Url.Action("DocsCreate", new { id = "{id}" })' target="navTab" rel="AdminDocsCreate" title="修改文章" warn="请选择"><span>修改</span></a></li>
             <li><a class="delete" href='@Url.Action("DocsDelete", new { id = "{id}" })' target="ajaxTodo" title="确定要删除吗？" warn="请选择"><span>删除</span></a></li>
+            <li><a class="delete" href='@Url.Action("AuditDocs", new { id = "{id}" })' target="ajaxTodo" title="确定要审核吗？" warn="请选择"><span>审核</span></a></li>
         </ul>
     </div>
 
@@ -69,8 +70,8 @@
                     <th width="50" align="center">序号</th>
                     <th>文章标题</th>
                     <th>文件夹</th>
-                    <th align="center" width="150">文章级别</th>
-                    <th align="center" width="150">添加日期</th>
+                    <th align="center" width="100">文章级别</th>
+                    <th align="center" width="75">审核日期</th>
                 </tr>
             </thead>
             <tbody>
@@ -82,7 +83,7 @@
                         <td>@item.Title</td>
                         <td align="center">@(item.Folder == null ? "" : item.Folder.Name)</td>
                         <td align="center">@item.Level.LevelName</td>
-                        <td align="center">@item.AddDate</td>
+                        <td align="center">@(item.AuditCase == AuditCase.审核 ? item.AuditDate.Value.ToString("yyyy-MM-dd") : "")</td>
                     </tr>
                 }
             </tbody>

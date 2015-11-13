@@ -1,6 +1,4 @@
 ﻿using Kfstorm.LrcParser;
-using NAudio.FileFormats.Mp3;
-using NAudio.Wave;
 using StudyOnline.Models;
 using StudyOnline.Utils;
 using System;
@@ -16,11 +14,11 @@ namespace StudyOnline.Controllers
     public class HomeController : Controller
     {
         private StudyOnlineEntities db = new StudyOnlineEntities();
-        private int pageSize = 14;
+        private int pageSize = 15;
         public ActionResult Index(int? index, int? level)
         {
             //取出文章等级数据,因为文章等级要一直显示(前提是要求在浏览器端显示)
-            ViewBag.Levels = db.Level.Where(o=>o.ShowBrowser==1).ToList();
+            ViewBag.Levels = db.Level.Where(o => o.ShowBrowser == 1).ToList();
 
             //过滤等级功能,如果没有则不过滤,如果不为空,说明要求按等级查询数据
             Expression<Func<Document, bool>> predicate = m => true;
@@ -33,7 +31,7 @@ namespace StudyOnline.Controllers
             //1,先排序
             //2,过滤查询参数
             //3,分页取出数据
-            ViewBag.Documents = db.Document.OrderByDescending(m => m.AddDate).Where(predicate).ToPagedList(index ?? 0, pageSize);
+            ViewBag.Documents = db.Document.Where(o => o.AuditCase == AuditCase.审核).OrderByDescending(m => m.AddDate).Where(predicate).ToPagedList(index ?? 0, pageSize);
             return View();
         }
 

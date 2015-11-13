@@ -15,11 +15,9 @@ namespace StudyOnline.Controllers
     public class AdminController : Controller
     {
         private StudyOnlineEntities entities = new StudyOnlineEntities();
-        private SystemDatabaseEntities sd = new SystemDatabaseEntities();
-        private SystemEntities sr = new SystemEntities();
         public ActionResult Index()
         {
-            ViewBag.Menus = sr.Menu.ToList();
+            ViewBag.Menus = new List<Menu>();
             return View();
         }
 
@@ -136,6 +134,8 @@ namespace StudyOnline.Controllers
                 oldDoc.Length = doc.Length;//文件长度
                 oldDoc.TitleTwo = doc.TitleTwo;//文件的标题（翻译）
                 oldDoc.LengthString = doc.LengthString;//音频文件的播放长度
+                oldDoc.AuditCase = doc.AuditCase;//审核情况
+                oldDoc.AuditDate = doc.AuditDate;//审核日期
             }
             else
             {
@@ -148,7 +148,18 @@ namespace StudyOnline.Controllers
             return Json(data);
         }
 
+        public ActionResult AuditDocs(Int32? id)
+        {
+            Document doc = entities.Document.Find(id);
+            doc.AuditCase = AuditCase.审核;
+            doc.AuditDate = DateTime.Now;
+            entities.SaveChanges();
+            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminDocsList", rel = "", callbackType = "", forwardUrl = "" };
+            return Json(data);
+        }
+
         public ActionResult DocsDetail(int id) { return View(); }
+
         [HttpPost]
         public ActionResult DocsDelete(int id)
         {
@@ -336,11 +347,13 @@ namespace StudyOnline.Controllers
         #region 系统管理
         public ActionResult MenuIndex()
         {
-            ViewBag.Menus = sr.Menu.ToList();
+            ViewBag.Menus = new List<Menu>();
             return View();
         }
 
-        public ActionResult MenuLookup() { return View();
+        public ActionResult MenuLookup()
+        {
+            return View();
 
 
 
@@ -362,21 +375,13 @@ namespace StudyOnline.Controllers
             }
             else
             {
-                ViewData.Model = sr.Menu.Find(id);
+                ViewData.Model = new Menu() { };
             }
             return View();
         }
         [HttpPost]
         public ActionResult MenuCreate(Menu menu)
         {
-            if (menu.Id > 0)
-            {
-            }
-            else
-            {
-                sr.Menu.Add(menu);
-            }
-            sr.SaveChanges();
             var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminMenuIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
             return Json(data);
         }

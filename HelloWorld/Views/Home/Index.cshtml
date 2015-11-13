@@ -4,7 +4,6 @@
 @{
     Layout = null;
     List<Level> levels = ViewBag.Levels;
-
     PagedList<Document> documents = ViewBag.Documents;
 }
 <!DOCTYPE html>
@@ -34,7 +33,7 @@
                 {
                     <li>
                         <a href='@Url.Action("Index", new { level = item.LevelId })'><span style="color:#B26646;">[@item.Level.LevelName]</span></a>
-                        <a href="@Url.Action("Detail", new { id = item.Id })">@item.Title<span style="color:#57b4b7;padding-left:10px;">(@item.AddDate.Value.ToString("yyyy-MM-dd"))</span></a>
+                        <a href="@Url.Action("Detail", new { id = item.Id })">@item.Title<span style="color:#57b4b7;padding-left:10px;">(@item.AuditDate.Value.ToString("yyyy-MM-dd"))</span></a>
                     </li>
                 }
             </ul>

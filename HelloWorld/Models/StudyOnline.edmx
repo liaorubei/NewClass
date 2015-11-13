@@ -30,6 +30,8 @@
           <Property Name="TitleTwo" Type="varchar" MaxLength="250" />
           <Property Name="LengthString" Type="varchar" MaxLength="250" />
           <Property Name="FolderId" Type="int" />
+          <Property Name="AuditDate" Type="datetime" />
+          <Property Name="AuditCase" Type="int" />
         </EntityType>
         <EntityType Name="Folder">
           <Key>
@@ -202,6 +204,8 @@
           <Property Name="LengthString" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="FolderId" Type="Int32" />
           <NavigationProperty Name="Folder" Relationship="StudyOnlineModel.FK_Document_Folder" FromRole="Document" ToRole="Folder" />
+          <Property Name="AuditDate" Type="DateTime" Precision="3" />
+          <Property Name="AuditCase" Type="Int32" />
         </EntityType>
         <Association Name="FK_Comment_Document">
           <End Type="StudyOnlineModel.Document" Role="Document" Multiplicity="0..1" />
@@ -303,7 +307,9 @@
     <EntitySetMapping Name="Document">
       <EntityTypeMapping TypeName="IsTypeOf(StudyOnlineModel.Document)">
         <MappingFragment StoreEntitySet="Document">
-          <ScalarProperty Name="FolderId" ColumnName="FolderId" />
+          <ScalarProperty Name="AuditCase" ColumnName="AuditCase" />
+                <ScalarProperty Name="AuditDate" ColumnName="AuditDate" />
+                <ScalarProperty Name="FolderId" ColumnName="FolderId" />
                 <ScalarProperty Name="LengthString" ColumnName="LengthString" />
                 <ScalarProperty Name="TitleTwo" ColumnName="TitleTwo" />
                 <ScalarProperty Name="Length" ColumnName="Length" />

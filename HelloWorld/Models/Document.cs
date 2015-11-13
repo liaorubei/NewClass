@@ -31,6 +31,8 @@ namespace StudyOnline.Models
         public string TitleTwo { get; set; }
         public string LengthString { get; set; }
         public Nullable<int> FolderId { get; set; }
+        public Nullable<System.DateTime> AuditDate { get; set; }
+        public Nullable<int> AuditCase { get; set; }
     
         public virtual ICollection<Comment> Comment { get; set; }
         public virtual Level Level { get; set; }

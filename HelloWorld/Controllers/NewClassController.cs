@@ -44,7 +44,7 @@ namespace StudyOnline.Controllers
                 predicateFolder = o => o.FolderId == folderId;
             }
 
-            var temp = db.Document.Where(predicateFolder).OrderByDescending(t => t.AddDate).Skip(skip ?? 0).Take(take ?? 20).ToList();
+            var temp = db.Document.Where(o => o.AuditCase == AuditCase.审核).Where(predicateFolder).OrderByDescending(t => t.AddDate).Skip(skip ?? 0).Take(take ?? 20).ToList();
             var data = temp.Select(t => new
             {
                 t.Id,
@@ -55,8 +55,8 @@ namespace StudyOnline.Controllers
                 t.Duration,
                 t.Length,
                 t.LengthString,
-                DateString = (t.AddDate == null ? "" : t.AddDate.Value.ToString("yyyy-MM-dd")),
-                Date = (t.AddDate == null ? "" : t.AddDate.Value.ToString("yyyy-MM-dd")),
+                DateString = (t.AddDate == null ? "" : t.AuditDate.Value.ToString("yyyy-MM-dd")),
+                Date = (t.AddDate == null ? "" : t.AuditDate.Value.ToString("yyyy-MM-dd")),
                 Size = t.Length,
                 Time = t.Duration
             });
@@ -66,7 +66,7 @@ namespace StudyOnline.Controllers
         public ActionResult Levels()
         {
             var data = db.Level.ToList();
-            var m = data.Select(t => new { t.Id, t.LevelName,Name=t.LevelName, DocCount = t.Document.Count, t.Sort, t.Show });
+            var m = data.Select(t => new { t.Id, t.LevelName, Name = t.LevelName, DocCount = t.Document.Count, t.Sort, t.Show });
             return Json(m, JsonRequestBehavior.AllowGet);
         }
 

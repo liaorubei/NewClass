@@ -14,10 +14,10 @@ body { background: url(../Images/background.png) repeat; margin: auto; }
 
 
 
-#content { margin: auto; width: 800px; min-height: 500px; }
+#content { margin: auto; width: 800px; min-height: 550px; }
 #footer { text-align: center; width: 100%; background-color: #F0EEEF; border-top: solid 1px #E2E0E1; padding: 25px 0; }
 
-#side { width: 198px; float: left; min-height: 498px; border: 1px solid #ccc; }
+#side { width: 198px; float: left; min-height: 548px; border: 1px solid #ccc; }
 #side ul { list-style: none; padding: 15px; }
 #side ul li a { text-align: center; line-height: 30px; width: 166px; border: solid 1px #D6D6D6; border-bottom-color: #969696; border-radius: 5px; background-color: #F1F1F1; font-size: 12px; display: inline-block; margin: 5px 0px; color: #B26646; background: -webkit-gradient(linear,left top,left bottom,from(#F9F9F9),to(#E4E4E4)); background: -moz-linear-gradient(top,#F9F9F9,#E4E4E4); }
 
@@ -69,26 +69,6 @@ body { background: url(../Images/background.png) repeat; margin: auto; }
 /*播放器Logo隐藏代码*/
 .jwlogo { display: none; }
 
-
-
-/*body, div, p, span, ul, li, h1, h2, h3, form, table, tr, td, img { margin: 0; border: 0; padding: 0; }
-a:focus { outline: 0; }
-input:focus { outline: 0; }
-textarea { resize: none; }
-.hidden { display: none; }
-.invisible { visibility: hidden; }
-.clear:after { content: ""; display: block; clear: both; }
-.has-layout { overflow: auto; zoom: 1; }
-.no-scroll { overflow: hidden; }
-.no-x-scroll { overflow-x: hidden; overflow-y: auto; }
-.left { float: left; }
-.right { float: right; }
-.no-select { user-select: none; -webkit-user-select: none; -moz-user-select: none; }
-html { overflow: hidden; }
-body { font-size: 12px; font-family: arial,sans-serif; }
-input, textarea { margin: 0; border: 0; padding: 0; }
-.bg-sprite { background: url(bg.png) no-repeat 0 0; }
-.sprite { background: url(dicter.png) no-repeat 0 0; }*/
 #youdaoDictBg { width: 320px; height: 240px; }
 #youdaoDictBg #bgTop { background-position: left top; height: 120px; }
 #youdaoDictBg #bgTopRight { background-position: right top; float: right; width: 160px; height: 120px; }
@@ -116,6 +96,5 @@ input, textarea { margin: 0; border: 0; padding: 0; }
 #result .sub-item { overflow: hidden; white-space: nowrap; _white-space: normal; margin-right: 15px; height: 18px; line-height: 18px; color: #959595; font-size: 12px; font-weight: normal; }
 #result .sub-item span { color: #CECECE; font-family: "宋体"; }
 #result span.split { background-color: #959595; display: inline-block; margin: 0 8px; width: 1px; height: 8px; line-height: 8px; font-size: 0; }
-
 #result #copyright { margin: 3px 15px 0 0; }
 #result .bottom-link { float: right; margin: 0 5px; }
