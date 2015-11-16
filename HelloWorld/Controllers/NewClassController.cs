@@ -44,7 +44,7 @@ namespace StudyOnline.Controllers
                 predicateFolder = o => o.FolderId == folderId;
             }
 
-            var temp = db.Document.Where(o => o.AuditCase == AuditCase.审核).Where(predicateFolder).OrderByDescending(t => t.AddDate).Skip(skip ?? 0).Take(take ?? 20).ToList();
+            var temp = db.Document.Where(o => o.AuditCase == AuditCase.审核).Where(predicateFolder).OrderByDescending(t => t.AuditDate).Skip(skip ?? 0).Take(take ?? 20).ToList();
             var data = temp.Select(t => new
             {
                 t.Id,

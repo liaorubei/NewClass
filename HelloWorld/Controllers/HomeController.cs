@@ -31,7 +31,7 @@ namespace StudyOnline.Controllers
             //1,先排序
             //2,过滤查询参数
             //3,分页取出数据
-            ViewBag.Documents = db.Document.Where(o => o.AuditCase == AuditCase.审核).OrderByDescending(m => m.AddDate).Where(predicate).ToPagedList(index ?? 0, pageSize);
+            ViewBag.Documents = db.Document.Where(o => o.AuditCase == AuditCase.审核).OrderByDescending(m => m.AuditDate).Where(predicate).ToPagedList(index ?? 0, pageSize);
             return View();
         }
 
