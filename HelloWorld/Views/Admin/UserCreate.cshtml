@@ -1,0 +1,63 @@
+﻿@model StudyOnline.Models.User
+
+@{
+    Layout = null;
+}
+
+
+
+
+<div class="pageContent">
+
+    <form method="post" action="@Url.Action("UserCreate")" class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent " layoutH="58">
+            <dl>
+                <dt>昵称：</dt>
+                <dd>
+                    @Html.Hidden("Id", Model.Id)
+                    @Html.TextBox("NickName", Model.NickName, new { @class = "required" })
+                </dd>
+            </dl>
+            <dl>
+                <dt>帐号：</dt>
+                <dd>
+                    @Html.TextBox("UserName", Model.UserName, new { @class = "required" })
+                </dd>
+            </dl>
+            @if (Model.Id < 1)
+            {
+                <dl>
+                    <dt>密码：</dt>
+                    <dd>
+                        <input id="user_password" type="password" name="password" class="required alphanumeric" minlength="6" maxlength="20" alt="字母、数字、下划线 6-20位" />
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>确认密码：</dt>
+                    <dd>
+                        <input type="password" name="repassword" class="required" equalto="#user_password" />
+                    </dd>
+                </dl>
+            }
+            <dl>
+                <dt>邮箱：</dt>
+                <dd>
+                    @Html.TextBox("Email", Model.Email, new { @class = "required email", placeholder = "请输入您的邮箱" })
+                </dd>
+            </dl>
+            <dl>
+                <dt>电话：</dt>
+                <dd>
+                    @Html.TextBox("Phone", Model.Phone, new { @class = "required phone", placeholder = "请输入您的电话" })
+                </dd>
+            </dl>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+
+</div>

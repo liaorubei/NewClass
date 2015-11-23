@@ -222,6 +222,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NewClassController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
+    <Compile Include="Filters\MyAuthorizationFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -260,7 +261,9 @@
     <Compile Include="Models\UploadFile.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\User.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\ConvertUtil.cs" />
     <Compile Include="Utils\Helper.cs" />
@@ -979,6 +982,9 @@
     <Content Include="Views\Admin\Login.cshtml" />
     <Content Include="Views\Admin\MenuCreate.cshtml" />
     <Content Include="Views\Admin\MenuLookup.cshtml" />
+    <Content Include="Views\Admin\UserCreate.cshtml" />
+    <Content Include="Views\Admin\UserIndex.cshtml" />
+    <Content Include="Views\Shared\_create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

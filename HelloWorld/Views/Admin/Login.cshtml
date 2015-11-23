@@ -1,4 +1,5 @@
-﻿@{
+﻿@model LoginModel
+@{
     Layout = null;
 }
 
@@ -6,7 +7,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>风险管理平台</title>
+    <title>管理平台</title>
     <link href="~/Content/dwz/themes/css/login.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/dwz/themes/css/login.css" rel="stylesheet" />
 </head>
@@ -30,20 +31,25 @@
         </div>
         <div id="login_content">
             <div class="loginForm">
-                <form action="@Url.Action("Index")">
+                <form action="@Url.Action("Login","Admin",null)" method="post">
                     <p>
                         <label>用户名：</label>
-                        <input type="text" name="username" class="login_input" />
+                        <input type="text" name="username" class="login_input" value="@Model.UserName" />
                     </p>
                     <p>
                         <label>密码：</label>
-                        <input type="password" name="password"  class="login_input"/>
+                        <input type="password" name="password" class="login_input" value="@Model.Password" />
                     </p>
                     <p>
                         <label>验证码：</label>
                         <input class="code" type="text" size="5" />
                         <span><img src="~/Content/dwz/themes/default/images/header_bg.png" alt="" width="75" height="24" /></span>
                     </p>
+                    <p>
+                        <label>是否记住：</label>
+                        <input type="checkbox" name="RememberMe" value="true" @(Model.RememberMe ? "checked='checked'":"") />
+                    </p>
+
                     <div class="login_bar">
                         <input class="sub" type="submit" value=" " />
                     </div>

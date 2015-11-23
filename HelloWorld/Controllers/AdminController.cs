@@ -1,4 +1,5 @@
 ﻿using NAudio.Wave;
+using StudyOnline.Filters;
 using StudyOnline.Models;
 using StudyOnline.Utils;
 using System;
@@ -12,6 +13,7 @@ using Webdiyer.WebControls.Mvc;
 
 namespace StudyOnline.Controllers
 {
+    [MyAuthorizationFilter]
     public class AdminController : Controller
     {
         private StudyOnlineEntities entities = new StudyOnlineEntities();
@@ -361,12 +363,6 @@ namespace StudyOnline.Controllers
 
         }
 
-
-
-
-
-
-
         public ActionResult MenuCreate(int? id)
         {
             if (id == null)
@@ -387,6 +383,67 @@ namespace StudyOnline.Controllers
         }
         #endregion
 
+
+
+        #region 用户管理
+
+        public ActionResult UserIndex()
+        {
+
+
+            PagedList<User> users = entities.User.OrderBy(o => o.CreateDate).ToPagedList(1, 25);
+            ViewBag.Users = users;
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult UserCreate(int? id)
+        {
+            if (id != null)
+            {
+                ViewData.Model = entities.User.Find(id);
+            }
+            else
+            {
+                ViewData.Model = new User() { Id = 0 };
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult UserCreate(User user)
+        {
+            if (user.Id > 0)
+            {
+                User u = entities.User.Find(user.Id);
+                u.UserName = user.UserName;
+                u.Password = user.Password;
+                u.Phone = user.Phone;
+                u.Email = user.Email;
+                // u.IsOnline   =user.IsOnline   ;
+                //  u.CreateDate = user.CreateDate;
+            }
+            else
+            {
+                user.CreateDate = DateTime.Now;
+                entities.User.Add(user);
+            }
+            entities.SaveChanges();
+
+            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminUserIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
+            return Json(data);
+        }
+        public ActionResult UserDelete(int? id)
+        {
+            User user = entities.User.Find(id);
+            entities.User.Remove(user);
+            entities.SaveChanges();
+            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminUserIndex", rel = "", callbackType = "", forwardUrl = "" };
+            return Json(data);
+        }
+
+
+        #endregion
 
 
         [HttpPost]
@@ -500,11 +557,39 @@ namespace StudyOnline.Controllers
 
         public ActionResult Login()
         {
+            HttpCookie cookie = Request.Cookies["User"];
+
+            LoginModel model = new LoginModel();
+            if (cookie != null)
+            {
+                model.UserName = cookie["username"];
+                model.Password = cookie["password"];
+                model.RememberMe = Convert.ToBoolean(cookie["RememberMe"]);
+            }
+            ViewData.Model = model;
             return View();
         }
 
+        [HttpPost]
+        public ActionResult Login(LoginModel model)
+        {
 
+            User user = entities.User.FirstOrDefault(o => o.UserName == model.UserName && o.Password == model.Password);
+            if (user == null)
+            {
+                ViewData.Model = model;
+                return View();
+            }
 
+            Session["User"] = user;
 
+            HttpCookie cookie = new HttpCookie("User");
+            cookie["username"] = user.UserName;
+            cookie["password"] = user.Password;
+            cookie["RememberMe"] = model.RememberMe.ToString();
+            Response.Cookies.Add(cookie);
+            return RedirectToAction("Index");
+
+        }
     }
 }

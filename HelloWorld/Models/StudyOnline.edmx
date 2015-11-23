@@ -63,6 +63,19 @@
           <Property Name="Extension" Type="nvarchar" MaxLength="50" />
           <Property Name="VersionName" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Phone" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="IsOnline" Type="int" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="NickName" Type="nvarchar" MaxLength="256" />
+        </EntityType>
         <Association Name="FK_Comment_Document">
           <End Role="Document" Type="Self.Document" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -119,6 +132,7 @@
           <EntitySet Name="Folder" EntityType="Self.Folder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Level" EntityType="Self.Level" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UploadFile" EntityType="Self.UploadFile" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Comment_Document" Association="Self.FK_Comment_Document">
             <End Role="Document" EntitySet="Document" />
             <End Role="Comment" EntitySet="Comment" />
@@ -184,6 +198,7 @@
             <End Role="Level" EntitySet="Level" />
             <End Role="Folder" EntitySet="Folder" />
           </AssociationSet>
+          <EntitySet Name="User" EntityType="StudyOnlineModel.User" />
         </EntityContainer>
         <EntityType Name="Document">
           <Key>
@@ -277,6 +292,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="IsOnline" Type="Int32" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="NickName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -346,6 +374,20 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="User">
+            <EntityTypeMapping TypeName="StudyOnlineModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="NickName" ColumnName="NickName" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
@@ -377,6 +419,7 @@
         <AssociationConnector Association="StudyOnlineModel.FK_Document_Level" ManuallyRouted="false" />
         <AssociationConnector Association="StudyOnlineModel.FK_Document_Folder" ManuallyRouted="false" />
         <AssociationConnector Association="StudyOnlineModel.FK_Folder_Level" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="StudyOnlineModel.User" Width="1.5" PointX="5.375" PointY="0.75" />
       </Diagram>
     </Diagrams>
   </Designer>

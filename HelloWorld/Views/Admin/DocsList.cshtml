@@ -83,7 +83,7 @@
                         <td>@item.Title</td>
                         <td align="center">@(item.Folder == null ? "" : item.Folder.Name)</td>
                         <td align="center">@item.Level.LevelName</td>
-                        <td align="center">@(item.AuditCase == AuditCase.审核 ? item.AuditDate.Value.ToString("yyyy-MM-dd") : "")</td>
+                        <td align="center">@(item.AuditDate == null ?  "":item.AuditDate.Value.ToString("yyyy-MM-dd"))</td>
                     </tr>
                 }
             </tbody>

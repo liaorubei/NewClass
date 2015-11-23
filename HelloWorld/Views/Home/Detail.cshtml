@@ -30,7 +30,7 @@
                 </p>
                 <p style="text-align:center;">
                     <span style="padding-right:25px;">level:[@Model.Level.LevelName]</span>
-                    <span>Date:[@Model.AddDate]</span>
+                    <span>Date:[@(Model.AuditDate==null?"":Model.AuditDate.Value.ToString("yyyy-MM-dd"))]</span>
                 </p>
                 <br />
                 <div id="music">音频加载中......</div>

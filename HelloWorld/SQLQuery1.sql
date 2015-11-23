@@ -24,3 +24,7 @@ SELECT * FROM Document order by AddDate desc
 
 select * from Folder
 
+--alter table [User] add [NickName] nvarchar(256)
+select * from [user]
+
+

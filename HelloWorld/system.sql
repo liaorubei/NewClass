@@ -3,8 +3,13 @@
 CREATE TABLE [User] 
 (
     [Id]               INT IDENTITY(1,1) NOT NULL,
+	[NickName]         NVARCHAR (256)    NOT NULL,
     [UserName]         NVARCHAR (256)    NOT NULL,
-    [Password]         NVARCHAR (256)    NOT NULL
+    [Password]         NVARCHAR (256)    NOT NULL,
+    [Phone]			   NVARCHAR (256)    NOT NULL,
+	[Email]			   NVARCHAR (256)    NOT NULL,
+	[IsOnline]         INT               NOT NULL,
+	[CreateDate]       DATETIME          NOT NULL
 );
 GO
 

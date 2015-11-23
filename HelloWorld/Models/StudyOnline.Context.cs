@@ -30,5 +30,6 @@ namespace StudyOnline.Models
         public DbSet<Document> Document { get; set; }
         public DbSet<UploadFile> UploadFile { get; set; }
         public DbSet<Folder> Folder { get; set; }
+        public DbSet<User> User { get; set; }
     }
 }

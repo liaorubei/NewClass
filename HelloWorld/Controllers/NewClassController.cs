@@ -55,8 +55,8 @@ namespace StudyOnline.Controllers
                 t.Duration,
                 t.Length,
                 t.LengthString,
-                DateString = (t.AddDate == null ? "" : t.AuditDate.Value.ToString("yyyy-MM-dd")),
-                Date = (t.AddDate == null ? "" : t.AuditDate.Value.ToString("yyyy-MM-dd")),
+                DateString = (t.AuditDate == null ? "" : t.AuditDate.Value.ToString("yyyy-MM-dd")),
+                Date = (t.AuditDate == null ? "" : t.AuditDate.Value.ToString("yyyy-MM-dd")),
                 Size = t.Length,
                 Time = t.Duration
             });
@@ -121,7 +121,7 @@ namespace StudyOnline.Controllers
                 temp.Duration,
                 temp.LengthString,
                 temp.AddDate,
-                Date = (temp.AddDate == null ? "" : temp.AddDate.Value.ToString("yyyy-MM-dd")),
+                Date = (temp.AuditDate == null ? "" : temp.AddDate.Value.ToString("yyyy-MM-dd")),
                 Size = temp.Length,
                 Time = temp.LengthString
             };
