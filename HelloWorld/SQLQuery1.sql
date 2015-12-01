@@ -28,3 +28,27 @@ select * from Folder
 select * from [user]
 
 
+--创建用户表
+CREATE TABLE [Customer] 
+(
+    [AccId]            NVARCHAR (32)    NOT NULL,
+    [Account]          NVARCHAR (64)    NOT NULL,
+    [Password]         NVARCHAR (64)    NOT NULL,
+	[NickName]         NVARCHAR (64)    ,
+    [Phone]			   NVARCHAR (256)   ,
+	[Email]			   NVARCHAR (1024)  ,
+	[Icon]			   NVARCHAR (1024)  ,
+	[Gender]           INT              ,
+	[Birthday]         DATETIME         ,
+	[IsOnline]         INT              ,
+	[CreateDate]       DATETIME         
+);
+GO
+
+CREATE UNIQUE NONCLUSTERED INDEX [AccountIndex] ON [Customer]([Account] ASC);
+GO
+
+ALTER TABLE [Customer] ADD CONSTRAINT [PK_Customer] PRIMARY KEY CLUSTERED ([AccId] ASC);
+GO
+
+

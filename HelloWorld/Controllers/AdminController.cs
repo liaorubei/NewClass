@@ -580,6 +580,8 @@ namespace StudyOnline.Controllers
                 ViewData.Model = model;
                 return View();
             }
+            user.IsOnline = 1;
+            entities.SaveChanges();
 
             Session["User"] = user;
 

@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleXpath", "ConsoleXpat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebHanWen", "WebHanWen\WebHanWen.csproj", "{447C9519-C874-4B66-A626-7AB359AEAC91}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChineseChat.Library", "ChineseChat.Library\ChineseChat.Library.csproj", "{C4F0C56F-ED28-4518-AEA9-E01D886AAC2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyOnlineTests", "StudyOnlineTests\StudyOnlineTests.csproj", "{80E4D197-BC3D-4722-B15F-6140C51423EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{447C9519-C874-4B66-A626-7AB359AEAC91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{447C9519-C874-4B66-A626-7AB359AEAC91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{447C9519-C874-4B66-A626-7AB359AEAC91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4F0C56F-ED28-4518-AEA9-E01D886AAC2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4F0C56F-ED28-4518-AEA9-E01D886AAC2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4F0C56F-ED28-4518-AEA9-E01D886AAC2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4F0C56F-ED28-4518-AEA9-E01D886AAC2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80E4D197-BC3D-4722-B15F-6140C51423EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80E4D197-BC3D-4722-B15F-6140C51423EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80E4D197-BC3D-4722-B15F-6140C51423EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80E4D197-BC3D-4722-B15F-6140C51423EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,10 +4,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+
 using System.Text.RegularExpressions;
 using Kfstorm.LrcParser;
 using NAudio.Wave;
 using NAudio.FileFormats.Mp3;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using System.Net;
+using System.Security.Cryptography;
+using ChineseChat.Library;
+using System.Collections.Specialized;
 
 namespace ConsoleXpath
 {
@@ -15,7 +23,84 @@ namespace ConsoleXpath
     class Program
     {
 
+        //参数 参数说明
+        //AppKey 开发者平台分配的appkey
+        //Nonce 随机数（最大长度128个字符）
+        //CurTime 当前UTC时间戳，从1970年1月1日0点0 分0 秒开始到现在的秒数(String)
+        //CheckSum SHA1(AppSecret + Nonce + CurTime),三个参数拼接的字符串，进行SHA1哈希计算，转化成16进制字符(String，小写)
+        //App Key:db75c3901c1a2029d0dd668975b580e0
+        //App Secret:8b928c19e4cc
+
+
+
+
+        //db75c3901c1a2029d0dd668975b580e0
+        //HttpWebRequest
         static void Main(string[] args)
+        {
+            testusercreate();
+            Console.ReadLine();
+        }
+
+        private static void testusercreate()
+        {
+            User user = new User();
+            user.Accid = "8d99243533e246f481244d99a9068771"; ;// Guid.NewGuid().ToString().Replace("-", "");
+            Answer a = NimUtil.UserCreate(user);
+            Console.WriteLine(a.desc);
+        }
+
+        private static void CreateMethod(string appKey, string nonce, string curTime, string checkSum)
+        {
+            NameValueCollection headers = new NameValueCollection();
+            headers.Add("AppKey", appKey);
+            headers.Add("Nonce", nonce);
+            headers.Add("CurTime", curTime);
+            headers.Add("CheckSum", checkSum);
+            // headers.Add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+            NameValueCollection parameters = new NameValueCollection();
+            parameters.Add("accid", Guid.NewGuid().ToString().Replace("-", ""));
+            String json = HttpUtil.Post("https://api.netease.im/nimserver/user/create.action", headers, parameters);
+            Console.WriteLine(json);
+        }
+
+        private static void SelectMethod()
+        {
+            String appKey = "db75c3901c1a2029d0dd668975b580e0";
+            String appSecret = "8b928c19e4cc";
+            String nonce = Guid.NewGuid().ToString().Replace("-", "");
+            String curTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds).ToString();
+            String checkSum = EncryptionUtil.Sha1Encode(appSecret + nonce + curTime);
+
+            NameValueCollection headers = new NameValueCollection();
+            headers.Add("AppKey", appKey);
+            headers.Add("Nonce", nonce);
+            headers.Add("CurTime", curTime);
+            headers.Add("CheckSum", checkSum);
+
+            NameValueCollection parameters = new NameValueCollection();
+            parameters.Add("accids", "[\"beb12f183b904919810c297cc122af7e\"]");
+            String json = HttpUtil.Post("https://api.netease.im/nimserver/user/getUinfos.action", headers, parameters);
+
+            Console.WriteLine(json);
+        }
+
+        private static String Sha1Encode(String value)
+        {
+            SHA1 sha1 = SHA1.Create();
+            byte[] s = Encoding.UTF8.GetBytes(value);
+            Byte[] o = sha1.ComputeHash(s);
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var item in o)
+            {
+                sb.Append(String.Format("{0:x2}", item));
+            }
+            return sb.ToString();
+        }
+
+        private static void Mp3Test()
         {
             FileInfo info = new FileInfo(@"D:\TTPmusic\huanzi.mp3");
             Stream input = info.Open(FileMode.Open);
@@ -29,11 +114,8 @@ namespace ConsoleXpath
             WaveOut wave = new WaveOut();
             wave.Init(mp3);
             wave.Play();
-
             Console.WriteLine("{0}:{1}", mp3.TotalTime.Minutes, mp3.TotalTime.Seconds);
-            Console.ReadLine();
         }
-
 
 
         private static void newParse()

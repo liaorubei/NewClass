@@ -218,6 +218,9 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Areas\Api\ApiAreaRegistration.cs" />
+    <Compile Include="Areas\Api\Controllers\UserController.cs" />
+    <Compile Include="Areas\Api\Models\User.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NewClassController.cs" />
@@ -229,6 +232,9 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AuditCase.cs" />
     <Compile Include="Models\Comment.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Customer.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Document.cs">
@@ -577,6 +583,7 @@
       <DependentUpon>StudyOnline.edmx</DependentUpon>
       <LastGenOutput>StudyOnline.cs</LastGenOutput>
     </Content>
+    <Content Include="Areas\Api\Views\web.config" />
     <None Include="Properties\PublishProfiles\voc2015 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\voc2015 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
@@ -988,12 +995,20 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Api\Views\Shared\" />
+    <Folder Include="Areas\Api\Views\User\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ChineseChat.Library\ChineseChat.Library.csproj">
+      <Project>{c4f0c56f-ed28-4518-aea9-e01d886aac2d}</Project>
+      <Name>ChineseChat.Library</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

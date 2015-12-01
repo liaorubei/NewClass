@@ -13,24 +13,15 @@
             <input type="hidden" name="numPerPage" value="@users.PageSize" />
             <ul class="searchContent">
                 <li>
-                    <label>我的客户：</label>
-                    <input type="text" />
+                    <label>关键字</label>
+                    <input type="text" name="keyword" value="@ViewBag.Keyword"/>
                 </li>
-                <li>
-                    <select class="combox" name="province">
-                        <option value="">所有省市</option>
-                        <option value="北京">北京</option>
-                        <option value="上海">上海</option>
-                        <option value="天津">天津</option>
-                        <option value="重庆">重庆</option>
-                        <option value="广东">广东</option>
-                    </select>
+                <li>        
                 </li>
             </ul>
             <div class="subBar">
                 <ul>
                     <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
-                    <li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>
                 </ul>
             </div>
         </div>
@@ -44,6 +35,7 @@
             <li><a class="delete" href="@Url.Action("UserDelete")?id={id}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
         </ul>
     </div>
+
     <table class="list" style="width:98%;" layoutH="116">
         <thead>
             <tr>
