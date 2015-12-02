@@ -38,7 +38,7 @@ namespace ConsoleXpath
         //HttpWebRequest
         static void Main(string[] args)
         {
-            testusercreate();
+            SelectMethod();
             Console.ReadLine();
         }
 
@@ -46,6 +46,7 @@ namespace ConsoleXpath
         {
             User user = new User();
             user.Accid = "8d99243533e246f481244d99a9068771"; ;// Guid.NewGuid().ToString().Replace("-", "");
+
             Answer a = NimUtil.UserCreate(user);
             Console.WriteLine(a.desc);
         }
@@ -79,7 +80,7 @@ namespace ConsoleXpath
             headers.Add("CheckSum", checkSum);
 
             NameValueCollection parameters = new NameValueCollection();
-            parameters.Add("accids", "[\"beb12f183b904919810c297cc122af7e\"]");
+            parameters.Add("accids", "[\"d5657d6325fe458b9a1f0218a29bc3ca\"]");
             String json = HttpUtil.Post("https://api.netease.im/nimserver/user/getUinfos.action", headers, parameters);
 
             Console.WriteLine(json);

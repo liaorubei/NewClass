@@ -9,7 +9,7 @@ namespace ChineseChat.Library
     public class Answer
     {
         public String desc { get; set; }
-        public String code { get; set; }
+        public Int32 code { get; set; }
         public Info info { get; set; }
     }
 
