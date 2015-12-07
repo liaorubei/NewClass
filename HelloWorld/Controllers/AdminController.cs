@@ -1,4 +1,5 @@
 ﻿using NAudio.Wave;
+using Newtonsoft.Json.Linq;
 using StudyOnline.Filters;
 using StudyOnline.Models;
 using StudyOnline.Utils;
@@ -259,10 +260,6 @@ namespace StudyOnline.Controllers
             return View();
         }
 
-
-
-
-
         [HttpPost]
         public ActionResult FolderCreate(Folder folder, String DocsIds, FormCollection form)
         {
@@ -346,6 +343,72 @@ namespace StudyOnline.Controllers
             return Json(data);
         }
 
+
+        #region 客户管理
+        public ActionResult CustomerIndex()
+        {
+            PagedList<Customer> customers = entities.Customer.OrderByDescending(o => o.CreateDate).ToPagedList(1, 25);
+            ViewBag.Customers = customers;
+            return View();
+        }
+
+        public ActionResult CustomerCreate()
+        {
+            PagedList<Customer> customers = entities.Customer.OrderByDescending(o => o.CreateDate).ToPagedList(1, 25);
+            ViewBag.Customers = customers;
+            return View();
+        }
+
+        /// <summary>
+        /// 修改用户,只修改基本信息
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult CustomerUpdate(String accid)
+        {
+            Customer customer = entities.Customer.Find(accid);
+            ViewData.Model = customer;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CustomerUpdate(Customer customer)
+        {
+            Customer model = entities.Customer.Find(customer.AccId);
+            model.Account = customer.Account;
+            model.Password = ChineseChat.Library.EncryptionUtil.Md5Encode(customer.Password);//密码加密
+            model.NickName = customer.NickName;
+            model.Phone = customer.Phone;
+            model.Email = customer.Email;
+
+            ChineseChat.Library.User user = new ChineseChat.Library.User();
+            user.Accid = model.AccId;
+            user.Name = model.NickName;
+            user.Token = ChineseChat.Library.EncryptionUtil.Md5Encode(model.AccId + ChineseChat.Library.NimUtil.AppKey);//更换token
+
+            String json = ChineseChat.Library.NimUtil.UserUpdate(user);
+            JObject rss = JObject.Parse(json);
+            if ("200" == rss.GetValue("code").ToString())
+            {
+                entities.SaveChanges();
+            }
+
+            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminCustomerIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
+            return Json(data);
+        }
+
+
+
+
+        #endregion
+
+
+
+
+
+
+
+
+
         #region 系统管理
         public ActionResult MenuIndex()
         {
@@ -389,8 +452,6 @@ namespace StudyOnline.Controllers
 
         public ActionResult UserIndex()
         {
-
-
             PagedList<User> users = entities.User.OrderBy(o => o.CreateDate).ToPagedList(1, 25);
             ViewBag.Users = users;
             return View();
@@ -411,11 +472,11 @@ namespace StudyOnline.Controllers
         }
 
         [HttpPost]
-        public ActionResult UserCreate(User user)
+        public ActionResult UserCreate(Models.User user)
         {
             if (user.Id > 0)
             {
-                User u = entities.User.Find(user.Id);
+                Models.User u = entities.User.Find(user.Id);
                 u.UserName = user.UserName;
                 u.Password = user.Password;
                 u.Phone = user.Phone;

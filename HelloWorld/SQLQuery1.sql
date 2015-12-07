@@ -18,14 +18,12 @@
 --update Document set LevelId=(select F.LevelId from Folder as F where F.Id=Document.FolderId)
 
 select * from Level
-
 select id,title,folderid from document where id in(492,493,494)
 SELECT * FROM Document order by AddDate desc
-
 select * from Folder
-
 --alter table [User] add [NickName] nvarchar(256)
 select * from [user]
+--select * from customer
 
 
 --创建用户表
@@ -50,5 +48,20 @@ GO
 
 ALTER TABLE [Customer] ADD CONSTRAINT [PK_Customer] PRIMARY KEY CLUSTERED ([AccId] ASC);
 GO
+
+--创建教师表
+CREATE TABLE [Teacher] 
+(
+    [AccId]            NVARCHAR (32)    NOT NULL,
+    [Category]         INT              NOT NULL, --教师分类,如专职,兼职的
+    [IsOnline]         INT              ,		  --是否在线	
+	[IsAvailable]      INT              ,         --当前是否可以连接
+	[LastRefresh]      bigint         ,     --上次刷新在线状态的时间DateTime.Now.Ticks
+	[LastStopTime]     bigint         ,     --上次连接结束的时间
+	CONSTRAINT [PK_Teacher] PRIMARY KEY (AccId),
+	CONSTRAINT [FK_Teacher_Customer] FOREIGN KEY ([AccId]) REFERENCES [Customer] ([AccId])
+);
+GO
+
 
 

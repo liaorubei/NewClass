@@ -1,0 +1,71 @@
+﻿
+@{
+    Layout = null;
+    PagedList<Customer> customers = ViewBag.Customers;
+}
+
+<div class="pageHeader">
+    <form id="pagerForm" method="post" action="@Url.Action("UserIndex")">
+        <div class="searchBar">
+            <input type="hidden" name="pageNum" value="@customers.CurrentPageIndex" />
+            <input type="hidden" name="numPerPage" value="@customers.PageSize" />
+            <ul class="searchContent">
+                <li>
+                    <label>关键字</label>
+                    <input type="text" name="keyword" value="@ViewBag.Keyword" />
+                </li>
+                <li>
+                </li>
+            </ul>
+            <div class="subBar">
+                <ul>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+    <div class="panelBar">
+        <ul class="toolBar">
+            @*<li><a class="create" href="@Url.Action("UserCreate")" target="dialog" width="600" height="400" mask="true" title="添加用户"><span>添加</span></a></li>*@
+
+            <li><a class="update" href="@Url.Action("CustomerUpdate")?accid={id}" target="dialog" width="600" height="400" mask="true" title="修改用户"><span>修改</span></a></li>
+            @*<li><a class="delete" href="@Url.Action("UserDelete")?id={id}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>*@
+        </ul>
+    </div>
+
+    <table class="list" style="width:98%;" layoutH="116">
+        <thead>
+            <tr>
+                <th width="35" align="center">序号</th>
+                <th width="250">AccId</th>
+                <th width="120">帐号</th>
+                <th width="250">密码(经过加密))</th>
+                <th width="120">昵称</th>
+                <th>电话</th>
+                <th>邮箱</th>
+                <th>在线情况</th>
+                <th>创建日期</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int i = 0;}
+            @foreach (var item in customers)
+            {
+                <tr target="id" rel="@item.AccId">
+                    <td align="center">@(++i)</td>
+                    <td>@item.AccId</td>
+                    <td>@item.Account</td>
+                    <td>@item.Password</td>
+                    <td>@item.NickName</td>
+                    <td>@item.Phone</td>
+                    <td>@item.Email</td>
+                    <td>@Html.Raw(item.IsOnline == 1 ? "<span style='color:green;'>在线</span>" : "离线")</td>
+                    <td>@item.CreateDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @Html.NavTabPages(customers, 10)
+</div>

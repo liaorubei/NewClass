@@ -992,6 +992,8 @@
     <Content Include="Views\Admin\UserCreate.cshtml" />
     <Content Include="Views\Admin\UserIndex.cshtml" />
     <Content Include="Views\Shared\_create.cshtml" />
+    <Content Include="Views\Admin\CustomerIndex.cshtml" />
+    <Content Include="Views\Admin\CustomerUpdate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

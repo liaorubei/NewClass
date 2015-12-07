@@ -16,6 +16,7 @@ using System.Net;
 using System.Security.Cryptography;
 using ChineseChat.Library;
 using System.Collections.Specialized;
+using Newtonsoft.Json.Linq;
 
 namespace ConsoleXpath
 {
@@ -40,6 +41,16 @@ namespace ConsoleXpath
         {
             SelectMethod();
             Console.ReadLine();
+        }
+
+        private static string UserUpdate()
+        {
+            User u = new User();
+            u.Accid = "c6396b2d943543aebb0aa5240705be98";
+            u.Name = "c6396b2d943543aebb0aa5240705be98";
+            u.Props = "";
+            u.Token = EncryptionUtil.Md5Encode(u.Accid + NimUtil.AppKey);
+            return NimUtil.UserUpdate(u);
         }
 
         private static void testusercreate()
@@ -80,7 +91,7 @@ namespace ConsoleXpath
             headers.Add("CheckSum", checkSum);
 
             NameValueCollection parameters = new NameValueCollection();
-            parameters.Add("accids", "[\"d5657d6325fe458b9a1f0218a29bc3ca\"]");
+            parameters.Add("accids", "['d5657d6325fe458b9a1f0218a29bc3ca','c6396b2d943543aebb0aa5240705be98','bf09f7dd02e549f4a16af0cf8e9a5701','ad9393a90f2945fa9c403b3f4e163dbd','8d99243533e246f481244d99a9068771']");
             String json = HttpUtil.Post("https://api.netease.im/nimserver/user/getUinfos.action", headers, parameters);
 
             Console.WriteLine(json);
