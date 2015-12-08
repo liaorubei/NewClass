@@ -67,6 +67,17 @@
           <Property Name="Show" Type="int" />
           <Property Name="ShowBrowser" Type="int" />
         </EntityType>
+        <EntityType Name="Teacher">
+          <Key>
+            <PropertyRef Name="AccId" />
+          </Key>
+          <Property Name="AccId" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="Category" Type="int" Nullable="false" />
+          <Property Name="IsOnline" Type="int" />
+          <Property Name="IsAvailable" Type="int" />
+          <Property Name="LastRefresh" Type="bigint" />
+          <Property Name="EnqueueTime" Type="bigint" />
+        </EntityType>
         <EntityType Name="UploadFile">
           <Key>
             <PropertyRef Name="Id" />
@@ -142,12 +153,25 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Teacher_Customer">
+          <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+          <End Role="Teacher" Type="Self.Teacher" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="AccId" />
+            </Principal>
+            <Dependent Role="Teacher">
+              <PropertyRef Name="AccId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="StudyOnlineModelStoreContainer">
           <EntitySet Name="Comment" EntityType="Self.Comment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Customer" EntityType="Self.Customer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Document" EntityType="Self.Document" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Folder" EntityType="Self.Folder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Level" EntityType="Self.Level" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Teacher" EntityType="Self.Teacher" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UploadFile" EntityType="Self.UploadFile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Comment_Document" Association="Self.FK_Comment_Document">
@@ -165,6 +189,10 @@
           <AssociationSet Name="FK_Folder_Level" Association="Self.FK_Folder_Level">
             <End Role="Level" EntitySet="Level" />
             <End Role="Folder" EntitySet="Folder" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Teacher_Customer" Association="Self.FK_Teacher_Customer">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Teacher" EntitySet="Teacher" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -217,6 +245,11 @@
           </AssociationSet>
           <EntitySet Name="User" EntityType="StudyOnlineModel.User" />
           <EntitySet Name="Customer" EntityType="StudyOnlineModel.Customer" />
+          <EntitySet Name="Teacher" EntityType="StudyOnlineModel.Teacher" />
+          <AssociationSet Name="FK_Teacher_Customer" Association="StudyOnlineModel.FK_Teacher_Customer">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Teacher" EntitySet="Teacher" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Document">
           <Key>
@@ -338,7 +371,32 @@
           <Property Name="Birthday" Type="DateTime" Precision="3" />
           <Property Name="IsOnline" Type="Int32" />
           <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Teacher" Relationship="StudyOnlineModel.FK_Teacher_Customer" FromRole="Customer" ToRole="Teacher" />
         </EntityType>
+        <EntityType Name="Teacher">
+          <Key>
+            <PropertyRef Name="AccId" />
+          </Key>
+          <Property Name="AccId" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Category" Type="Int32" Nullable="false" />
+          <Property Name="IsOnline" Type="Int32" />
+          <Property Name="IsAvailable" Type="Int32" />
+          <Property Name="LastRefresh" Type="Int64" />
+          <Property Name="EnqueueTime" Type="Int64" />
+          <NavigationProperty Name="Customer" Relationship="StudyOnlineModel.FK_Teacher_Customer" FromRole="Teacher" ToRole="Customer" />
+        </EntityType>
+        <Association Name="FK_Teacher_Customer">
+          <End Type="StudyOnlineModel.Customer" Role="Customer" Multiplicity="1" />
+          <End Type="StudyOnlineModel.Teacher" Role="Teacher" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="AccId" />
+            </Principal>
+            <Dependent Role="Teacher">
+              <PropertyRef Name="AccId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -439,6 +497,18 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Teacher">
+            <EntityTypeMapping TypeName="StudyOnlineModel.Teacher">
+              <MappingFragment StoreEntitySet="Teacher">
+                <ScalarProperty Name="EnqueueTime" ColumnName="EnqueueTime" />
+                <ScalarProperty Name="LastRefresh" ColumnName="LastRefresh" />
+                <ScalarProperty Name="IsAvailable" ColumnName="IsAvailable" />
+                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="AccId" ColumnName="AccId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
@@ -472,6 +542,8 @@
         <AssociationConnector Association="StudyOnlineModel.FK_Folder_Level" ManuallyRouted="false" />
         <EntityTypeShape EntityType="StudyOnlineModel.User" Width="1.5" PointX="5.375" PointY="0.75" />
         <EntityTypeShape EntityType="StudyOnlineModel.Customer" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="StudyOnlineModel.Teacher" Width="1.5" PointX="9.625" PointY="1.25" />
+        <AssociationConnector Association="StudyOnlineModel.FK_Teacher_Customer" />
       </Diagram>
     </Diagrams>
   </Designer>

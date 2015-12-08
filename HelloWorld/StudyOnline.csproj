@@ -219,6 +219,8 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\Api\ApiAreaRegistration.cs" />
+    <Compile Include="Areas\Api\Controllers\StudentController.cs" />
+    <Compile Include="Areas\Api\Controllers\TeacherController.cs" />
     <Compile Include="Areas\Api\Controllers\UserController.cs" />
     <Compile Include="Areas\Api\Models\User.cs" />
     <Compile Include="Controllers\AdminController.cs" />
@@ -264,6 +266,9 @@
       <DependentUpon>StudyOnline.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\SystemDatabaseEntities.cs" />
+    <Compile Include="Models\Teacher.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\UploadFile.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
@@ -998,6 +1003,8 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Api\Views\Shared\" />
+    <Folder Include="Areas\Api\Views\Student\" />
+    <Folder Include="Areas\Api\Views\Teacher\" />
     <Folder Include="Areas\Api\Views\User\" />
   </ItemGroup>
   <ItemGroup>

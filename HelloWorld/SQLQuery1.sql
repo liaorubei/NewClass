@@ -1,4 +1,4 @@
-﻿
+﻿use voc
 
 --alter table Level add Sort int,Show int;
 --alter table Level add ShowBrowser int; --20151009添加是否在浏览器端显示的字段
@@ -23,7 +23,7 @@ SELECT * FROM Document order by AddDate desc
 select * from Folder
 --alter table [User] add [NickName] nvarchar(256)
 select * from [user]
---select * from customer
+--select * from teacher
 
 
 --创建用户表
@@ -57,7 +57,7 @@ CREATE TABLE [Teacher]
     [IsOnline]         INT              ,		  --是否在线	
 	[IsAvailable]      INT              ,         --当前是否可以连接
 	[LastRefresh]      bigint         ,     --上次刷新在线状态的时间DateTime.Now.Ticks
-	[LastStopTime]     bigint         ,     --上次连接结束的时间
+	[EnqueueTime]     bigint          ,     --上次入队的时间
 	CONSTRAINT [PK_Teacher] PRIMARY KEY (AccId),
 	CONSTRAINT [FK_Teacher_Customer] FOREIGN KEY ([AccId]) REFERENCES [Customer] ([AccId])
 );

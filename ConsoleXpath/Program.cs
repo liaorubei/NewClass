@@ -39,7 +39,6 @@ namespace ConsoleXpath
         //HttpWebRequest
         static void Main(string[] args)
         {
-            SelectMethod();
             Console.ReadLine();
         }
 

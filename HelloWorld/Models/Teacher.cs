@@ -12,20 +12,15 @@ namespace StudyOnline.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Customer
+    public partial class Teacher
     {
         public string AccId { get; set; }
-        public string Account { get; set; }
-        public string Password { get; set; }
-        public string NickName { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
-        public string Icon { get; set; }
-        public Nullable<int> Gender { get; set; }
-        public Nullable<System.DateTime> Birthday { get; set; }
+        public int Category { get; set; }
         public Nullable<int> IsOnline { get; set; }
-        public Nullable<System.DateTime> CreateDate { get; set; }
+        public Nullable<int> IsAvailable { get; set; }
+        public Nullable<long> LastRefresh { get; set; }
+        public Nullable<long> EnqueueTime { get; set; }
     
-        public virtual Teacher Teacher { get; set; }
+        public virtual Customer Customer { get; set; }
     }
 }

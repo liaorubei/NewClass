@@ -4,6 +4,7 @@ using StudyOnline.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -136,14 +137,37 @@ namespace StudyOnline.Areas.Api.Controllers
             }
         }
 
+        [HttpPost]
         public ActionResult Refresh(String accid)
         {
-
             Int64 now = DateTime.Now.Ticks;
 
+            Teacher teacher = entities.Teacher.Find(accid);
+            teacher.LastRefresh = now;
+            entities.SaveChanges();
 
-            return Json("");
+            long refresh = now - 3000000000L;//5分钟轮循时间
+            int count = entities.Teacher.Where(o => o.IsOnline == 1 && o.IsAvailable == 1 && o.EnqueueTime < teacher.EnqueueTime && o.LastRefresh > refresh).Count();
+            return Json(new { code = 200, rank = count });
         }
+
+        [HttpPost]
+        public ActionResult Enqueue(String accid)
+        {
+            Int64 now = DateTime.Now.Ticks;
+
+            Teacher teacher = entities.Teacher.Find(accid);
+            teacher.IsOnline = 1;
+            teacher.IsAvailable = 1;
+            teacher.LastRefresh = now;
+            teacher.EnqueueTime = now;
+            entities.SaveChanges();
+
+            long refresh = now - 3000000000L;//5分钟轮循时间
+            Int32 rank = entities.Teacher.Where(o => o.IsOnline == 1 && o.IsAvailable == 1 && o.EnqueueTime < now && (o.LastRefresh > refresh)).Count();
+            return Json(new { code = 200, rank = rank });
+        }
+
 
 
 
