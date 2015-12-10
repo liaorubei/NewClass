@@ -12,17 +12,19 @@ namespace StudyOnline.Areas.Api.Controllers
         private StudyOnlineEntities entites = new StudyOnlineEntities();
         // 请求老师
         [HttpPost]
-        public ActionResult Index(String accid)
+        public ActionResult Call(String accid)
         {
             Session["teachers"] = new List<Customer>();
             Session["students"] = new List<Customer>();
 
             Int64 now = DateTime.Now.Ticks - 3000000000L;
-            Teacher teacher = entites.Teacher.OrderBy(o => o.EnqueueTime).FirstOrDefault(o => o.IsOnline == 1 && o.IsAvailable == 1 && o.LastRefresh > now);
+            Teacher teacher = entites.Teacher.OrderBy(o => o.EnqueueTime).FirstOrDefault(o => o.IsOnline == 1 && o.IsAvailable == 1);// && o.LastRefresh > now);
             if (teacher == null)
             {
                 return Json(new { code = 2001, desc = "暂时没有老师" });
             }
+            teacher.IsAvailable = 0;
+            entites.SaveChanges();
             return Json(new { code = 200, accid = teacher.AccId, name = teacher.Customer.NickName });
         }
 

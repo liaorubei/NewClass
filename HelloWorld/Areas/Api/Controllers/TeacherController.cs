@@ -38,7 +38,7 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult Enqueue(String accid)
         {
-         
+
 
             Int64 now = DateTime.Now.Ticks;
 
@@ -51,7 +51,7 @@ namespace StudyOnline.Areas.Api.Controllers
 
             long refresh = now - 3000000000L;//5分钟轮循时间
             Int32 rank = entities.Teacher.Where(o => o.IsOnline == 1 && o.IsAvailable == 1 && o.EnqueueTime < now && (o.LastRefresh > refresh)).Count();
-            return Json(new { code = 200, rank = rank });
+            return Json(new { code = 200, rank = rank + 1 });
         }
         public ActionResult Index()
         {

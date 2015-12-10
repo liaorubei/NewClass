@@ -51,7 +51,7 @@
                             {
                                 <li value="@(item.Key.TotalMilliseconds/1000)">
                                     <p class="cn">@(item.Value.IndexOf('<') > 0 ? item.Value.Substring(0, item.Value.IndexOf('<')) : item.Value)</p>
-                                    <p class="en" style="padding-bottom:10px;display:none;">@(regex.Match(item.Value).Value.Replace("<", "").Replace(">", ""))</p>
+                                    <p class="en" style="padding-bottom:1em;display:none;">@(regex.Match(item.Value).Value.Replace("<", "").Replace(">", ""))</p>
                                 </li>
                             }
                         </ul>
