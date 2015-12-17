@@ -219,6 +219,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\Api\ApiAreaRegistration.cs" />
+    <Compile Include="Areas\Api\Controllers\GroupController.cs" />
     <Compile Include="Areas\Api\Controllers\StudentController.cs" />
     <Compile Include="Areas\Api\Controllers\TeacherController.cs" />
     <Compile Include="Areas\Api\Controllers\UserController.cs" />
@@ -243,6 +244,9 @@
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Folder.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Group.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Level.cs">
@@ -1002,6 +1006,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Api\Views\Group\" />
     <Folder Include="Areas\Api\Views\Shared\" />
     <Folder Include="Areas\Api\Views\Student\" />
     <Folder Include="Areas\Api\Views\Teacher\" />

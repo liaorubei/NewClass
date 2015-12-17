@@ -57,6 +57,18 @@
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="LevelId" Type="int" />
         </EntityType>
+        <EntityType Name="Group">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="Host" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="64" />
+          <Property Name="Time" Type="datetime" />
+          <Property Name="Theme" Type="nvarchar" MaxLength="1024" />
+          <Property Name="Notice" Type="nvarchar" MaxLength="1024" />
+          <Property Name="CreateDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="Level">
           <Key>
             <PropertyRef Name="Id" />
@@ -153,6 +165,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Group_Customer">
+          <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+          <End Role="Group" Type="Self.Group" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="AccId" />
+            </Principal>
+            <Dependent Role="Group">
+              <PropertyRef Name="Host" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Teacher_Customer">
           <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
           <End Role="Teacher" Type="Self.Teacher" Multiplicity="0..1" />
@@ -170,6 +194,7 @@
           <EntitySet Name="Customer" EntityType="Self.Customer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Document" EntityType="Self.Document" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Folder" EntityType="Self.Folder" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Group" EntityType="Self.Group" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Level" EntityType="Self.Level" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Teacher" EntityType="Self.Teacher" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UploadFile" EntityType="Self.UploadFile" Schema="dbo" store:Type="Tables" />
@@ -189,6 +214,10 @@
           <AssociationSet Name="FK_Folder_Level" Association="Self.FK_Folder_Level">
             <End Role="Level" EntitySet="Level" />
             <End Role="Folder" EntitySet="Folder" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Group_Customer" Association="Self.FK_Group_Customer">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Group" EntitySet="Group" />
           </AssociationSet>
           <AssociationSet Name="FK_Teacher_Customer" Association="Self.FK_Teacher_Customer">
             <End Role="Customer" EntitySet="Customer" />
@@ -249,6 +278,11 @@
           <AssociationSet Name="FK_Teacher_Customer" Association="StudyOnlineModel.FK_Teacher_Customer">
             <End Role="Customer" EntitySet="Customer" />
             <End Role="Teacher" EntitySet="Teacher" />
+          </AssociationSet>
+          <EntitySet Name="Group" EntityType="StudyOnlineModel.Group" />
+          <AssociationSet Name="FK_Group_Customer" Association="StudyOnlineModel.FK_Group_Customer">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Group" EntitySet="Group" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Document">
@@ -372,6 +406,7 @@
           <Property Name="IsOnline" Type="Int32" />
           <Property Name="CreateDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Teacher" Relationship="StudyOnlineModel.FK_Teacher_Customer" FromRole="Customer" ToRole="Teacher" />
+          <NavigationProperty Name="Group" Relationship="StudyOnlineModel.FK_Group_Customer" FromRole="Customer" ToRole="Group" />
         </EntityType>
         <EntityType Name="Teacher">
           <Key>
@@ -394,6 +429,31 @@
             </Principal>
             <Dependent Role="Teacher">
               <PropertyRef Name="AccId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Group">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Host" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="Time" Type="DateTime" Precision="3" />
+          <Property Name="Theme" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="Notice" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Customer" Relationship="StudyOnlineModel.FK_Group_Customer" FromRole="Group" ToRole="Customer" />
+        </EntityType>
+        <Association Name="FK_Group_Customer">
+          <End Type="StudyOnlineModel.Customer" Role="Customer" Multiplicity="1" />
+          <End Type="StudyOnlineModel.Group" Role="Group" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="AccId" />
+            </Principal>
+            <Dependent Role="Group">
+              <PropertyRef Name="Host" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -509,6 +569,19 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Group">
+            <EntityTypeMapping TypeName="StudyOnlineModel.Group">
+              <MappingFragment StoreEntitySet="Group">
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Notice" ColumnName="Notice" />
+                <ScalarProperty Name="Theme" ColumnName="Theme" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Host" ColumnName="Host" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
@@ -544,6 +617,8 @@
         <EntityTypeShape EntityType="StudyOnlineModel.Customer" Width="1.5" PointX="7.375" PointY="0.75" />
         <EntityTypeShape EntityType="StudyOnlineModel.Teacher" Width="1.5" PointX="9.625" PointY="1.25" />
         <AssociationConnector Association="StudyOnlineModel.FK_Teacher_Customer" />
+        <EntityTypeShape EntityType="StudyOnlineModel.Group" Width="1.5" PointX="9.625" PointY="9.25" />
+        <AssociationConnector Association="StudyOnlineModel.FK_Group_Customer" />
       </Diagram>
     </Diagrams>
   </Designer>

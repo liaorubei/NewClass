@@ -41,7 +41,7 @@ namespace StudyOnline.Controllers
             String keyword = form["keyword"];
             if (!String.IsNullOrEmpty(keyword))
             {
-                predicateKeyWord = o => o.Title.Contains(keyword) || o.TitleTwo.Contains(keyword) || o.Contents.Contains(keyword);
+                predicateKeyWord = o => o.Title.Contains(keyword) || o.TitleTwo.Contains(keyword);
             }
 
             int levelId = ConvertUtil.ToInt32(form["levelId"], -1);

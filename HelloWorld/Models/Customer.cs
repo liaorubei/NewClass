@@ -14,6 +14,11 @@ namespace StudyOnline.Models
     
     public partial class Customer
     {
+        public Customer()
+        {
+            this.Group = new HashSet<Group>();
+        }
+    
         public string AccId { get; set; }
         public string Account { get; set; }
         public string Password { get; set; }
@@ -27,5 +32,6 @@ namespace StudyOnline.Models
         public Nullable<System.DateTime> CreateDate { get; set; }
     
         public virtual Teacher Teacher { get; set; }
+        public virtual ICollection<Group> Group { get; set; }
     }
 }

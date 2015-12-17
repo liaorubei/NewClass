@@ -63,5 +63,19 @@ CREATE TABLE [Teacher]
 );
 GO
 
+--创建群组,群聊
+CREATE TABLE [Group]
+(
+[Id]           NVARCHAR (32)    NOT NULL,
+[Host]         NVARCHAR (32)    NOT NULL,
+[Name]         NVARCHAR (64)    ,
+[Time]         DATETIME		    ,
+[Theme]        NVARCHAR (1024)  ,
+[Notice]       NVARCHAR (1024)  ,
+[CreateDate]   DATETIME         ,
+constraint [PK_Group] primary key (Id),
+constraint [FK_Group_Customer] foreign key (Host) references [Customer] (Accid)
+)
+
 
 

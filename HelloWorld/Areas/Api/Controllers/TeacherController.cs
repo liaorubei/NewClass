@@ -38,8 +38,6 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult Enqueue(String accid)
         {
-
-
             Int64 now = DateTime.Now.Ticks;
 
             Teacher teacher = entities.Teacher.Find(accid);
@@ -53,81 +51,18 @@ namespace StudyOnline.Areas.Api.Controllers
             Int32 rank = entities.Teacher.Where(o => o.IsOnline == 1 && o.IsAvailable == 1 && o.EnqueueTime < now && (o.LastRefresh > refresh)).Count();
             return Json(new { code = 200, rank = rank + 1 });
         }
-        public ActionResult Index()
-        {
-            return View();
-        }
 
-        // GET: Api/Teacher/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: Api/Teacher/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Api/Teacher/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Accept(String accid, String target)
         {
-            try
-            {
-                // TODO: Add insert logic here
+            Teacher teacher = entities.Teacher.Find(accid);
+            teacher.IsAvailable = 0;
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            //添加对话记录
+            entities.SaveChanges();
+            return Json(new { code = 200 });
         }
 
-        // GET: Api/Teacher/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Api/Teacher/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Api/Teacher/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Api/Teacher/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
+      
     }
 }

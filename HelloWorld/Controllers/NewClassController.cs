@@ -16,9 +16,14 @@ namespace StudyOnline.Controllers
     {
         private StudyOnlineEntities db = new StudyOnlineEntities();
 
-        public ActionResult Index()
+        [HttpPost]
+        public ActionResult Index(bool? folder)
         {
-            return Content("dsfsadfsdf");
+            bool b = folder ?? false;
+            List<Level> levels = db.Level.ToList();
+            Level l = levels.OrderBy(o => o.Sort).FirstOrDefault();
+            var temp = new { code = 200, desc = "", info = levels.Select(o => new { o.Id, Name = o.LevelName, o.Sort, o.Show, Folders = ((b && o.Id == l.Id) ? o.Folder.Select(f => new { f.Id, f.Name, f.Document.Count }) : null) }) };
+            return Json(temp);
         }
 
         public ActionResult DocsByLevel(int levelId)
