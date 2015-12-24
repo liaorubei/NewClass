@@ -13,17 +13,15 @@ namespace StudyOnline.Areas.Api.Controllers
         StudyOnlineEntities entities = new StudyOnlineEntities();
 
         [HttpPost]
-        public ActionResult Select(String accid)
+        public ActionResult Select(int id)
         {
             Expression<Func<Group, bool>> predicate = o => true;
-            if (!String.IsNullOrEmpty(accid))
-            {
-                predicate = o => o.Host == accid;
-            }
+
+            predicate = o => o.Host == id;
 
             List<Group> groups = entities.Group.Where(predicate).ToList();
 
-            return Json(new { code = 200, desc = "查询成功", info = groups.Select(o => new { o.Id, o.Host, o.Name, o.Time, o.Theme }) });
+            return Json(new { code = 200, desc = "查询成功", info = groups.Select(o => new { o.Id, o.Host, o.Name, o.Time, o.Theme, o.Notice, HostName = o.NimUser.NimUserEx.Name }) });
         }
 
 

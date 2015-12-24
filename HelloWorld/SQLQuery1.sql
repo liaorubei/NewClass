@@ -1,81 +1,82 @@
-﻿use voc
-
---alter table Level add Sort int,Show int;
---alter table Level add ShowBrowser int; --20151009添加是否在浏览器端显示的字段
-
---alter table document add FolderId int
---alter table document add CONSTRAINT [FK_Document_Folder] FOREIGN KEY (FolderId) REFERENCES Folder(Id)
---ALTER TABLE Document add AuditDate datetime, AuditCase int;
---update Document set AddDate=AuditDate; 
---update document set auditcase=2;
---create table Folder(Id int primary key identity(1,1),Name nvarchar(50) not null)
---alter table Folder add LevelId int ;
---alter table folder add constraint [FK_Folder_Level] foreign key (LevelId) references Level(Id)
-
-
---update document set folderid=null where id>450;
---update Level set ShowBrowser=1
---update Document set LevelId=(select F.LevelId from Folder as F where F.Id=Document.FolderId)
-
-select * from Level
-select id,title,folderid from document where id in(492,493,494)
-SELECT * FROM Document order by AddDate desc
-select * from Folder
---alter table [User] add [NickName] nvarchar(256)
-select * from [user]
---select * from teacher
-
-
---创建用户表
-CREATE TABLE [Customer] 
+﻿--创建云信关联用户表
+CREATE TABLE [NimUser] 
 (
-    [AccId]            NVARCHAR (32)    NOT NULL,
-    [Account]          NVARCHAR (64)    NOT NULL,
-    [Password]         NVARCHAR (64)    NOT NULL,
-	[NickName]         NVARCHAR (64)    ,
-    [Phone]			   NVARCHAR (256)   ,
-	[Email]			   NVARCHAR (1024)  ,
-	[Icon]			   NVARCHAR (1024)  ,
-	[Gender]           INT              ,
-	[Birthday]         DATETIME         ,
-	[IsOnline]         INT              ,
-	[CreateDate]       DATETIME         
+	[Id]         INT IDENTITY(1,1),
+	[Accid]      NVARCHAR (32)     NOT NULL,
+	[Token]      NVARCHAR (32)     NOT NULL,
+	[Username]   NVARCHAR (128)    NOT NULL,
+	[Password]   NVARCHAR (128)    NOT NULL,
+	
+	[Category]   int,
+	[IsOnline]	 int,
+	[IsActive]	 int,
+	[IsEnable]	 int,
+	[Refresh]	 bigint,
+	[Enqueue]	 bigint,
+	[CreateDate] DATETIME,
+
+	CONSTRAINT [PK_NimUser] PRIMARY KEY ([Id])
 );
 GO
-
-CREATE UNIQUE NONCLUSTERED INDEX [AccountIndex] ON [Customer]([Account] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [Index_Accid] ON [NimUser]([Accid] ASC);
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [Index_Username] ON [NimUser]([Username] ASC);
 GO
 
-ALTER TABLE [Customer] ADD CONSTRAINT [PK_Customer] PRIMARY KEY CLUSTERED ([AccId] ASC);
+CREATE TABLE [NimUserEx] 
+(
+	[Id]     int,
+	[Name]	 NVARCHAR (64) ,
+	[Icon]	 NVARCHAR (256),
+	[Sign]	 NVARCHAR (256),
+	[Email]	 NVARCHAR (64) ,
+	[Birth]	 DATETIME      ,
+	[Mobile] NVARCHAR (32) ,
+	[Gender] INT		   ,
+	[Ex]     NVARCHAR (512),
+
+	CONSTRAINT [PK_NimUserEx]         PRIMARY KEY ([Id]),
+	CONSTRAINT [FK_NimUserEx_NimUser] FOREIGN KEY ([Id]) REFERENCES [NimUser] ([Id])
+);
 GO
 
 --创建教师表
 CREATE TABLE [Teacher] 
 (
-    [AccId]            NVARCHAR (32)    NOT NULL,
+    [Id]     int,
     [Category]         INT              NOT NULL, --教师分类,如专职,兼职的
     [IsOnline]         INT              ,		  --是否在线	
 	[IsAvailable]      INT              ,         --当前是否可以连接
-	[LastRefresh]      bigint         ,     --上次刷新在线状态的时间DateTime.Now.Ticks
-	[EnqueueTime]     bigint          ,     --上次入队的时间
-	CONSTRAINT [PK_Teacher] PRIMARY KEY (AccId),
-	CONSTRAINT [FK_Teacher_Customer] FOREIGN KEY ([AccId]) REFERENCES [Customer] ([AccId])
+	[LastRefresh]      BIGINT           ,     --上次刷新在线状态的时间DateTime.Now.Ticks
+	[EnqueueTime]      BIGINT           ,     --上次入队的时间
+
+	CONSTRAINT [PK_Teacher]         PRIMARY KEY ([Id]),
+	CONSTRAINT [FK_Teacher_NimUser] FOREIGN KEY ([Id]) REFERENCES [NimUser] ([Id])
 );
 GO
+
 
 --创建群组,群聊
 CREATE TABLE [Group]
 (
-[Id]           NVARCHAR (32)    NOT NULL,
-[Host]         NVARCHAR (32)    NOT NULL,
-[Name]         NVARCHAR (64)    ,
-[Time]         DATETIME		    ,
-[Theme]        NVARCHAR (1024)  ,
-[Notice]       NVARCHAR (1024)  ,
-[CreateDate]   DATETIME         ,
-constraint [PK_Group] primary key (Id),
-constraint [FK_Group_Customer] foreign key (Host) references [Customer] (Accid)
+	[Id]           NVARCHAR (32)    NOT NULL,
+	[Host]         int  ,
+	[Name]         NVARCHAR (64)    ,
+	[Time]         DATETIME		    ,
+	[Level]		   INT,		
+	[Theme]        NVARCHAR (1024)  ,
+	[Notice]       NVARCHAR (1024)  ,
+	[CreateDate]   DATETIME         ,
+	CONSTRAINT [PK_Group]         PRIMARY KEY (Id),
+	CONSTRAINT [FK_Group_NimUser] FOREIGN KEY (Host) REFERENCES [NimUser] ([Id])
 )
 
 
+--drop table nimuser
+--drop table nimuserex
+--drop table teacher
+--drop table [group]
+select * from NimUser order by enqueue
+select * from NimUserEx
 
+insert into nimuser(accid,token) values('bf09f7dd02e549f4a16af0cf8e9a5701');

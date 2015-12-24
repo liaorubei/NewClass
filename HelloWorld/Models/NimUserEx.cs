@@ -12,13 +12,18 @@ namespace StudyOnline.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Comment
+    public partial class NimUserEx
     {
         public int Id { get; set; }
-        public Nullable<int> DocumentId { get; set; }
-        public Nullable<double> Score { get; set; }
-        public string MainBody { get; set; }
+        public string Name { get; set; }
+        public string Icon { get; set; }
+        public string Sign { get; set; }
+        public string Email { get; set; }
+        public Nullable<System.DateTime> Birth { get; set; }
+        public string Mobile { get; set; }
+        public Nullable<int> Gender { get; set; }
+        public string Ex { get; set; }
     
-        public virtual Document Document { get; set; }
+        public virtual NimUser NimUser { get; set; }
     }
 }

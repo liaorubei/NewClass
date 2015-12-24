@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace ChineseChat.Library
 {
-    public class Answer
+    public class Answer 
     {
-        public String desc { get; set; }
         public Int32 code { get; set; }
+        public String desc { get; set; }
         public Info info { get; set; }
     }
 

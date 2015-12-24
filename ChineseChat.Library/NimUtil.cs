@@ -11,19 +11,18 @@ namespace ChineseChat.Library
         private readonly static string UserCreatePath = "https://api.netease.im/nimserver/user/create.action";
         private static readonly string UserUpdatePath = "https://api.netease.im/nimserver/user/update.action";
 
-        public static Answer UserCreate(User user)
+        public static String UserCreate(String accid, String token, String props, String name)
         {
             NameValueCollection headers = GenerateHeaders();
+            NameValueCollection parameters = GenerateParameters(accid, token, props, name);
+            return HttpUtil.Post(NimUtil.UserCreatePath, headers, parameters);
+        }
 
-            NameValueCollection parameters = new NameValueCollection();
-            parameters.Add("accid", user.Accid);
-            parameters.Add("name", user.Name);
-            parameters.Add("icon", user.Icon);
-            parameters.Add("token", user.Token);//云信Token为固定算出来的值,不与帐号的密码有关联,免得业务变复杂
-
-            String json = HttpUtil.Post(NimUtil.UserCreatePath, headers, parameters);
-            Console.WriteLine(json);
-            return JsonConvert.DeserializeObject<Answer>(json);
+        public static String UserUpdate(String accid, String token, String props, String name)
+        {
+            NameValueCollection headers = GenerateHeaders(); ;
+            NameValueCollection parameters = GenerateParameters(accid, token, props, name);
+            return HttpUtil.Post(NimUtil.UserUpdatePath, headers, parameters);
         }
 
         private static NameValueCollection GenerateHeaders()
@@ -42,21 +41,27 @@ namespace ChineseChat.Library
             return headers;
         }
 
-        public static string UserUpdate(User user)
+        private static NameValueCollection GenerateParameters(string accid, string token, string props, string name)
         {
-            NameValueCollection headers = GenerateHeaders(); ;
-            NameValueCollection parameters = new NameValueCollection();
-
-            parameters.Add("accid", user.Accid);
-            parameters.Add("name", user.Name);
-            parameters.Add("props", user.Props);
-            parameters.Add("token", user.Token);
-
-           
-
-            return HttpUtil.Post(NimUtil.UserUpdatePath, headers, parameters);
+            NameValueCollection n = new NameValueCollection();
+            if (!String.IsNullOrEmpty(accid))
+            {
+                n.Add("accid", accid);
+            }
+            if (!String.IsNullOrEmpty(token))
+            {
+                n.Add("token", token);
+            }
+            if (!String.IsNullOrEmpty(props))
+            {
+                n.Add("props", props);
+            }
+            if (!String.IsNullOrEmpty(name))
+            {
+                n.Add("name", name);
+            }
+            return n;
         }
-
 
     }
 }

@@ -222,22 +222,17 @@
     <Compile Include="Areas\Api\Controllers\GroupController.cs" />
     <Compile Include="Areas\Api\Controllers\StudentController.cs" />
     <Compile Include="Areas\Api\Controllers\TeacherController.cs" />
-    <Compile Include="Areas\Api\Controllers\UserController.cs" />
+    <Compile Include="Areas\Api\Controllers\NimUserController.cs" />
     <Compile Include="Areas\Api\Models\User.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NewClassController.cs" />
-    <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Filters\MyAuthorizationFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AuditCase.cs" />
     <Compile Include="Models\Comment.cs">
-      <DependentUpon>StudyOnline.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Customer.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Document.cs">
@@ -252,8 +247,14 @@
     <Compile Include="Models\Level.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\Menu.cs" />
-    <Compile Include="Models\Role.cs" />
+    <Compile Include="Models\NimUser.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\NimUserEx.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\StudyOnline.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -264,14 +265,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\StudyOnline1.Designer.cs">
+    <Compile Include="Models\StudyOnline.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>StudyOnline.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\SystemDatabaseEntities.cs" />
-    <Compile Include="Models\Teacher.cs">
-      <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\UploadFile.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
@@ -570,18 +567,6 @@
     <Content Include="Images\file.png" />
     <Content Include="Images\folder.png" />
     <Content Include="Images\logo.png" />
-    <Content Include="Scripts\dwz\dwz.min.js" />
-    <Content Include="Scripts\jquery-1.8.3.min.js" />
-    <Content Include="Scripts\jquery-1.9.1.min.js" />
-    <Content Include="Scripts\jquery.treegrid.js" />
-    <Content Include="Scripts\jquery.treegrid.min.js" />
-    <Content Include="SQLQuery1.sql" />
-    <Content Include="system.sql" />
-    <Content Include="有道翻译API申请.png" />
-    <EntityDeploy Include="Models\StudyOnline.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>StudyOnline1.Designer.cs</LastGenOutput>
-    </EntityDeploy>
     <Content Include="Models\StudyOnline.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>StudyOnline.edmx</DependentUpon>
@@ -592,7 +577,22 @@
       <DependentUpon>StudyOnline.edmx</DependentUpon>
       <LastGenOutput>StudyOnline.cs</LastGenOutput>
     </Content>
+    <Content Include="Scripts\dwz\dwz.min.js" />
+    <Content Include="Scripts\jquery-1.8.3.min.js" />
+    <Content Include="Scripts\jquery-1.9.1.min.js" />
+    <Content Include="Scripts\jquery.treegrid.js" />
+    <Content Include="Scripts\jquery.treegrid.min.js" />
+    <Content Include="SQLQuery1.sql" />
+    <Content Include="system.sql" />
+    <Content Include="有道翻译API申请.png" />
     <Content Include="Areas\Api\Views\web.config" />
+    <EntityDeploy Include="Models\StudyOnline.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>StudyOnline.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\StudyOnline.edmx.diagram">
+      <DependentUpon>StudyOnline.edmx</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\voc2015 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\voc2015 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />

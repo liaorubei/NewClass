@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
+
+
 using System.Text.RegularExpressions;
 using Kfstorm.LrcParser;
 using NAudio.Wave;
@@ -16,7 +18,9 @@ using System.Net;
 using System.Security.Cryptography;
 using ChineseChat.Library;
 using System.Collections.Specialized;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Web;
 
 namespace ConsoleXpath
 {
@@ -39,26 +43,31 @@ namespace ConsoleXpath
         //HttpWebRequest
         static void Main(string[] args)
         {
+
+            testusercreate();
+           // UserUpdate();
+           // SelectMethod();
             Console.ReadLine();
         }
 
-        private static string UserUpdate()
+        private static void UserUpdate()
         {
             User u = new User();
-            u.Accid = "c6396b2d943543aebb0aa5240705be98";
+            u.Accid = "9a4826e0310e4b78b88daff8e104f516";
             u.Name = "c6396b2d943543aebb0aa5240705be98";
-            u.Props = "";
-            u.Token = EncryptionUtil.Md5Encode(u.Accid + NimUtil.AppKey);
-            return NimUtil.UserUpdate(u);
+
+
+            String json = NimUtil.UserUpdate(u.Accid, null, null, HttpUtility.UrlEncode("另一个昵称1"));
+            Console.WriteLine(json);
         }
 
         private static void testusercreate()
         {
-            User user = new User();
-            user.Accid = "8d99243533e246f481244d99a9068771"; ;// Guid.NewGuid().ToString().Replace("-", "");
-
-            Answer a = NimUtil.UserCreate(user);
-            Console.WriteLine(a.desc);
+            String accid = Guid.NewGuid().ToString().Replace("-", "");
+            Console.WriteLine(accid.Length);
+            String json = NimUtil.UserCreate(accid, null, null, HttpUtility.UrlEncode("高级昵称"));
+            Answer o = JsonConvert.DeserializeObject<Answer>(json);
+            Console.WriteLine(json);
         }
 
         private static void CreateMethod(string appKey, string nonce, string curTime, string checkSum)
@@ -90,7 +99,7 @@ namespace ConsoleXpath
             headers.Add("CheckSum", checkSum);
 
             NameValueCollection parameters = new NameValueCollection();
-            parameters.Add("accids", "['d5657d6325fe458b9a1f0218a29bc3ca','c6396b2d943543aebb0aa5240705be98','bf09f7dd02e549f4a16af0cf8e9a5701','ad9393a90f2945fa9c403b3f4e163dbd','8d99243533e246f481244d99a9068771']");
+            parameters.Add("accids", "['d5657d6325fe458b9a1f0218a29bc3ca','9a4826e0310e4b78b88daff8e104f516']");
             String json = HttpUtil.Post("https://api.netease.im/nimserver/user/getUinfos.action", headers, parameters);
 
             Console.WriteLine(json);

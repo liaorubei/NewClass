@@ -12,20 +12,29 @@ namespace StudyOnline.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Folder
+    public partial class NimUser
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Folder()
+        public NimUser()
         {
-            this.Document = new HashSet<Document>();
+            this.Group = new HashSet<Group>();
         }
     
         public int Id { get; set; }
-        public string Name { get; set; }
-        public Nullable<int> LevelId { get; set; }
+        public string Accid { get; set; }
+        public string Token { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public Nullable<System.DateTime> CreateDate { get; set; }
+        public Nullable<int> Category { get; set; }
+        public Nullable<int> IsOnline { get; set; }
+        public Nullable<int> IsActive { get; set; }
+        public Nullable<int> IsEnable { get; set; }
+        public Nullable<long> Refresh { get; set; }
+        public Nullable<long> Enqueue { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Document> Document { get; set; }
-        public virtual Level Level { get; set; }
+        public virtual ICollection<Group> Group { get; set; }
+        public virtual NimUserEx NimUserEx { get; set; }
     }
 }

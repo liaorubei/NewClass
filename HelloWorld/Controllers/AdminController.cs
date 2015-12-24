@@ -345,17 +345,17 @@ namespace StudyOnline.Controllers
 
 
         #region 客户管理
-        public ActionResult CustomerIndex()
+        public ActionResult NimUserIndex()
         {
-            PagedList<Customer> customers = entities.Customer.OrderByDescending(o => o.CreateDate).ToPagedList(1, 25);
-            ViewBag.Customers = customers;
+            PagedList<NimUser> NimUsers = entities.NimUser.OrderByDescending(o => o.CreateDate).ToPagedList(1, 25);
+            ViewBag.NimUsers = NimUsers;
             return View();
         }
 
-        public ActionResult CustomerCreate()
+        public ActionResult NimUserCreate()
         {
-            PagedList<Customer> customers = entities.Customer.OrderByDescending(o => o.CreateDate).ToPagedList(1, 25);
-            ViewBag.Customers = customers;
+            PagedList<NimUser> NimUsers = entities.NimUser.OrderByDescending(o => o.CreateDate).ToPagedList(1, 25);
+            ViewBag.NimUsers = NimUsers;
             return View();
         }
 
@@ -363,36 +363,30 @@ namespace StudyOnline.Controllers
         /// 修改用户,只修改基本信息
         /// </summary>
         /// <returns></returns>
-        public ActionResult CustomerUpdate(String accid)
+        public ActionResult NimUserUpdate(String accid)
         {
-            Customer customer = entities.Customer.Find(accid);
-            ViewData.Model = customer;
+            NimUser NimUser = entities.NimUser.Find(accid);
+            ViewData.Model = NimUser;
             return View();
         }
 
         [HttpPost]
-        public ActionResult CustomerUpdate(Customer customer)
+        public ActionResult NimUserUpdate(NimUser NimUser,String nickname)
         {
-            Customer model = entities.Customer.Find(customer.AccId);
-            model.Account = customer.Account;
-            model.Password = ChineseChat.Library.EncryptionUtil.Md5Encode(customer.Password);//密码加密
-            model.NickName = customer.NickName;
-            model.Phone = customer.Phone;
-            model.Email = customer.Email;
+            NimUser model = entities.NimUser.Find(NimUser.Id);
 
-            ChineseChat.Library.User user = new ChineseChat.Library.User();
-            user.Accid = model.AccId;
-            user.Name = model.NickName;
-            user.Token = ChineseChat.Library.EncryptionUtil.Md5Encode(model.AccId + ChineseChat.Library.NimUtil.AppKey);//更换token
+            model.Username = NimUser.Username;
+            model.Password = ChineseChat.Library.EncryptionUtil.Md5Encode(NimUser.Password);//密码加密
+     
 
-            String json = ChineseChat.Library.NimUtil.UserUpdate(user);
+            String json = ChineseChat.Library.NimUtil.UserUpdate(NimUser.Accid,null,null,nickname);
             JObject rss = JObject.Parse(json);
             if ("200" == rss.GetValue("code").ToString())
             {
                 entities.SaveChanges();
             }
 
-            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminCustomerIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
+            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminNimUserIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
             return Json(data);
         }
 
