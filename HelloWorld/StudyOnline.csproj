@@ -219,10 +219,12 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\Api\ApiAreaRegistration.cs" />
+    <Compile Include="Areas\Api\Controllers\CallLogController.cs" />
     <Compile Include="Areas\Api\Controllers\GroupController.cs" />
     <Compile Include="Areas\Api\Controllers\StudentController.cs" />
     <Compile Include="Areas\Api\Controllers\TeacherController.cs" />
     <Compile Include="Areas\Api\Controllers\NimUserController.cs" />
+    <Compile Include="Areas\Api\Controllers\ThemeController.cs" />
     <Compile Include="Areas\Api\Models\User.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -232,6 +234,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AuditCase.cs" />
+    <Compile Include="Models\CallLog.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Comment.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
@@ -255,6 +260,9 @@
     <Compile Include="Models\NimUserEx.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Question.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\StudyOnline.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -269,6 +277,9 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>StudyOnline.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Theme.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\UploadFile.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
@@ -584,6 +595,7 @@
     <Content Include="Scripts\jquery.treegrid.min.js" />
     <Content Include="SQLQuery1.sql" />
     <Content Include="system.sql" />
+    <Content Include="Views\Shared\_index.html" />
     <Content Include="有道翻译API申请.png" />
     <Content Include="Areas\Api\Views\web.config" />
     <EntityDeploy Include="Models\StudyOnline.edmx">
@@ -1001,15 +1013,19 @@
     <Content Include="Views\Admin\UserCreate.cshtml" />
     <Content Include="Views\Admin\UserIndex.cshtml" />
     <Content Include="Views\Shared\_create.cshtml" />
-    <Content Include="Views\Admin\CustomerIndex.cshtml" />
+    <Content Include="Views\Admin\NimUserIndex.cshtml" />
     <Content Include="Views\Admin\CustomerUpdate.cshtml" />
+    <Content Include="Views\Admin\ThemeIndex.cshtml" />
+    <Content Include="Views\Admin\ThemeCreate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Api\Views\CallLog\" />
     <Folder Include="Areas\Api\Views\Group\" />
     <Folder Include="Areas\Api\Views\Shared\" />
     <Folder Include="Areas\Api\Views\Student\" />
     <Folder Include="Areas\Api\Views\Teacher\" />
+    <Folder Include="Areas\Api\Views\Theme\" />
     <Folder Include="Areas\Api\Views\User\" />
   </ItemGroup>
   <ItemGroup>

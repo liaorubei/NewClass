@@ -18,6 +18,8 @@ namespace StudyOnline.Models
         public NimUser()
         {
             this.Group = new HashSet<Group>();
+            this.CallLog = new HashSet<CallLog>();
+            this.CallLog1 = new HashSet<CallLog>();
         }
     
         public int Id { get; set; }
@@ -36,5 +38,9 @@ namespace StudyOnline.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Group> Group { get; set; }
         public virtual NimUserEx NimUserEx { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CallLog> CallLog { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CallLog> CallLog1 { get; set; }
     }
 }

@@ -34,5 +34,8 @@ namespace StudyOnline.Models
         public virtual DbSet<NimUserEx> NimUserEx { get; set; }
         public virtual DbSet<UploadFile> UploadFile { get; set; }
         public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<Question> Question { get; set; }
+        public virtual DbSet<Theme> Theme { get; set; }
+        public virtual DbSet<CallLog> CallLog { get; set; }
     }
 }

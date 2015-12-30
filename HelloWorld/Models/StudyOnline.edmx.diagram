@@ -20,6 +20,12 @@
         <AssociationConnector Association="StudyOnline.FK_Folder_Level" ManuallyRouted="false" />
         <AssociationConnector Association="StudyOnline.FK_Group_NimUser" ManuallyRouted="false" />
         <AssociationConnector Association="StudyOnline.FK_NimUserEx_NimUser" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="StudyOnline.Question" Width="1.5" PointX="3" PointY="9.875" />
+        <EntityTypeShape EntityType="StudyOnline.Theme" Width="1.5" PointX="0.75" PointY="10" />
+        <AssociationConnector Association="StudyOnline.FK_Question_Theme" />
+        <EntityTypeShape EntityType="StudyOnline.CallLog" Width="1.5" PointX="3" PointY="12.5" />
+        <AssociationConnector Association="StudyOnline.FK_CallLog_NimUser_Source" />
+        <AssociationConnector Association="StudyOnline.FK_CallLog_NimUser_Target" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

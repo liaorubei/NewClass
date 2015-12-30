@@ -5,6 +5,16 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="StudyOnline.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CallLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="Source" Type="int" Nullable="false" />
+          <Property Name="Target" Type="int" Nullable="false" />
+          <Property Name="Start" Type="datetime" />
+          <Property Name="Finish" Type="datetime" />
+        </EntityType>
         <EntityType Name="Comment">
           <Key>
             <PropertyRef Name="Id" />
@@ -95,6 +105,21 @@
           <Property Name="Gender" Type="int" />
           <Property Name="Ex" Type="nvarchar" MaxLength="512" />
         </EntityType>
+        <EntityType Name="Question">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="ThemeId" Type="int" />
+        </EntityType>
+        <EntityType Name="Theme">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
         <EntityType Name="UploadFile">
           <Key>
             <PropertyRef Name="Id" />
@@ -120,6 +145,30 @@
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
           <Property Name="NickName" Type="nvarchar" MaxLength="256" />
         </EntityType>
+        <Association Name="FK_CallLog_NimUser_Source">
+          <End Role="NimUser" Type="Self.NimUser" Multiplicity="1" />
+          <End Role="CallLog" Type="Self.CallLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CallLog">
+              <PropertyRef Name="Source" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CallLog_NimUser_Target">
+          <End Role="NimUser" Type="Self.NimUser" Multiplicity="1" />
+          <End Role="CallLog" Type="Self.CallLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CallLog">
+              <PropertyRef Name="Target" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Comment_Document">
           <End Role="Document" Type="Self.Document" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -194,7 +243,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Question_Theme">
+          <End Role="Theme" Type="Self.Theme" Multiplicity="0..1" />
+          <End Role="Question" Type="Self.Question" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Theme">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Question">
+              <PropertyRef Name="ThemeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="StudyOnlineStoreContainer">
+          <EntitySet Name="CallLog" EntityType="Self.CallLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Comment" EntityType="Self.Comment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Document" EntityType="Self.Document" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Folder" EntityType="Self.Folder" Schema="dbo" store:Type="Tables" />
@@ -202,8 +264,18 @@
           <EntitySet Name="Level" EntityType="Self.Level" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NimUser" EntityType="Self.NimUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NimUserEx" EntityType="Self.NimUserEx" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Question" EntityType="Self.Question" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Theme" EntityType="Self.Theme" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UploadFile" EntityType="Self.UploadFile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_CallLog_NimUser_Source" Association="Self.FK_CallLog_NimUser_Source">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="CallLog" EntitySet="CallLog" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CallLog_NimUser_Target" Association="Self.FK_CallLog_NimUser_Target">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="CallLog" EntitySet="CallLog" />
+          </AssociationSet>
           <AssociationSet Name="FK_Comment_Document" Association="Self.FK_Comment_Document">
             <End Role="Document" EntitySet="Document" />
             <End Role="Comment" EntitySet="Comment" />
@@ -227,6 +299,10 @@
           <AssociationSet Name="FK_NimUserEx_NimUser" Association="Self.FK_NimUserEx_NimUser">
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="NimUserEx" EntitySet="NimUserEx" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Question_Theme" Association="Self.FK_Question_Theme">
+            <End Role="Theme" EntitySet="Theme" />
+            <End Role="Question" EntitySet="Question" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -319,6 +395,8 @@
           <Property Name="IsEnable" Type="Int32" />
           <Property Name="Refresh" Type="Int64" />
           <Property Name="Enqueue" Type="Int64" />
+          <NavigationProperty Name="CallLog" Relationship="StudyOnline.FK_CallLog_NimUser_Source" FromRole="NimUser" ToRole="CallLog" />
+          <NavigationProperty Name="CallLog1" Relationship="StudyOnline.FK_CallLog_NimUser_Target" FromRole="NimUser" ToRole="CallLog" />
         </EntityType>
         <EntityType Name="NimUserEx">
           <Key>
@@ -468,7 +546,87 @@
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="NimUserEx" EntitySet="NimUserEx" />
           </AssociationSet>
+          <EntitySet Name="Question" EntityType="StudyOnline.Question" />
+          <EntitySet Name="Theme" EntityType="StudyOnline.Theme" />
+          <AssociationSet Name="FK_Question_Theme" Association="StudyOnline.FK_Question_Theme">
+            <End Role="Theme" EntitySet="Theme" />
+            <End Role="Question" EntitySet="Question" />
+          </AssociationSet>
+          <EntitySet Name="CallLog" EntityType="StudyOnline.CallLog" />
+          <AssociationSet Name="FK_CallLog_NimUser_Source" Association="StudyOnline.FK_CallLog_NimUser_Source">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="CallLog" EntitySet="CallLog" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CallLog_NimUser_Target" Association="StudyOnline.FK_CallLog_NimUser_Target">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="CallLog" EntitySet="CallLog" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Question">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ThemeId" Type="Int32" />
+          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_Question_Theme" FromRole="Question" ToRole="Theme" />
+        </EntityType>
+        <EntityType Name="Theme">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Question" Relationship="StudyOnline.FK_Question_Theme" FromRole="Theme" ToRole="Question" />
+        </EntityType>
+        <Association Name="FK_Question_Theme">
+          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="0..1" />
+          <End Type="StudyOnline.Question" Role="Question" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Theme">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Question">
+              <PropertyRef Name="ThemeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="CallLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Source" Type="Int32" Nullable="false" />
+          <Property Name="Target" Type="Int32" Nullable="false" />
+          <Property Name="Start" Type="DateTime" Precision="3" />
+          <Property Name="Finish" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="NimUser" Relationship="StudyOnline.FK_CallLog_NimUser_Source" FromRole="CallLog" ToRole="NimUser" />
+          <NavigationProperty Name="NimUser1" Relationship="StudyOnline.FK_CallLog_NimUser_Target" FromRole="CallLog" ToRole="NimUser" />
+        </EntityType>
+        <Association Name="FK_CallLog_NimUser_Source">
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
+          <End Type="StudyOnline.CallLog" Role="CallLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CallLog">
+              <PropertyRef Name="Source" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CallLog_NimUser_Target">
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
+          <End Type="StudyOnline.CallLog" Role="CallLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CallLog">
+              <PropertyRef Name="Target" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -596,6 +754,34 @@
                 <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
                 <ScalarProperty Name="NickName" ColumnName="NickName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Question">
+            <EntityTypeMapping TypeName="StudyOnline.Question">
+              <MappingFragment StoreEntitySet="Question">
+                <ScalarProperty Name="ThemeId" ColumnName="ThemeId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Theme">
+            <EntityTypeMapping TypeName="StudyOnline.Theme">
+              <MappingFragment StoreEntitySet="Theme">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CallLog">
+            <EntityTypeMapping TypeName="StudyOnline.CallLog">
+              <MappingFragment StoreEntitySet="CallLog">
+                <ScalarProperty Name="Finish" ColumnName="Finish" />
+                <ScalarProperty Name="Start" ColumnName="Start" />
+                <ScalarProperty Name="Target" ColumnName="Target" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

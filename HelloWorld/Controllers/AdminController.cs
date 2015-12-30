@@ -173,7 +173,11 @@ namespace StudyOnline.Controllers
             return Json(data);
         }
 
-        //分类相关
+        #region 分类相关
+
+
+
+
         public ActionResult LevelList(FormCollection form)
         {
             PagedList<Level> levels = entities.Level.OrderBy(l => l.Id).ToPagedList(1, 20);
@@ -222,6 +226,9 @@ namespace StudyOnline.Controllers
             var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminLevelList", rel = "", callbackType = "", forwardUrl = "" };
             return Json(data);
         }
+
+        #endregion
+
 
         //文件夹相关
         public ActionResult FolderIndex()
@@ -371,15 +378,15 @@ namespace StudyOnline.Controllers
         }
 
         [HttpPost]
-        public ActionResult NimUserUpdate(NimUser NimUser,String nickname)
+        public ActionResult NimUserUpdate(NimUser NimUser, String nickname)
         {
             NimUser model = entities.NimUser.Find(NimUser.Id);
 
             model.Username = NimUser.Username;
             model.Password = ChineseChat.Library.EncryptionUtil.Md5Encode(NimUser.Password);//密码加密
-     
 
-            String json = ChineseChat.Library.NimUtil.UserUpdate(NimUser.Accid,null,null,nickname);
+
+            String json = ChineseChat.Library.NimUtil.UserUpdate(NimUser.Accid, null, null, nickname);
             JObject rss = JObject.Parse(json);
             if ("200" == rss.GetValue("code").ToString())
             {
@@ -397,7 +404,64 @@ namespace StudyOnline.Controllers
 
 
 
+        #region 主题管理
 
+        public ActionResult ThemeIndex(FormCollection form)
+        {
+            //分页处理
+            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 20);
+            int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
+
+            ViewBag.Themes = entities.Theme.OrderBy(o => o.Id).ToPagedList(pageIndex, pageSize);
+            return View();
+        }
+
+        public ActionResult ThemeCreate(Int32? id)
+        {
+            Theme theme;
+            if (id != null && id > 0)
+            {
+                theme = entities.Theme.Find(id);
+            }
+            else
+            {
+                theme = new Theme() { Id = 0 };
+            }
+
+            ViewData.Model = theme;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ThemeCreate(Theme theme)
+        {
+            if (theme.Id > 0)
+            {
+                Theme model = entities.Theme.Find(theme.Id);
+                model.Name = theme.Name;
+            }
+            else
+            {
+                entities.Theme.Add(theme);
+            }
+            entities.SaveChanges();
+
+            return Json(new { statusCode = "200", message = "操作成功", navTabId = "AdminThemeIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" });
+        }
+
+        [HttpPost]
+        public ActionResult ThemeDelete(Int32? id)
+        {
+            if (id != null && id > 0)
+            {
+                Theme model = entities.Theme.Find(id);
+                entities.Theme.Remove(model);
+                entities.SaveChanges();
+            }
+            return Json(new { statusCode = "200", message = "操作成功", navTabId = "AdminThemeIndex", rel = "", callbackType = "", forwardUrl = "" });
+        }
+
+        #endregion
 
 
 

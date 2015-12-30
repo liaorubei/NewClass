@@ -71,6 +71,36 @@ CREATE TABLE [Group]
 	CONSTRAINT [FK_Group_NimUser] FOREIGN KEY (Host) REFERENCES [NimUser] ([Id])
 )
 
+--创建主题,话题
+create table Theme
+(
+   [Id]       int identity (1,1),
+   [Name]     nvarchar(256) not null,
+   constraint [PK_Theme] primary key (Id)
+)
+
+--创建问题
+create table Question
+(
+   [Id]       int identity (1,1),
+   [Name]     nvarchar(256) not null,
+   [ThemeId]  int,
+   constraint [PK_Question]       primary key (Id),
+   constraint [FK_Question_Theme] foreign key (ThemeId) references [Theme] ([Id])
+)
+
+--通话记录
+create table CallLog(
+	[Id]         NVARCHAR (32) NOT NULL,
+	[Source]     INT           NOT NULL,
+	[Target]     INT           NOT NULL,
+	[Start]      DATETIME,
+	[Finish]	 DATETIME,
+	CONSTRAINT [PK_CallLog]                PRIMARY KEY([Id]),
+	CONSTRAINT [FK_CallLog_NimUser_Source] FOREIGN KEY([Source]) REFERENCES [NimUser]([Id]),
+	CONSTRAINT [FK_CallLog_NimUser_Target] FOREIGN KEY([Target]) REFERENCES [NimUser]([Id])
+)
+
 
 --drop table nimuser
 --drop table nimuserex
@@ -80,3 +110,7 @@ select * from NimUser order by enqueue
 select * from NimUserEx
 
 insert into nimuser(accid,token) values('bf09f7dd02e549f4a16af0cf8e9a5701');
+
+
+select * from CallLog
+

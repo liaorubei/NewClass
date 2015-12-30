@@ -1,7 +1,7 @@
 ﻿
 @{
     Layout = null;
-    PagedList<Customer> customers = ViewBag.Customers;
+    PagedList<NimUser> customers = ViewBag.NimUsers;
 }
 
 <div class="pageHeader">
@@ -39,10 +39,10 @@
         <thead>
             <tr>
                 <th width="35" align="center">序号</th>
+                <th width="100">帐号</th>              
                 <th width="250">AccId</th>
-                <th width="120">帐号</th>
-                <th width="250">密码(经过加密))</th>
-                <th width="120">昵称</th>
+                <th width="100">类型</th>
+                <th width="100">昵称</th>
                 <th>电话</th>
                 <th>邮箱</th>
                 <th>在线情况</th>
@@ -53,14 +53,14 @@
             @{ int i = 0;}
             @foreach (var item in customers)
             {
-                <tr target="id" rel="@item.AccId">
+                <tr target="id" rel="@item.Id">
                     <td align="center">@(++i)</td>
-                    <td>@item.AccId</td>
-                    <td>@item.Account</td>
-                    <td>@item.Password</td>
-                    <td>@item.NickName</td>
-                    <td>@item.Phone</td>
-                    <td>@item.Email</td>
+                    <td>@item.Username</td>                 
+                    <td>@item.Accid</td>
+                    <td>@(item.Category==1?"老师":"学生")</td>
+                    <td>@item.NimUserEx.Name</td>
+                    <td>@item.NimUserEx.Mobile</td>
+                    <td>@item.NimUserEx.Email</td>
                     <td>@Html.Raw(item.IsOnline == 1 ? "<span style='color:green;'>在线</span>" : "离线")</td>
                     <td>@item.CreateDate</td>
                 </tr>
