@@ -592,6 +592,7 @@
     <Content Include="Content\raty\star-on.png" />
     <Content Include="Images\app-student-release.png" />
     <Content Include="Images\app-teacher-release.png" />
+    <Content Include="Images\chinesechat.png" />
     <Content Include="Images\collapse.png" />
     <Content Include="Images\expand.png" />
     <Content Include="Images\file.png" />

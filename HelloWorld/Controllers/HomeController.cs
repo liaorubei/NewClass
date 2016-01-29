@@ -17,6 +17,7 @@ namespace StudyOnline.Controllers
         private int pageSize = 15;
         public ActionResult Index(int? index, int? level)
         {
+
             //取出文章等级数据,因为文章等级要一直显示(前提是要求在浏览器端显示)
             ViewBag.Levels = db.Level.Where(o => o.ShowBrowser == 1).ToList();
 
@@ -32,6 +33,10 @@ namespace StudyOnline.Controllers
             //2,过滤查询参数
             //3,分页取出数据
             ViewBag.Documents = db.Document.Where(o => o.AuditCase == AuditCase.审核).OrderByDescending(m => m.AuditDate).Where(predicate).ToPagedList(index ?? 0, pageSize);
+            /* 
+            ViewBag.Levels = new List<Level>() { new Level() { Id = 1, LevelName = "LevelName" } };
+            ViewBag.Documents = new PagedList<Document>(new List<Document>() { new Document() { Id = 1,AuditDate=DateTime.Now, Title = "Title",Level=new Level() { LevelName= "LevelName" } } }, 1, 15) { };
+ */
             return View();
         }
 
