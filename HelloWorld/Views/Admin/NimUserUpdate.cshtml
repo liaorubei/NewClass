@@ -1,0 +1,50 @@
+﻿@model StudyOnline.Models.NimUser
+@{
+    Layout = null;
+}
+
+<div class="pageContent">
+
+    <form method="post" action="@Url.Action("NimUserUpdate")" class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent " layoutH="58">
+            <dl>
+                <dt>帐号：</dt>
+                <dd>
+                    @Html.Hidden("Id", Model.Id)
+                    @Html.TextBox("Username", Model.Username, new { @class = "required" })
+
+                </dd>
+            </dl>
+            <dl>
+                <dt>密码：</dt>
+                <dd>
+                    <input id="user_password" type="password" name="Password" value="@Model.Password" class="required alphanumeric" minlength="6" maxlength="20" alt="字母、数字、下划线 6-20位" />
+                </dd>
+            </dl>
+            <dl>
+                <dt>确认密码：</dt>
+                <dd>
+                    <input type="password" name="repassword" class="required" equalto="#user_password" />
+                </dd>
+            </dl>
+
+            <dl>
+                <dt>帐号类型：</dt>
+                <dd>
+                    <select class="combox" name="Category">
+                        <option value="0" @(Model.Category == 0 ? "" : "selected='selected'")>学生</option>
+                        <option value="1" @(Model.Category == 1 ? "" : "selected='selected'")>教师</option>
+                    </select>
+                </dd>
+            </dl>
+
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+
+</div>

@@ -2,10 +2,11 @@
 @{
     Layout = null;
     PagedList<NimUser> customers = ViewBag.NimUsers;
+    int category = ViewBag.Category;
 }
 
 <div class="pageHeader">
-    <form id="pagerForm" method="post" action="@Url.Action("UserIndex")">
+    <form id="pagerForm" onsubmit="return navTabSearch(this);" method="post" action="@Url.Action("NimUserIndex")">
         <div class="searchBar">
             <input type="hidden" name="pageNum" value="@customers.CurrentPageIndex" />
             <input type="hidden" name="numPerPage" value="@customers.PageSize" />
@@ -15,6 +16,12 @@
                     <input type="text" name="keyword" value="@ViewBag.Keyword" />
                 </li>
                 <li>
+                    <label>客户类型</label>
+                    <select name="category" class="combox">
+                        <option value="-1" @(category==-1?"selected='selected'":"") >-请选择-</option>
+                        <option value="0" @(category==0?"selected='selected'":"")>学生</option>
+                        <option value="1" @(category==1?"selected='selected'":"")>教师</option>
+                    </select>
                 </li>
             </ul>
             <div class="subBar">
@@ -28,9 +35,8 @@
 <div class="pageContent">
     <div class="panelBar">
         <ul class="toolBar">
-            @*<li><a class="create" href="@Url.Action("UserCreate")" target="dialog" width="600" height="400" mask="true" title="添加用户"><span>添加</span></a></li>*@
-
-            <li><a class="update" href="@Url.Action("CustomerUpdate")?accid={id}" target="dialog" width="600" height="400" mask="true" title="修改用户"><span>修改</span></a></li>
+            <li><a class="update" href="@Url.Action("NimUserUpdate", new { id="{id}"})" target="dialog" width="600" height="400" mask="true" title="修改帐号"><span>修改帐号</span></a></li>
+            <li><a class="update" href="@Url.Action("NimUserUpdateInfo", new { id="{id}"})" target="dialog" width="600" height="400" mask="true" title="修改资料"><span>修改资料</span></a></li>
             @*<li><a class="delete" href="@Url.Action("UserDelete")?id={id}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>*@
         </ul>
     </div>
@@ -39,8 +45,8 @@
         <thead>
             <tr>
                 <th width="35" align="center">序号</th>
-                <th width="100">帐号</th>              
                 <th width="250">AccId</th>
+                <th width="100">帐号</th>
                 <th width="100">类型</th>
                 <th width="100">昵称</th>
                 <th>电话</th>
@@ -55,9 +61,9 @@
             {
                 <tr target="id" rel="@item.Id">
                     <td align="center">@(++i)</td>
-                    <td>@item.Username</td>                 
                     <td>@item.Accid</td>
-                    <td>@(item.Category==1?"老师":"学生")</td>
+                    <td>@item.Username</td>
+                    <td>@(item.Category == 1 ? "老师" : "学生")</td>
                     <td>@item.NimUserEx.Name</td>
                     <td>@item.NimUserEx.Mobile</td>
                     <td>@item.NimUserEx.Email</td>

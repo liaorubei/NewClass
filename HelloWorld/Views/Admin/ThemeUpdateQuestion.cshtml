@@ -1,0 +1,50 @@
+﻿@model Theme
+@{
+    Layout = null;
+}
+
+<style>
+    .questionwidth { width: 98%; }
+</style>
+<div class="pageContent">
+
+    <form method="post" action='@Url.Action("ThemeUpdateQuestion")' class="pageForm required-validate" onsubmit="return validateCallback(this,dialogAjaxDone)">
+        <div class="pageFormContent " layoutH="58">
+            <div>
+                <input type="hidden" name="id" value="@Model.Id" />
+                <table class="list nowrap itemDetail" addButton="新建" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th type="text" name="questions[#index#].Name" fieldClass="required questionwidth" style="width:90%;">问题</th>
+                            <th type="del" width="60">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{int i = 0;}
+                        @foreach (var item in Model.Question)
+                        {
+
+                            <tr class="unitBox">
+                                <td width="100">
+                                    <input type="hidden" name="questions[@(i)].Id" value="@item.Id" />
+                                    <input type="text" name="questions[@(i)].Name" value="@item.Name" class="required questionwidth">
+                                </td>
+                                <td align="center"><a href="javascript:void(0)" class="btnDel">删除</a></td>
+                            </tr>
+                            i++;
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+
+</div>

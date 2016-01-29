@@ -84,6 +84,10 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PayPal, Version=1.7.2.0, Culture=neutral, PublicKeyToken=5b4afc1ccaef40fb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PayPal.1.7.2\lib\net45\PayPal.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System">
       <Private>True</Private>
     </Reference>
@@ -220,7 +224,10 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\Api\ApiAreaRegistration.cs" />
     <Compile Include="Areas\Api\Controllers\CallLogController.cs" />
+    <Compile Include="Areas\Api\Controllers\FolderController.cs" />
     <Compile Include="Areas\Api\Controllers\GroupController.cs" />
+    <Compile Include="Areas\Api\Controllers\LevelController.cs" />
+    <Compile Include="Areas\Api\Controllers\PaymentController.cs" />
     <Compile Include="Areas\Api\Controllers\StudentController.cs" />
     <Compile Include="Areas\Api\Controllers\TeacherController.cs" />
     <Compile Include="Areas\Api\Controllers\NimUserController.cs" />
@@ -232,6 +239,9 @@
     <Compile Include="Filters\MyAuthorizationFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Android.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AuditCase.cs" />
     <Compile Include="Models\CallLog.cs">
@@ -249,10 +259,16 @@
     <Compile Include="Models\Group.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\HskLevel.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Level.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\LoginModel.cs" />
+    <Compile Include="Models\LogTheme.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\NimUser.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
@@ -288,6 +304,7 @@
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\Configuration.cs" />
     <Compile Include="Utils\ConvertUtil.cs" />
     <Compile Include="Utils\Helper.cs" />
     <Compile Include="Utils\LyricParser.cs" />
@@ -573,6 +590,8 @@
     <Content Include="Content\raty\star-off.png" />
     <Content Include="Content\raty\star-on-big.png" />
     <Content Include="Content\raty\star-on.png" />
+    <Content Include="Images\app-student-release.png" />
+    <Content Include="Images\app-teacher-release.png" />
     <Content Include="Images\collapse.png" />
     <Content Include="Images\expand.png" />
     <Content Include="Images\file.png" />
@@ -1014,14 +1033,21 @@
     <Content Include="Views\Admin\UserIndex.cshtml" />
     <Content Include="Views\Shared\_create.cshtml" />
     <Content Include="Views\Admin\NimUserIndex.cshtml" />
-    <Content Include="Views\Admin\CustomerUpdate.cshtml" />
+    <Content Include="Views\Admin\NimUserUpdate.cshtml" />
     <Content Include="Views\Admin\ThemeIndex.cshtml" />
     <Content Include="Views\Admin\ThemeCreate.cshtml" />
+    <Content Include="Views\Admin\ThemeUpdateQuestion.cshtml" />
+    <Content Include="Views\Admin\NimUserUpdateInfo.cshtml" />
+    <Content Include="Views\Admin\AndroidIndex.cshtml" />
+    <Content Include="Views\Admin\AndroidCreate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Api\Views\CallLog\" />
+    <Folder Include="Areas\Api\Views\Folder\" />
     <Folder Include="Areas\Api\Views\Group\" />
+    <Folder Include="Areas\Api\Views\Level\" />
+    <Folder Include="Areas\Api\Views\Payment\" />
     <Folder Include="Areas\Api\Views\Shared\" />
     <Folder Include="Areas\Api\Views\Student\" />
     <Folder Include="Areas\Api\Views\Teacher\" />

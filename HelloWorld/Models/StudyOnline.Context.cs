@@ -37,5 +37,8 @@ namespace StudyOnline.Models
         public virtual DbSet<Question> Question { get; set; }
         public virtual DbSet<Theme> Theme { get; set; }
         public virtual DbSet<CallLog> CallLog { get; set; }
+        public virtual DbSet<LogTheme> LogTheme { get; set; }
+        public virtual DbSet<Android> Android { get; set; }
+        public virtual DbSet<HskLevel> HskLevel { get; set; }
     }
 }

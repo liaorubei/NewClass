@@ -5,6 +5,18 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="StudyOnline.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Android">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VersionType" Type="int" />
+          <Property Name="VersionName" Type="nvarchar" MaxLength="1024" />
+          <Property Name="PackageSize" Type="int" />
+          <Property Name="UpgradeInfo" Type="nvarchar" MaxLength="1024" />
+          <Property Name="PackagePath" Type="nvarchar" MaxLength="1024" />
+          <Property Name="CreateDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="CallLog">
           <Key>
             <PropertyRef Name="Id" />
@@ -14,6 +26,9 @@
           <Property Name="Target" Type="int" Nullable="false" />
           <Property Name="Start" Type="datetime" />
           <Property Name="Finish" Type="datetime" />
+          <Property Name="ChatId" Type="bigint" />
+          <Property Name="ChatType" Type="int" />
+          <Property Name="Score" Type="int" />
         </EntityType>
         <EntityType Name="Comment">
           <Key>
@@ -64,6 +79,13 @@
           <Property Name="Notice" Type="nvarchar" MaxLength="1024" />
           <Property Name="CreateDate" Type="datetime" />
         </EntityType>
+        <EntityType Name="HskLevel">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
         <EntityType Name="Level">
           <Key>
             <PropertyRef Name="Id" />
@@ -73,6 +95,14 @@
           <Property Name="Sort" Type="int" />
           <Property Name="Show" Type="int" />
           <Property Name="ShowBrowser" Type="int" />
+        </EntityType>
+        <EntityType Name="LogTheme">
+          <Key>
+            <PropertyRef Name="ChatId" />
+            <PropertyRef Name="ThemeId" />
+          </Key>
+          <Property Name="ChatId" Type="bigint" Nullable="false" />
+          <Property Name="ThemeId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="NimUser">
           <Key>
@@ -119,6 +149,7 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="HskLevelId" Type="int" />
         </EntityType>
         <EntityType Name="UploadFile">
           <Key>
@@ -231,6 +262,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <!--生成过程中发现错误:
+警告 6035: 关系“FK_LogTheme_CallLog”在关系主端上有一些列不属于表的键的一部分。已排除了此关系。
+        <Association Name="FK_LogTheme_CallLog" />-->
+        <Association Name="FK_LogTheme_ThemeId">
+          <End Role="Theme" Type="Self.Theme" Multiplicity="1" />
+          <End Role="LogTheme" Type="Self.LogTheme" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Theme">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LogTheme">
+              <PropertyRef Name="ThemeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_NimUserEx_NimUser">
           <End Role="NimUser" Type="Self.NimUser" Multiplicity="1" />
           <End Role="NimUserEx" Type="Self.NimUserEx" Multiplicity="0..1" />
@@ -255,13 +301,28 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Theme_HskLevel">
+          <End Role="HskLevel" Type="Self.HskLevel" Multiplicity="0..1" />
+          <End Role="Theme" Type="Self.Theme" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="HskLevel">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Theme">
+              <PropertyRef Name="HskLevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="StudyOnlineStoreContainer">
+          <EntitySet Name="Android" EntityType="Self.Android" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CallLog" EntityType="Self.CallLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Comment" EntityType="Self.Comment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Document" EntityType="Self.Document" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Folder" EntityType="Self.Folder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Group" EntityType="Self.Group" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HskLevel" EntityType="Self.HskLevel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Level" EntityType="Self.Level" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LogTheme" EntityType="Self.LogTheme" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NimUser" EntityType="Self.NimUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NimUserEx" EntityType="Self.NimUserEx" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Question" EntityType="Self.Question" Schema="dbo" store:Type="Tables" />
@@ -296,6 +357,10 @@
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="Group" EntitySet="Group" />
           </AssociationSet>
+          <AssociationSet Name="FK_LogTheme_ThemeId" Association="Self.FK_LogTheme_ThemeId">
+            <End Role="Theme" EntitySet="Theme" />
+            <End Role="LogTheme" EntitySet="LogTheme" />
+          </AssociationSet>
           <AssociationSet Name="FK_NimUserEx_NimUser" Association="Self.FK_NimUserEx_NimUser">
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="NimUserEx" EntitySet="NimUserEx" />
@@ -303,6 +368,10 @@
           <AssociationSet Name="FK_Question_Theme" Association="Self.FK_Question_Theme">
             <End Role="Theme" EntitySet="Theme" />
             <End Role="Question" EntitySet="Question" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Theme_HskLevel" Association="Self.FK_Theme_HskLevel">
+            <End Role="HskLevel" EntitySet="HskLevel" />
+            <End Role="Theme" EntitySet="Theme" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -561,6 +630,17 @@
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="CallLog" EntitySet="CallLog" />
           </AssociationSet>
+          <EntitySet Name="LogTheme" EntityType="StudyOnline.LogTheme" />
+          <AssociationSet Name="FK_LogTheme_ThemeId" Association="StudyOnline.FK_LogTheme_ThemeId">
+            <End Role="Theme" EntitySet="Theme" />
+            <End Role="LogTheme" EntitySet="LogTheme" />
+          </AssociationSet>
+          <EntitySet Name="Android" EntityType="StudyOnline.Android" />
+          <EntitySet Name="HskLevel" EntityType="StudyOnline.HskLevel" />
+          <AssociationSet Name="FK_Theme_HskLevel" Association="StudyOnline.FK_Theme_HskLevel">
+            <End Role="HskLevel" EntitySet="HskLevel" />
+            <End Role="Theme" EntitySet="Theme" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Question">
           <Key>
@@ -578,6 +658,9 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Question" Relationship="StudyOnline.FK_Question_Theme" FromRole="Theme" ToRole="Question" />
+          <NavigationProperty Name="LogTheme" Relationship="StudyOnline.FK_LogTheme_ThemeId" FromRole="Theme" ToRole="LogTheme" />
+          <Property Name="HskLevelId" Type="Int32" />
+          <NavigationProperty Name="HskLevel" Relationship="StudyOnline.FK_Theme_HskLevel" FromRole="Theme" ToRole="HskLevel" />
         </EntityType>
         <Association Name="FK_Question_Theme">
           <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="0..1" />
@@ -600,8 +683,11 @@
           <Property Name="Target" Type="Int32" Nullable="false" />
           <Property Name="Start" Type="DateTime" Precision="3" />
           <Property Name="Finish" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="NimUser" Relationship="StudyOnline.FK_CallLog_NimUser_Source" FromRole="CallLog" ToRole="NimUser" />
-          <NavigationProperty Name="NimUser1" Relationship="StudyOnline.FK_CallLog_NimUser_Target" FromRole="CallLog" ToRole="NimUser" />
+          <NavigationProperty Name="Student" Relationship="StudyOnline.FK_CallLog_NimUser_Source" FromRole="CallLog" ToRole="NimUser" />
+          <NavigationProperty Name="Teacher" Relationship="StudyOnline.FK_CallLog_NimUser_Target" FromRole="CallLog" ToRole="NimUser" />
+          <Property Name="ChatId" Type="Int64" />
+          <Property Name="ChatType" Type="Int32" />
+          <Property Name="Score" Type="Int32" />
         </EntityType>
         <Association Name="FK_CallLog_NimUser_Source">
           <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
@@ -624,6 +710,59 @@
             </Principal>
             <Dependent Role="CallLog">
               <PropertyRef Name="Target" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="LogTheme">
+          <Key>
+            <PropertyRef Name="ChatId" />
+            <PropertyRef Name="ThemeId" />
+          </Key>
+          <Property Name="ChatId" Type="Int64" Nullable="false" />
+          <Property Name="ThemeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_LogTheme_ThemeId" FromRole="LogTheme" ToRole="Theme" />
+        </EntityType>
+        <Association Name="FK_LogTheme_ThemeId">
+          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="1" />
+          <End Type="StudyOnline.LogTheme" Role="LogTheme" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Theme">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LogTheme">
+              <PropertyRef Name="ThemeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Android">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VersionName" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="PackageSize" Type="Int32" />
+          <Property Name="UpgradeInfo" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="PackagePath" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="VersionType" Type="Int32" />
+        </EntityType>
+        <EntityType Name="HskLevel">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_Theme_HskLevel" FromRole="HskLevel" ToRole="Theme" />
+        </EntityType>
+        <Association Name="FK_Theme_HskLevel">
+          <End Type="StudyOnline.HskLevel" Role="HskLevel" Multiplicity="0..1" />
+          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="HskLevel">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Theme">
+              <PropertyRef Name="HskLevelId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -769,6 +908,7 @@
           <EntitySetMapping Name="Theme">
             <EntityTypeMapping TypeName="StudyOnline.Theme">
               <MappingFragment StoreEntitySet="Theme">
+                <ScalarProperty Name="HskLevelId" ColumnName="HskLevelId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
@@ -777,10 +917,42 @@
           <EntitySetMapping Name="CallLog">
             <EntityTypeMapping TypeName="StudyOnline.CallLog">
               <MappingFragment StoreEntitySet="CallLog">
+                <ScalarProperty Name="Score" ColumnName="Score" />
+                <ScalarProperty Name="ChatType" ColumnName="ChatType" />
+                <ScalarProperty Name="ChatId" ColumnName="ChatId" />
                 <ScalarProperty Name="Finish" ColumnName="Finish" />
                 <ScalarProperty Name="Start" ColumnName="Start" />
                 <ScalarProperty Name="Target" ColumnName="Target" />
                 <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LogTheme">
+            <EntityTypeMapping TypeName="StudyOnline.LogTheme">
+              <MappingFragment StoreEntitySet="LogTheme">
+                <ScalarProperty Name="ThemeId" ColumnName="ThemeId" />
+                <ScalarProperty Name="ChatId" ColumnName="ChatId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Android">
+            <EntityTypeMapping TypeName="StudyOnline.Android">
+              <MappingFragment StoreEntitySet="Android">
+                <ScalarProperty Name="VersionType" ColumnName="VersionType" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="PackagePath" ColumnName="PackagePath" />
+                <ScalarProperty Name="UpgradeInfo" ColumnName="UpgradeInfo" />
+                <ScalarProperty Name="PackageSize" ColumnName="PackageSize" />
+                <ScalarProperty Name="VersionName" ColumnName="VersionName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HskLevel">
+            <EntityTypeMapping TypeName="StudyOnline.HskLevel">
+              <MappingFragment StoreEntitySet="HskLevel">
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

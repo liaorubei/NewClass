@@ -12,23 +12,18 @@ namespace StudyOnline.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Theme
+    public partial class HskLevel
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Theme()
+        public HskLevel()
         {
-            this.Question = new HashSet<Question>();
-            this.LogTheme = new HashSet<LogTheme>();
+            this.Theme = new HashSet<Theme>();
         }
     
         public int Id { get; set; }
         public string Name { get; set; }
-        public Nullable<int> HskLevelId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Question> Question { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LogTheme> LogTheme { get; set; }
-        public virtual HskLevel HskLevel { get; set; }
+        public virtual ICollection<Theme> Theme { get; set; }
     }
 }

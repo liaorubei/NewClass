@@ -7,34 +7,29 @@ using System.Web.Mvc;
 
 namespace StudyOnline.Areas.Api.Controllers
 {
-    public class ThemeController : Controller
+    public class FolderController : Controller
     {
-        private StudyOnline.Models.StudyOnlineEntities entities = new StudyOnline.Models.StudyOnlineEntities();
-
+        StudyOnlineEntities entities = new StudyOnlineEntities();
         [HttpPost]
-        public ActionResult Select(Int32 take, Int32 skip)
+        public ActionResult GetByLevelId(Int32 levelId, Int32 skip, Int32 take)
         {
-            var temp = entities.Theme.OrderBy(o => o.Id).Skip(skip).Take(take).ToList();
-            return Json(new { code = 200, desc = "", info = temp.Select(o => new { o.Id, o.Name }) });
+            var temp = entities.Folder.Where(o => o.LevelId == levelId).OrderBy(o => o.Name).Skip(skip).Take(take);
+            return Json(new { code = 200, desc = "查询成功", info = temp.Select(o => new { o.Id, o.Name, DocsCount = o.Document.Count, o.LevelId }) });
         }
 
-
-        public ActionResult GetById(int id)
+        // GET: Api/Folder/Details/5
+        public ActionResult Details(int id)
         {
-            Theme theme = entities.Theme.Find(id);
-
-
-
-            return Json(new { code = 200, desc = "", info = new { theme.Id, theme.Name, Questions = theme.Question.Select(o => new { o.Id, o.Name }) } });
+            return View();
         }
 
-        // GET: Api/Theme/Create
+        // GET: Api/Folder/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Api/Theme/Create
+        // POST: Api/Folder/Create
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
@@ -50,13 +45,13 @@ namespace StudyOnline.Areas.Api.Controllers
             }
         }
 
-        // GET: Api/Theme/Edit/5
+        // GET: Api/Folder/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: Api/Theme/Edit/5
+        // POST: Api/Folder/Edit/5
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -72,13 +67,13 @@ namespace StudyOnline.Areas.Api.Controllers
             }
         }
 
-        // GET: Api/Theme/Delete/5
+        // GET: Api/Folder/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: Api/Theme/Delete/5
+        // POST: Api/Folder/Delete/5
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {

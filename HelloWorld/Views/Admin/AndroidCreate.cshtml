@@ -1,0 +1,76 @@
+﻿@model Android
+
+@{
+    Layout = null;
+}
+<style type="text/css" media="screen">
+    .uploadify { margin-bottom: 0; display: inline-block; }
+
+    .uploadify-button { border: none; border-radius: 0; }
+    /*.uploadify-queue { display: none; }*/
+</style>
+<div class="pageContent">
+    <form method="post" enctype="multipart/form-data" action='@Url.Action("AndroidCreate")' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone);">
+        <div class="pageFormContent nowrap" layouth="58">
+            <table class="formTable">
+                <tr>
+                    <th>版本名称</th>
+                    <td>
+                        <input type="hidden" name="Id" value="@Model.Id" />
+                        <input type="hidden" name="CreateDate" value="@Model.CreateDate" />
+                        <input type="text" name="VersionName" style="width:99%" class="required" value="@Model.VersionName" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>目标版本</th>
+                    <td>
+                        <select name="VersionType" class="combox">
+                            <option value="0" @(Model.VersionType == 0 ? "selected='selected'" : "")>学生端</option>
+                            <option value="1" @(Model.VersionType == 1 ? "selected='selected'" : "")>教师端</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th style="vertical-align:top;padding-top:10px;">更新日志</th>
+                    <td><textarea name="UpgradeInfo" style="width:99%;height:150px;" class="required">@Model.UpgradeInfo</textarea></td>
+                </tr>
+                <tr>
+                    <th style="vertical-align:top;padding-top:10px;">目标文件</th>
+                    <td>
+                        <span>
+                            @if (!String.IsNullOrEmpty(Model.PackagePath))
+                            {
+                                <span class="fileList">
+                                    <input type="hidden" name="Path" value="@Model.PackagePath" />
+                                    <input type='hidden' name='Size' value='@Model.PackageSize' />
+                                    <span>@Model.PackagePath</span>
+                                    <a href="javascript:;" class="close" title="移除" onclick='$(this).parent().remove();'></a>
+                                </span>
+                            }
+                        </span>
+                        <input id="Path" type="file" name="file" uploaderoption="{swf:'/Content/uploadify/scripts/uploadify.swf',uploader:'/Admin/UploadifyFull',buttonText:'请选择文件',auto:true,multi:false,onUploadSuccess:successAndroidUpload}" />
+                    </td>
+                </tr>
+            </table>
+            <script>
+                /*uploadifySuccess*/
+                function successAndroidUpload(file, data, response) {
+                    var o = $.parseJSON(data);
+                    var $c = $("#Path").prev();
+                    $c.html("<span class='fileList'></span>");
+                    var input = "<input type='hidden' name='PackagePath' value='" + o.filePath + "'/><input type='hidden' name='PackageSize' value='" + o.Size + "' />";
+                    var span = "<span>" + o.filePath + "</span>";
+                    var a = "<a href=\"javascript:;\" class=\"close\" title=\"移除\" onclick='$(this).parent().remove();'></a>";
+                    $c.children().append(input).append(span).append(a);
+                }
+            </script>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+
+</div>

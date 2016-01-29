@@ -67,7 +67,7 @@ namespace StudyOnline.Utils
             builder.AppendLine(String.Format("			<option value='50'>50</option>                                                                               "));
             builder.AppendLine(String.Format("			<option value='75'>75</option>                                                                               "));
             builder.AppendLine(String.Format("		</select>                                                                                                        "));
-            builder.AppendLine(String.Format("		<span>条，共{0}条</span>                                                                               ", list.Count));
+            builder.AppendLine(String.Format("		<span>条，共{0}条</span>                                                                               ", list.TotalItemCount));
             builder.AppendLine(String.Format("	</div>		                                                                                                         "));
             builder.AppendLine(String.Format("	<div class='pagination' targetType='navTab' totalCount='{0}' numPerPage='{1}' currentPage='{2}' pageNumShown='{3}' ></div>", list.TotalItemCount, list.PageSize, list.CurrentPageIndex, show));
             builder.AppendLine(String.Format("</div>                                                                                                                 "));

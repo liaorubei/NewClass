@@ -5,9 +5,11 @@ using StudyOnline.Models;
 using StudyOnline.Utils;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Web;
 using System.Web.Mvc;
 using Webdiyer.WebControls.Mvc;
@@ -166,7 +168,7 @@ namespace StudyOnline.Controllers
         [HttpPost]
         public ActionResult DocsDelete(int id)
         {
-            var doc = entities.Document.FirstOrDefault(d => d.Id == id);
+            var doc = entities.Document.Find(id);
             entities.Document.Remove(doc);
             entities.SaveChanges();
             var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminDocsList", rel = "", callbackType = "", forwardUrl = "" };
@@ -229,11 +231,23 @@ namespace StudyOnline.Controllers
 
         #endregion
 
-
-        //文件夹相关
-        public ActionResult FolderIndex()
+        #region 文件夹相关
+        public ActionResult FolderIndex(FormCollection form)
         {
-            PagedList<Folder> folders = entities.Folder.OrderByDescending(t => t.Id).ToPagedList(1, 20);
+            //分页处理
+            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 20);
+            int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
+
+            //关键字处理
+            Expression<Func<Folder, bool>> predicate = o => true;
+            if (!String.IsNullOrEmpty(form["keyword"]))
+            {
+                String keyword = form["keyword"];
+                predicate = o => o.Name.Contains(keyword);
+                ViewBag.Keyword = form["keyword"];
+            }
+
+            PagedList<Folder> folders = entities.Folder.Where(predicate).OrderByDescending(t => t.Id).ToPagedList(pageIndex, pageSize);
             ViewBag.Folders = folders;
             return View();
         }
@@ -300,13 +314,12 @@ namespace StudyOnline.Controllers
 
         public ActionResult FolderCreateRight(FormCollection form)
         {
-
             //分页处理
             int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 20);
             int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
 
-
-            System.Linq.Expressions.Expression<Func<Document, bool>> predicate = o => true;
+            //关键字处理
+            Expression<Func<Document, bool>> predicate = o => true;
             if (!String.IsNullOrEmpty(form["keyword"]))
             {
                 String keyword = form["keyword"];
@@ -314,11 +327,9 @@ namespace StudyOnline.Controllers
                 ViewBag.Keyword = form["keyword"];
             }
 
-
             PagedList<Document> docs = entities.Document.OrderByDescending(o => o.AddDate).Where(predicate).ToPagedList(pageIndex, pageSize);
             ViewBag.Documents = docs;
             return View();
-
         }
 
         public ActionResult FolderDelete(int? id)
@@ -350,59 +361,92 @@ namespace StudyOnline.Controllers
             return Json(data);
         }
 
+        #endregion
 
         #region 客户管理
-        public ActionResult NimUserIndex()
+        public ActionResult NimUserIndex(FormCollection form)
         {
-            PagedList<NimUser> NimUsers = entities.NimUser.OrderByDescending(o => o.CreateDate).ToPagedList(1, 25);
+            //分页处理
+            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 25);
+            int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
+
+            //关键字
+            Expression<Func<NimUser, bool>> predicate = o => true;
+            if (!string.IsNullOrEmpty(form["keyword"]))
+            {
+                String keyword = form["keyword"];
+                predicate = o => o.Username.Contains(keyword) || o.NimUserEx.Name.Contains(keyword) || o.NimUserEx.Email.Contains(keyword) || o.NimUserEx.Mobile.Contains(keyword);
+                ViewBag.Keyword = keyword;
+            }
+
+            Expression<Func<NimUser, bool>> predicateCategory = o => true;
+            Int32 category = ConvertUtil.ToInt32(form["category"], -1);
+            ViewBag.Category = category;
+
+            if (category != -1)
+            {
+                predicateCategory = o => o.Category == category;
+            }
+
+            PagedList<NimUser> NimUsers = entities.NimUser.Where(predicate).Where(predicateCategory).OrderBy(o => o.CreateDate).ToPagedList(pageIndex, pageSize);
             ViewBag.NimUsers = NimUsers;
             return View();
         }
 
-        public ActionResult NimUserCreate()
+
+        /// <summary>
+        /// 修改用户,只修改帐号信息
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult NimUserUpdate(Int32 id)
         {
-            PagedList<NimUser> NimUsers = entities.NimUser.OrderByDescending(o => o.CreateDate).ToPagedList(1, 25);
-            ViewBag.NimUsers = NimUsers;
+            NimUser NimUser = entities.NimUser.Find(id);
+            ViewData.Model = NimUser;
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult NimUserUpdate(NimUser nimUser)
+        {
+            NimUser model = entities.NimUser.Find(nimUser.Id);
+            int exist = entities.NimUser.Where(o => o.Id != nimUser.Id && o.Username == nimUser.Username).Count();
+            if (exist > 0)
+            {
+                return Json(new { statusCode = "300", message = "帐号重复" });
+            }
+
+            model.Username = nimUser.Username;
+            model.Password = ChineseChat.Library.EncryptionUtil.Md5Encode(nimUser.Password);//密码加密
+            model.Category = nimUser.Category;
+
+            entities.SaveChanges();
+
+            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminNimUserIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
+            return Json(data);
         }
 
         /// <summary>
         /// 修改用户,只修改基本信息
         /// </summary>
         /// <returns></returns>
-        public ActionResult NimUserUpdate(String accid)
+        public ActionResult NimUserUpdateInfo(Int32 id)
         {
-            NimUser NimUser = entities.NimUser.Find(accid);
-            ViewData.Model = NimUser;
+            NimUser NimUser = entities.NimUser.Find(id);
+            ViewData.Model = NimUser.NimUserEx;
             return View();
         }
 
         [HttpPost]
-        public ActionResult NimUserUpdate(NimUser NimUser, String nickname)
+        public ActionResult NimUserUpdateInfo(NimUserEx nimUser)
         {
-            NimUser model = entities.NimUser.Find(NimUser.Id);
-
-            model.Username = NimUser.Username;
-            model.Password = ChineseChat.Library.EncryptionUtil.Md5Encode(NimUser.Password);//密码加密
-
-
-            String json = ChineseChat.Library.NimUtil.UserUpdate(NimUser.Accid, null, null, nickname);
-            JObject rss = JObject.Parse(json);
-            if ("200" == rss.GetValue("code").ToString())
-            {
-                entities.SaveChanges();
-            }
-
+            entities.Entry(nimUser).State = EntityState.Modified;
+            entities.SaveChanges();
             var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminNimUserIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
             return Json(data);
         }
 
 
-
-
         #endregion
-
-
 
         #region 主题管理
 
@@ -437,8 +481,7 @@ namespace StudyOnline.Controllers
         {
             if (theme.Id > 0)
             {
-                Theme model = entities.Theme.Find(theme.Id);
-                model.Name = theme.Name;
+                entities.Entry(theme).State = EntityState.Modified;
             }
             else
             {
@@ -461,11 +504,44 @@ namespace StudyOnline.Controllers
             return Json(new { statusCode = "200", message = "操作成功", navTabId = "AdminThemeIndex", rel = "", callbackType = "", forwardUrl = "" });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult ThemeUpdateQuestion(Int32 id)
+        {
+            Theme theme = entities.Theme.Find(id);
+            ViewData.Model = theme;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ThemeUpdateQuestion(Int32 id, List<Question> questions)
+        {
+            //context.Database.ExecuteSqlCommand("UPDATE dbo.Posts SET Rating = 5 WHERE Author = @author", new SqlParameter("@author",  userSuppliedAuthor));
+            entities.Database.ExecuteSqlCommand("UPDATE Question SET ThemeId = null WHERE ThemeId = @ThemeId", new SqlParameter("@ThemeId", id));
+
+            foreach (var item in questions)
+            {
+                item.ThemeId = id;
+                if (item.Id > 0)
+                {
+                    entities.Entry(item).State = EntityState.Modified;
+                }
+                else
+                {
+                    entities.Question.Add(item);
+                }
+            }
+            entities.SaveChanges();
+            return Json(new { statusCode = "200", message = "操作成功", navTabId = "AdminThemeIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" });
+        }
+
+
+
         #endregion
-
-
-
-
 
         #region 系统管理
         public ActionResult MenuIndex()
@@ -503,8 +579,6 @@ namespace StudyOnline.Controllers
             return Json(data);
         }
         #endregion
-
-
 
         #region 用户管理
 
@@ -564,7 +638,6 @@ namespace StudyOnline.Controllers
 
         #endregion
 
-
         [HttpPost]
         public ActionResult Uploadify(HttpPostedFileBase file)
         {
@@ -587,17 +660,17 @@ namespace StudyOnline.Controllers
         {
             String fileName = "";
             String filePath = String.Format("/{0}/{1}/{2}{3}", "File", DateTime.Now.ToString("yyyyMMdd"), Guid.NewGuid(), Path.GetExtension(file.FileName));
-            FileInfo info = new FileInfo(Server.MapPath("~" + filePath));
-            if (!info.Directory.Exists)
+            FileInfo fileInfo = new FileInfo(Server.MapPath("~" + filePath));
+            if (!fileInfo.Directory.Exists)
             {
-                info.Directory.Create();
+                fileInfo.Directory.Create();
             }
 
             Mp3FileReader reader = new Mp3FileReader(file.InputStream);
             double Duration = reader.TotalTime.TotalMilliseconds;
 
             fileName = file.FileName;
-            file.SaveAs(info.FullName);
+            file.SaveAs(fileInfo.FullName);
             var data = new { fileName = fileName, filePath = filePath, Duration, Length = file.ContentLength };
             return Json(data);
         }
@@ -618,6 +691,65 @@ namespace StudyOnline.Controllers
             var data = new { fileName = fileName, filePath = filePath, Size = file.ContentLength, Extension = Path.GetExtension(file.FileName) };
             return Json(data);
         }
+
+
+        #region 安卓管理
+        public ActionResult AndroidIndex(FormCollection form)
+        {
+            //分页处理
+            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 25);
+            int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
+
+            //关键字处理
+            Expression<Func<Android, bool>> predicate = o => true;
+            if (!String.IsNullOrEmpty(form["keyword"]))
+            {
+                String keyword = form["keyword"];
+                predicate = o => o.VersionName.Contains(keyword) || o.UpgradeInfo.Contains(keyword);
+                ViewBag.KeyWord = form["keyword"];
+            }
+
+            ViewData.Model = entities.Android.Where(predicate).OrderByDescending(o => o.CreateDate).ToPagedList(pageIndex, pageSize);
+
+            return View();
+        }
+
+        public ActionResult AndroidCreate(Int32? id)
+        {
+            Android android = entities.Android.Find(id);
+            ViewData.Model = android ?? new Android() { Id = 0, VersionType = 0, CreateDate = DateTime.Now };
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AndroidCreate(Android android)
+        {
+            if (android.Id > 0)
+            {
+                entities.Entry(android).State = EntityState.Modified;
+            }
+            else
+            {
+                android.CreateDate = DateTime.Now;
+                entities.Android.Add(android);
+            }
+
+            entities.SaveChanges();
+            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminAndroidIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
+            return Json(data);
+        }
+
+        [HttpPost]
+        public ActionResult AndroidDelete(Int32 id)
+        {
+            Android a = entities.Android.Find(id);
+            entities.Android.Remove(a);
+            entities.SaveChanges();
+            var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminAndroidIndex", rel = "", callbackType = "", forwardUrl = "" };
+            return Json(data);
+        }
+        #endregion
+
 
         public ActionResult ApkIndex()
         {

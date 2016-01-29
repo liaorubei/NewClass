@@ -55,7 +55,6 @@ CREATE TABLE [Teacher]
 );
 GO
 
-
 --创建群组,群聊
 CREATE TABLE [Group]
 (
@@ -71,13 +70,24 @@ CREATE TABLE [Group]
 	CONSTRAINT [FK_Group_NimUser] FOREIGN KEY (Host) REFERENCES [NimUser] ([Id])
 )
 
+--创建汉语等级表
+create table HskLevel(
+	[Id] int identity (1,1),
+	[Name] nvarchar(256) not null,
+	constraint [PK_HskLevel] primary key ([Id])
+);
+
 --创建主题,话题
 create table Theme
 (
-   [Id]       int identity (1,1),
-   [Name]     nvarchar(256) not null,
-   constraint [PK_Theme] primary key (Id)
+   [Id]           int identity (1,1),
+   [Name]         nvarchar(256) not null,
+   [HskLevelId]   int,
+   constraint     [PK_Theme] primary key (Id),
+   constraint     [FK_Theme_HskLevel] foreign key  ([HskLevelId]) references [HskLevel] ([Id])
 )
+--alter table theme add HskLevelId int ;
+--alter table theme add constraint [FK_Theme_HskLevel] foreign key  ([HskLevelId]) references [HskLevel] ([Id])
 
 --创建问题
 create table Question
@@ -92,25 +102,60 @@ create table Question
 --通话记录
 create table CallLog(
 	[Id]         NVARCHAR (32) NOT NULL,
+	[ChatId]     bigint ,
+	[ChatType]   int,
 	[Source]     INT           NOT NULL,
 	[Target]     INT           NOT NULL,
 	[Start]      DATETIME,
 	[Finish]	 DATETIME,
+	[Score]	     int,
 	CONSTRAINT [PK_CallLog]                PRIMARY KEY([Id]),
 	CONSTRAINT [FK_CallLog_NimUser_Source] FOREIGN KEY([Source]) REFERENCES [NimUser]([Id]),
 	CONSTRAINT [FK_CallLog_NimUser_Target] FOREIGN KEY([Target]) REFERENCES [NimUser]([Id])
 )
+CREATE UNIQUE NONCLUSTERED INDEX [Index_CallLog_ChatId] ON [CallLog]([ChatId] ASC);
+
+
+--学习记录的主题表
+create table LogTheme(
+[ChatId]     bigint ,
+[ThemeId]    int,
+CONSTRAINT [PK_LogTheme]         PRIMARY KEY([ChatId],[ThemeId]),
+CONSTRAINT [FK_LogTheme_CallLog] FOREIGN KEY([ChatId]) REFERENCES [CallLog]([ChatId]),
+CONSTRAINT [FK_LogTheme_ThemeId] FOREIGN KEY([ThemeId]) REFERENCES [Theme]([Id])
+)
+
+--安卓管理
+CREATE TABLE [Android]
+(
+	[Id]             INT IDENTITY(1,1),
+	[VersionType]    INT              ,
+	[VersionName]    NVARCHAR (1024)  ,
+	[PackageSize]    INT		      ,
+	[UpgradeInfo]    NVARCHAR (1024)  ,		
+	[PackagePath]	 NVARCHAR (1024)  ,	
+	[CreateDate]     DATETIME         ,
+	CONSTRAINT [PK_Android]  PRIMARY KEY (Id)
+)
+
+select * from android where versionType=0 order by createdate desc
 
 
 --drop table nimuser
 --drop table nimuserex
 --drop table teacher
 --drop table [group]
-select * from NimUser order by enqueue
+--insert into nimuser(accid,token) values('bf09f7dd02e549f4a16af0cf8e9a5701');
+
+select * from NimUser where Accid='25f1ccdee9cd4f37b4c177c271076477' order by enqueue 
 select * from NimUserEx
+select * from nimuser order by createdate
+select * from CallLog where ChatId in (select ChatId from LogTheme) order by start,ChatId
+select * from theme
+select * from question
 
-insert into nimuser(accid,token) values('bf09f7dd02e549f4a16af0cf8e9a5701');
-
-
-select * from CallLog
-
+--delete from CallLog where ChatId is null
+select * from LogTheme where ChatId =6236230176636676750
+select * from CallLog where source=9 order by Start 
+select * from nimuser order by username
+select * from android order by createdate

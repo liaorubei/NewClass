@@ -139,5 +139,13 @@ namespace StudyOnline.Controllers
             var data = new { PackageSize = temp.Size, PackagePath = temp.Path, UpgradeInfo = temp.Info, VersionName = temp.VersionName };
             return Json(data, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpPost]
+        public ActionResult AndroidCheckUpdate(Int32 versionType)
+        {
+            Android android = db.Android.Where(o => o.VersionType == versionType).OrderByDescending(o => o.CreateDate).First();
+            return Json(new { android.PackagePath, android.PackageSize, android.UpgradeInfo, android.VersionName, android.VersionType });
+        }
+
     }
 }
