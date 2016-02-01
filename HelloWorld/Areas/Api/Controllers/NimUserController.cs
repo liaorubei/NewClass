@@ -141,11 +141,11 @@ namespace StudyOnline.Areas.Api.Controllers
             try
             {
                 entities.SaveChanges();
-                return Json(new { code = 200, desc = "修改成功", info = new { info.Id, info.Name, info.Icon, info.Email, info.Birth, info.Mobile, info.Gender } });
+                return Json(new { code = 200, desc = "修改成功", info = new { info.Id, info.Name, info.Icon, info.Email, Birth = (info.Birth == null ? "" : info.Birth.Value.ToString("yyyy-MM-dd")), info.Mobile, info.Gender } });
             }
             catch
             {
-                return Json(new { code = 201, desc = "修改失败", info = new { info.Id, info.Name, info.Icon, info.Email, info.Birth, info.Mobile, info.Gender } });
+                return Json(new { code = 201, desc = "修改失败", info = new { info.Id, info.Name, info.Icon, info.Email, Birth = (info.Birth == null ? "" : info.Birth.Value.ToString("yyyy-MM-dd")), info.Mobile, info.Gender } });
             }
         }
 
@@ -174,11 +174,23 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 return Json(new { code = 20001 });
             }
-            return Json(new { code = 200, desc = "登录成功", info = new { user.Id, user.Accid, user.Token, user.Username, 
-			user.NimUserEx.Icon, Avater = user.NimUserEx.Icon, 
-			user.NimUserEx.Name, 
-			NickName = user.NimUserEx.Name, 
-			user.NimUserEx.Gender } });
+            return Json(new
+            {
+                code = 200,
+                desc = "登录成功",
+                info = new
+                {
+                    user.Id,
+                    user.Accid,
+                    user.Token,
+                    user.Username,
+                    user.NimUserEx.Icon,
+                    Avater = user.NimUserEx.Icon,
+                    user.NimUserEx.Name,
+                    NickName = user.NimUserEx.Name,
+                    user.NimUserEx.Gender
+                }
+            });
         }
 
         /// <summary>
@@ -213,7 +225,7 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 return Json(new { code = 2001, desc = "没有这个人", info = new { Id = id } });
             }
-            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.NimUserEx.Name,user.NimUserEx.Icon } });
+            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.NimUserEx.Name, user.NimUserEx.Icon } });
         }
 
         /// <summary>
@@ -398,7 +410,7 @@ namespace StudyOnline.Areas.Api.Controllers
             }
             teacher.IsEnable = 0;
             entities.SaveChanges();
-            return Json(new { code = 200, desc = "获取成功", info = new { teacher.Id, teacher.Accid, teacher.NimUserEx.Name, teacher.Username,teacher.NimUserEx.Icon } });
+            return Json(new { code = 200, desc = "获取成功", info = new { teacher.Id, teacher.Accid, teacher.NimUserEx.Name, teacher.Username, teacher.NimUserEx.Icon } });
         }
 
         /// <summary>
@@ -428,7 +440,7 @@ namespace StudyOnline.Areas.Api.Controllers
 
             teacher.IsEnable = 0;
             entities.SaveChanges();
-            return Json(new { code = 200, desc = "选择成功", info = new { teacher.Id, teacher.Accid, teacher.NimUserEx.Name, teacher.Username,teacher.NimUserEx.Icon } });
+            return Json(new { code = 200, desc = "选择成功", info = new { teacher.Id, teacher.Accid, teacher.NimUserEx.Name, teacher.Username, teacher.NimUserEx.Icon } });
         }
 
         /// <summary>
