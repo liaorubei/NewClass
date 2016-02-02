@@ -188,7 +188,10 @@ namespace StudyOnline.Areas.Api.Controllers
                     Avater = user.NimUserEx.Icon,
                     user.NimUserEx.Name,
                     NickName = user.NimUserEx.Name,
-                    user.NimUserEx.Gender
+                    user.NimUserEx.Gender,
+                    user.NimUserEx.Email,
+                    user.NimUserEx.Mobile,
+                    Birth = (user.NimUserEx.Birth == null ? "" : user.NimUserEx.Birth.Value.ToString("yyyy-MM-dd"))
                 }
             });
         }

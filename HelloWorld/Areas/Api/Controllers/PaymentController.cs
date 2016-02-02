@@ -44,19 +44,19 @@ namespace StudyOnline.Areas.Api.Controllers
             //插入数据库
 
             //验证交易总额
-            if (clientAmount!=serverAmount)
+            if (clientAmount != serverAmount)
             {
 
             }
 
             //验证货币类型
-            if (clientCurrency!=serverCurrentcy)
+            if (clientCurrency != serverCurrentcy)
             {
 
             }
 
             //验证交易状态
-            if (saleState!= "completed")
+            if (saleState != "completed")
             {
 
             }
@@ -67,76 +67,21 @@ namespace StudyOnline.Areas.Api.Controllers
             return Json(payment);
         }
 
-        // GET: Api/Payment/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: Api/Payment/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Api/Payment/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult CreateOrder(Int32 id, Payment payment, String currency, double amount, double quantity, double price, string main, String body, string trade_no, String trade_status)
         {
-            try
-            {
-                // TODO: Add insert logic here
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+
+
+            return Json("");
         }
 
-        // GET: Api/Payment/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
 
-        // POST: Api/Payment/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
+    }
 
-        // GET: Api/Payment/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Api/Payment/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
+    public enum Payment
+    {
+        Alipay, Paypal
     }
 }
