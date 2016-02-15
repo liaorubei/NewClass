@@ -1,0 +1,55 @@
+﻿@model NimUserEx
+@{
+    Layout = null;
+}
+
+<div class="pageContent">
+
+    <form method="post" action="@Url.Action("NimUserUpdateInfo")" class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent " layoutH="58">
+            <dl>
+                <dt>昵称：</dt>
+                <dd>
+                    @Html.Hidden("Id", Model.Id)
+                    @Html.TextBox("Name", Model.Name)
+                </dd>
+            </dl>
+            <dl>
+                <dt>邮箱：</dt>
+                <dd>
+                    <input type="text" name="Email" value="@Model.Email" class="email" />
+                </dd>
+            </dl>
+            <dl>
+                <dt>生日：</dt>
+                <dd>
+                    <input type="text" name="Birth" class="date" readonly="readonly" value="@(Model.Birth==null?"":Model.Birth.Value.ToString("yyyy-MM-dd"))" />
+                </dd>
+            </dl>
+            <dl>
+                <dt>手机：</dt>
+                <dd>
+                    <input type="text" name="Mobile" value="@Model.Mobile" class="phone" />
+                </dd>
+            </dl>
+            <dl>
+                <dt>性别：</dt>
+                <dd>
+                    <select class="combox" name="Gender">
+                        <option value="-1">-请选择-</option>
+                        <option value="0" @(Model.Gender == 0 ? "selected='selected'" : "")>女</option>
+                        <option value="1" @(Model.Gender == 1 ? "selected='selected'" : "")>男</option>
+                    </select>
+                </dd>
+            </dl>
+
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+
+</div>
