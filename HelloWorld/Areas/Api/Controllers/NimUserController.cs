@@ -228,7 +228,7 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 return Json(new { code = 2001, desc = "没有这个人", info = new { Id = id } });
             }
-            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.NimUserEx.Name, user.NimUserEx.Icon } });
+            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.Username, user.NimUserEx.Name, user.NimUserEx.Icon } });
         }
 
         /// <summary>
@@ -244,7 +244,18 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 return Json(new { code = 2001, desc = "没有这个人", info = new { Accid = accid } });
             }
-            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.NimUserEx.Name, NickName = user.NimUserEx.Name } });
+            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.Username, user.NimUserEx.Name, NickName = user.NimUserEx.Name } });
+        }
+
+        [HttpPost]
+        public ActionResult GetByUsername(String username)
+        {
+            NimUser user = entities.NimUser.Single(o => o.Username == username);
+            if (user == null)
+            {
+                return Json(new { code = 2001, desc = "没有这个人", info = new { Accid = username } });
+            }
+            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.Username, user.NimUserEx.Name, NickName = user.NimUserEx.Name } });
         }
 
         /// <summary>
