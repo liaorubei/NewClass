@@ -1,9 +1,7 @@
-﻿using PayPal.Api;
+﻿
+using PayPal.Api;
 using PayPal.Sample;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace StudyOnline.Areas.Api.Controllers
@@ -80,8 +78,4 @@ namespace StudyOnline.Areas.Api.Controllers
 
     }
 
-    public enum Payment
-    {
-        Alipay, Paypal
-    }
 }

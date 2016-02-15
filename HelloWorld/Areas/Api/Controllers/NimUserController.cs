@@ -244,7 +244,7 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 return Json(new { code = 2001, desc = "没有这个人", info = new { Accid = accid } });
             }
-            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.Username, user.NimUserEx.Name, NickName = user.NimUserEx.Name } });
+            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.Username, user.NimUserEx.Name, NickName = user.NimUserEx.Name ,user.NimUserEx.Icon} });
         }
 
         [HttpPost]
@@ -255,7 +255,7 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 return Json(new { code = 2001, desc = "没有这个人", info = new { Accid = username } });
             }
-            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.Username, user.NimUserEx.Name, NickName = user.NimUserEx.Name } });
+            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.Username, user.NimUserEx.Name, NickName = user.NimUserEx.Name,user.NimUserEx.Icon } });
         }
 
         /// <summary>
