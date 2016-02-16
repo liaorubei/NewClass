@@ -135,6 +135,21 @@
           <Property Name="Gender" Type="int" />
           <Property Name="Ex" Type="nvarchar" MaxLength="512" />
         </EntityType>
+        <EntityType Name="Orders">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Currency" Type="nvarchar" MaxLength="16" Nullable="false" />
+          <Property Name="Amount" Type="float" Nullable="false" />
+          <Property Name="Quantity" Type="float" Nullable="false" />
+          <Property Name="Price" Type="float" Nullable="false" />
+          <Property Name="Main" Type="nvarchar" MaxLength="1024" />
+          <Property Name="Body" Type="nvarchar" MaxLength="2048" />
+          <Property Name="TradeNo" Type="nvarchar" MaxLength="128" />
+          <Property Name="TradeStatus" Type="nvarchar" MaxLength="128" />
+        </EntityType>
         <EntityType Name="Question">
           <Key>
             <PropertyRef Name="Id" />
@@ -304,6 +319,9 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <!--生成过程中发现错误:
+警告 6035: 关系“FK_Orders_NimUser”在关系主端上有一些列不属于表的键的一部分。已排除了此关系。
+        <Association Name="FK_Orders_NimUser" />-->
         <Association Name="FK_Question_Theme">
           <End Role="Theme" Type="Self.Theme" Multiplicity="0..1" />
           <End Role="Question" Type="Self.Question" Multiplicity="*" />
@@ -352,6 +370,7 @@
           <EntitySet Name="LogTheme" EntityType="Self.LogTheme" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NimUser" EntityType="Self.NimUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NimUserEx" EntityType="Self.NimUserEx" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Question" EntityType="Self.Question" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Recharge" EntityType="Self.Recharge" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Theme" EntityType="Self.Theme" Schema="dbo" store:Type="Tables" />
@@ -679,6 +698,7 @@
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="Recharge" EntitySet="Recharge" />
           </AssociationSet>
+          <EntitySet Name="Orders" EntityType="StudyOnline.Orders" />
         </EntityContainer>
         <EntityType Name="Question">
           <Key>
@@ -832,6 +852,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Orders">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Currency" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="true" />
+          <Property Name="Amount" Type="Double" Nullable="false" />
+          <Property Name="Quantity" Type="Double" Nullable="false" />
+          <Property Name="Price" Type="Double" Nullable="false" />
+          <Property Name="Main" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="Body" Type="String" MaxLength="2048" FixedLength="false" Unicode="true" />
+          <Property Name="TradeNo" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="TradeStatus" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1035,6 +1070,22 @@
                 <ScalarProperty Name="Amount" ColumnName="Amount" />
                 <ScalarProperty Name="Currency" ColumnName="Currency" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="StudyOnline.Orders">
+              <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="TradeStatus" ColumnName="TradeStatus" />
+                <ScalarProperty Name="TradeNo" ColumnName="TradeNo" />
+                <ScalarProperty Name="Body" ColumnName="Body" />
+                <ScalarProperty Name="Main" ColumnName="Main" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -33,6 +33,7 @@
         <AssociationConnector Association="StudyOnline.FK_Theme_HskLevel" />
         <EntityTypeShape EntityType="StudyOnline.Recharge" Width="1.5" PointX="3" PointY="23.25" />
         <AssociationConnector Association="StudyOnline.FK_Recharge_NimUser" />
+        <EntityTypeShape EntityType="StudyOnline.Orders" Width="1.5" PointX="5.375" PointY="11.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
