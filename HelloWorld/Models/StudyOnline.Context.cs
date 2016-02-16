@@ -40,5 +40,6 @@ namespace StudyOnline.Models
         public virtual DbSet<LogTheme> LogTheme { get; set; }
         public virtual DbSet<Android> Android { get; set; }
         public virtual DbSet<HskLevel> HskLevel { get; set; }
+        public virtual DbSet<Recharge> Recharge { get; set; }
     }
 }

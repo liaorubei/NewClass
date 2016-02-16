@@ -143,6 +143,21 @@
           <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ThemeId" Type="int" />
         </EntityType>
+        <EntityType Name="Recharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="Currency" Type="nvarchar" MaxLength="16" Nullable="false" />
+          <Property Name="Amount" Type="float" Nullable="false" />
+          <Property Name="Quantity" Type="float" Nullable="false" />
+          <Property Name="Price" Type="float" Nullable="false" />
+          <Property Name="Main" Type="nvarchar" MaxLength="1024" />
+          <Property Name="Body" Type="nvarchar" MaxLength="2048" />
+          <Property Name="TradeNo" Type="nvarchar" MaxLength="128" />
+          <Property Name="TradeStatus" Type="nvarchar" MaxLength="128" />
+        </EntityType>
         <EntityType Name="Theme">
           <Key>
             <PropertyRef Name="Id" />
@@ -301,6 +316,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Recharge_NimUser">
+          <End Role="NimUser" Type="Self.NimUser" Multiplicity="1" />
+          <End Role="Recharge" Type="Self.Recharge" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Recharge">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Theme_HskLevel">
           <End Role="HskLevel" Type="Self.HskLevel" Multiplicity="0..1" />
           <End Role="Theme" Type="Self.Theme" Multiplicity="*" />
@@ -326,6 +353,7 @@
           <EntitySet Name="NimUser" EntityType="Self.NimUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NimUserEx" EntityType="Self.NimUserEx" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Question" EntityType="Self.Question" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Recharge" EntityType="Self.Recharge" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Theme" EntityType="Self.Theme" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UploadFile" EntityType="Self.UploadFile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
@@ -368,6 +396,10 @@
           <AssociationSet Name="FK_Question_Theme" Association="Self.FK_Question_Theme">
             <End Role="Theme" EntitySet="Theme" />
             <End Role="Question" EntitySet="Question" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Recharge_NimUser" Association="Self.FK_Recharge_NimUser">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="Recharge" EntitySet="Recharge" />
           </AssociationSet>
           <AssociationSet Name="FK_Theme_HskLevel" Association="Self.FK_Theme_HskLevel">
             <End Role="HskLevel" EntitySet="HskLevel" />
@@ -466,6 +498,7 @@
           <Property Name="Enqueue" Type="Int64" />
           <NavigationProperty Name="CallLog" Relationship="StudyOnline.FK_CallLog_NimUser_Source" FromRole="NimUser" ToRole="CallLog" />
           <NavigationProperty Name="CallLog1" Relationship="StudyOnline.FK_CallLog_NimUser_Target" FromRole="NimUser" ToRole="CallLog" />
+          <NavigationProperty Name="Recharge" Relationship="StudyOnline.FK_Recharge_NimUser" FromRole="NimUser" ToRole="Recharge" />
         </EntityType>
         <EntityType Name="NimUserEx">
           <Key>
@@ -641,6 +674,11 @@
             <End Role="HskLevel" EntitySet="HskLevel" />
             <End Role="Theme" EntitySet="Theme" />
           </AssociationSet>
+          <EntitySet Name="Recharge" EntityType="StudyOnline.Recharge" />
+          <AssociationSet Name="FK_Recharge_NimUser" Association="StudyOnline.FK_Recharge_NimUser">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="Recharge" EntitySet="Recharge" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Question">
           <Key>
@@ -763,6 +801,34 @@
             </Principal>
             <Dependent Role="Theme">
               <PropertyRef Name="HskLevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Recharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="Currency" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="true" />
+          <Property Name="Amount" Type="Double" Nullable="false" />
+          <Property Name="Quantity" Type="Double" Nullable="false" />
+          <Property Name="Price" Type="Double" Nullable="false" />
+          <Property Name="Main" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="Body" Type="String" MaxLength="2048" FixedLength="false" Unicode="true" />
+          <Property Name="TradeNo" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="TradeStatus" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="NimUser" Relationship="StudyOnline.FK_Recharge_NimUser" FromRole="Recharge" ToRole="NimUser" />
+        </EntityType>
+        <Association Name="FK_Recharge_NimUser">
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
+          <End Type="StudyOnline.Recharge" Role="Recharge" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Recharge">
+              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -953,6 +1019,22 @@
             <EntityTypeMapping TypeName="StudyOnline.HskLevel">
               <MappingFragment StoreEntitySet="HskLevel">
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Recharge">
+            <EntityTypeMapping TypeName="StudyOnline.Recharge">
+              <MappingFragment StoreEntitySet="Recharge">
+                <ScalarProperty Name="TradeStatus" ColumnName="TradeStatus" />
+                <ScalarProperty Name="TradeNo" ColumnName="TradeNo" />
+                <ScalarProperty Name="Body" ColumnName="Body" />
+                <ScalarProperty Name="Main" ColumnName="Main" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

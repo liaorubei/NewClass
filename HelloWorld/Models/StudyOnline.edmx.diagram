@@ -31,6 +31,8 @@
         <EntityTypeShape EntityType="StudyOnline.Android" Width="1.5" PointX="10.375" PointY="10.75" />
         <EntityTypeShape EntityType="StudyOnline.HskLevel" Width="1.5" PointX="0.75" PointY="13.25" />
         <AssociationConnector Association="StudyOnline.FK_Theme_HskLevel" />
+        <EntityTypeShape EntityType="StudyOnline.Recharge" Width="1.5" PointX="3" PointY="23.25" />
+        <AssociationConnector Association="StudyOnline.FK_Recharge_NimUser" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
