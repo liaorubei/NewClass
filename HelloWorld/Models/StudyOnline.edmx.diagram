@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="767fb3cbf87146c8a047e1fff03dce29" Name="Diagram1">
+      <Diagram DiagramId="767fb3cbf87146c8a047e1fff03dce29" Name="Diagram1" ZoomLevel="63">
         <EntityTypeShape EntityType="StudyOnline.Comment" Width="1.5" PointX="12.5" PointY="6" IsExpanded="true" />
         <EntityTypeShape EntityType="StudyOnline.Document" Width="1.5" PointX="10.25" PointY="4.875" IsExpanded="true" />
         <EntityTypeShape EntityType="StudyOnline.Folder" Width="1.5" PointX="8" PointY="8.5" IsExpanded="true" />
@@ -31,8 +31,6 @@
         <EntityTypeShape EntityType="StudyOnline.Android" Width="1.5" PointX="10.375" PointY="10.75" />
         <EntityTypeShape EntityType="StudyOnline.HskLevel" Width="1.5" PointX="0.75" PointY="13.25" />
         <AssociationConnector Association="StudyOnline.FK_Theme_HskLevel" />
-        <EntityTypeShape EntityType="StudyOnline.Recharge" Width="1.5" PointX="3" PointY="23.25" />
-        <AssociationConnector Association="StudyOnline.FK_Recharge_NimUser" />
         <EntityTypeShape EntityType="StudyOnline.Orders" Width="1.5" PointX="5.375" PointY="11.75" />
       </Diagram>
     </edmx:Diagrams>

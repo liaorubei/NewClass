@@ -20,7 +20,6 @@ namespace StudyOnline.Models
             this.Group = new HashSet<Group>();
             this.CallLog = new HashSet<CallLog>();
             this.CallLog1 = new HashSet<CallLog>();
-            this.Recharge = new HashSet<Recharge>();
         }
     
         public int Id { get; set; }
@@ -43,7 +42,5 @@ namespace StudyOnline.Models
         public virtual ICollection<CallLog> CallLog { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CallLog> CallLog1 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Recharge> Recharge { get; set; }
     }
 }

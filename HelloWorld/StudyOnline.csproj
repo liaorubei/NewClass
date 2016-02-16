@@ -282,9 +282,6 @@
     <Compile Include="Models\Question.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Recharge.cs">
-      <DependentUpon>StudyOnline.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\StudyOnline.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

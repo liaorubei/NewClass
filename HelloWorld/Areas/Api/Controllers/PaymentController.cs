@@ -71,7 +71,7 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult CreateOrder(Orders order)
         {
-            order.Id = Guid.NewGuid().ToString();
+            order.Id = Guid.NewGuid().ToString().Replace("-", "");
             entities.Orders.Add(order);
             entities.SaveChanges();
             return Json(new { code = 200, desc = "", info = order });
@@ -80,12 +80,11 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult VerifyAliPay(String paymentId, String clientPaymentJson)
         {
-
             return Json("");
         }
 
         [HttpPost]
-        public ActionResult VerifyPayPal(String paymentId, String rechargeId)
+        public ActionResult VerifyPayPal(String paymentId, String orderId)
         {
             //OAuthTokenCredential tokenCredential = new OAuthTokenCredential("<CLIENT_ID>", "<CLIENT_SECRET>");
             //string accessToken = tokenCredential.GetAccessToken();
@@ -110,11 +109,11 @@ namespace StudyOnline.Areas.Api.Controllers
                 return Json(new { code = 201, desc = "交易记录验证不成功", info = payment });
             }
 
-            Recharge recharge = entities.Recharge.Find(rechargeId);
+            Orders order = entities.Orders.Find(orderId);
 
             //由手机端传过来的信息,如支付总额,货币
-            String clientAmount = "";
-            String clientCurrency = "";
+            String clientAmount = order.Amount + "";
+            String clientCurrency = order.Currency + "";
 
 
             Transaction d = payment.transactions[0];
@@ -142,11 +141,13 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 return Json(new { code = 201, desc = "交易状态验证不成功", info = payment });
             }
-            //	recharge.state="completed";
 
             //保存数据
+            order.TradeNo = paymentId;
+            order.TradeStatus = "completed";
+            entities.SaveChanges();
 
-            return Json(payment);
+            return Json(new { code = 200, desc = "交易成功", info = payment });
         }
     }
 
