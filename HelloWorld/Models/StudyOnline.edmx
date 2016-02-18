@@ -149,6 +149,7 @@
           <Property Name="Body" Type="nvarchar" MaxLength="2048" />
           <Property Name="TradeNo" Type="nvarchar" MaxLength="128" />
           <Property Name="TradeStatus" Type="nvarchar" MaxLength="128" />
+          <Property Name="CreateTime" Type="datetime" />
         </EntityType>
         <EntityType Name="Question">
           <Key>
@@ -800,6 +801,7 @@
           <Property Name="Body" Type="String" MaxLength="2048" FixedLength="false" Unicode="true" />
           <Property Name="TradeNo" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="TradeStatus" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="CreateTime" Type="DateTime" Precision="3" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -995,6 +997,7 @@
           <EntitySetMapping Name="Orders">
             <EntityTypeMapping TypeName="StudyOnline.Orders">
               <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
                 <ScalarProperty Name="TradeStatus" ColumnName="TradeStatus" />
                 <ScalarProperty Name="TradeNo" ColumnName="TradeNo" />
                 <ScalarProperty Name="Body" ColumnName="Body" />

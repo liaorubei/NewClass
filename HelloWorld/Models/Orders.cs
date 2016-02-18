@@ -24,5 +24,6 @@ namespace StudyOnline.Models
         public string Body { get; set; }
         public string TradeNo { get; set; }
         public string TradeStatus { get; set; }
+        public Nullable<System.DateTime> CreateTime { get; set; }
     }
 }

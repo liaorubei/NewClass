@@ -5,8 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-
-
 using System.Text.RegularExpressions;
 using Kfstorm.LrcParser;
 using NAudio.Wave;
@@ -21,6 +19,9 @@ using System.Collections.Specialized;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Web;
+using StudyOnline.Areas.Api.Controllers;
+using StudyOnline.Utils;
+using Com.Alipay;
 
 namespace ConsoleXpath
 {
@@ -43,10 +44,40 @@ namespace ConsoleXpath
         //HttpWebRequest
         static void Main(string[] args)
         {
+            FileStream file = File.Open(@"D:\\re.txt", FileMode.Open);
+            StreamReader reader = new StreamReader(file);
 
-            testusercreate();
-           // UserUpdate();
-           // SelectMethod();
+            String d = reader.ReadToEnd();
+            String[] a = d.Split(new String[] { "&sign_type=\"RSA\"&sign=" }, StringSplitOptions.None);
+
+            foreach (var item in a)
+            {
+                Console.WriteLine(item);
+            }
+
+            Console.WriteLine("输入内容为:" + d);
+            Console.WriteLine("签名验证为:" + RSAFromPkcs8.verify(a[0], a[1].Trim(new char[] { '"' }), Config.Public_key, Config.Input_charset));
+
+            //StudyOnline.Models.Orders order = new StudyOnline.Models.Orders();
+            //order.Id = "82380efba25c44009e511857eba293da";
+            //order.Amount = 0.01;
+            //order.Main = "ChineseChat 学币充值";
+            //order.Body = "ChineseChat 学币1000枚";
+
+            //String orderString = OrderUtil.getOrderInfo(order);
+            //Console.WriteLine("订单字符串:" + orderString);
+
+            //String sign = RSAFromPkcs8.sign(orderString, Config.Private_key, Config.Input_charset);
+            //Console.WriteLine("签名:" + sign);
+
+            ////    
+
+            //String success = orderString + "&success=\"true\"";
+            //Console.WriteLine("结果:" + RSAFromPkcs8.sign(success, Config.Private_key, Config.Input_charset));
+
+            //String encodeSign = OrderUtil.UrlEncode(sign);
+
+            //Console.WriteLine("已编码签名:" + HttpUtility.UrlEncode(encodeSign, Encoding.UTF8));
             Console.ReadLine();
         }
 
