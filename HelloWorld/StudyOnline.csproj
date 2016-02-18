@@ -282,9 +282,6 @@
     <Compile Include="Models\Question.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Recharge.cs">
-      <DependentUpon>StudyOnline.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\StudyOnline.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -319,7 +316,6 @@
     <Compile Include="Utils\LyricParser.cs" />
     <Compile Include="Utils\OrderUtil.cs" />
     <Compile Include="Utils\RSA.cs" />
-	
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\dwz\dwz.frag.xml" />
@@ -637,6 +633,7 @@
     <Content Include="Models\StudyOnline.edmx.diagram">
       <DependentUpon>StudyOnline.edmx</DependentUpon>
     </Content>
+    <None Include="Properties\PublishProfiles\voc2015 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\voc2015 - Web Deploy.pubxml">
       <SubType>Designer</SubType>
     </None>

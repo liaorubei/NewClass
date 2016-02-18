@@ -129,7 +129,7 @@ namespace StudyOnline.Areas.Api.Controllers
 
             if (payment.state != "approved")
             {
-                return Json(new { code = 201, desc = "交易记录验证不成功", info = payment });
+                return Json(new { code = 201, desc = "交易记录验证不成功", info = orderId });
             }
 
             Orders order = entities.Orders.Find(orderId);
@@ -150,19 +150,19 @@ namespace StudyOnline.Areas.Api.Controllers
             //验证交易总额
             if (clientAmount != serverAmount)
             {
-                return Json(new { code = 201, desc = "交易总额验证不成功", info = payment });
+                return Json(new { code = 201, desc = "交易总额验证不成功", info = order });
             }
 
             //验证货币类型
             if (clientCurrency != serverCurrentcy)
             {
-                return Json(new { code = 201, desc = "货币类型验证不成功", info = payment });
+                return Json(new { code = 201, desc = "货币类型验证不成功", info = order });
             }
 
             //验证交易状态
             if (saleState != "completed")
             {
-                return Json(new { code = 201, desc = "交易状态验证不成功", info = payment });
+                return Json(new { code = 201, desc = "交易状态验证不成功", info = order });
             }
 
             //保存数据
@@ -170,14 +170,14 @@ namespace StudyOnline.Areas.Api.Controllers
             order.TradeStatus = "completed";
             entities.SaveChanges();
 
-            return Json(new { code = 200, desc = "交易成功", info = payment });
+            return Json(new { code = 200, desc = "交易成功", info = order });
         }
 
         [HttpPost]
         public ActionResult OrderRecords(String username, Int32 skip, Int32 take)
         {
-            var temp = entities.Orders.Where(o => o.UserName == username).Skip(skip).Take(take);
-            return Json(new { code = 200, desc = "", info = temp.Select(o => new { o.Id, o.Main }) });
+            var temp = entities.Orders.Where(o => o.UserName == username).OrderByDescending(o=>o.CreateTime).Skip(skip).Take(take).ToList();
+            return Json(new { code = 200, desc = "", info = temp.Select(o => new { o.Id, o.Amount, o.Main, o.Body, CreateTime = (o.CreateTime == null ? "" : o.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:ss")), o.TradeStatus }) });
         }
 
 
