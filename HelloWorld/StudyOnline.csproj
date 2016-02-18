@@ -282,6 +282,9 @@
     <Compile Include="Models\Question.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Recharge.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\StudyOnline.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -634,7 +637,9 @@
     <Content Include="Models\StudyOnline.edmx.diagram">
       <DependentUpon>StudyOnline.edmx</DependentUpon>
     </Content>
-    <None Include="Properties\PublishProfiles\voc2015 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\voc2015 - Web Deploy.pubxml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Images\background.png" />
     <Content Include="readme.txt" />
