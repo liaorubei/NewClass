@@ -448,6 +448,76 @@ namespace StudyOnline.Controllers
 
         #endregion
 
+        #region 汉语水平
+
+        public ActionResult HsLevelIndex()
+        {
+            PagedList<HsLevel> hsLevels = entities.HsLevel.OrderBy(o => o.Id).ToPagedList(1, 25);
+
+            ViewBag.HSLevels = hsLevels;
+            return View();
+        }
+
+        public ActionResult HsLevelCreate(Int32? id)
+        {
+
+            if (id == null)
+            {
+                ViewData.Model = new HsLevel() { Id = 0 };
+            }
+            else
+            {
+                ViewData.Model = entities.HsLevel.Find(id);
+            }
+
+            return View();
+        }
+        [HttpPost]
+        public ActionResult HsLevelCreate(HsLevel hsLevel)
+        {
+            if (hsLevel.Id > 0)
+            {
+                entities.Entry(hsLevel).State = EntityState.Modified;
+            }
+            else
+            {
+                entities.Entry(hsLevel).State = EntityState.Added;
+            }
+            entities.SaveChanges();
+            return Json(new { statusCode = "200", message = "操作成功", navTabId = "AdminHsLevelIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" });
+        }
+
+        [HttpPost]
+        public ActionResult HsLevelDelete(Int32 id)
+        {
+            HsLevel hs = new HsLevel() { Id = id };
+            entities.Entry(hs).State = EntityState.Deleted;
+            entities.SaveChanges();
+            return Json(new { statusCode = "200", message = "操作成功", navTabId = "AdminHsLevelIndex", rel = "", callbackType = "", forwardUrl = "" });
+        }
+
+        public ActionResult HsLevelExpand(FormCollection form)
+        {
+            //分页处理
+            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 20);
+            int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
+            ViewBag.ExpandHsLevel = entities.Theme.OrderBy(o => o.Id).ToPagedList(pageIndex, pageSize);
+
+            return View();
+        }
+
+        public ActionResult HsLevelAppend(Int32 id)
+        {
+            ViewData.Model = entities.HsLevel.Find(id);
+            return View();
+        }
+        [HttpPost]
+        public ActionResult HsLevelAppend(List<HskLevel> hsk) { return View(); }
+
+
+
+        #endregion
+
         #region 主题管理
 
         public ActionResult ThemeIndex(FormCollection form)

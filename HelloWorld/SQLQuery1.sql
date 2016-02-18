@@ -71,10 +71,10 @@ CREATE TABLE [Group]
 )
 
 --创建汉语等级表
-create table HskLevel(
+create table HsLevel(
 	[Id] int identity (1,1),
 	[Name] nvarchar(256) not null,
-	constraint [PK_HskLevel] primary key ([Id])
+	constraint [PK_HsLevel] primary key ([Id])
 );
 
 --创建主题,话题

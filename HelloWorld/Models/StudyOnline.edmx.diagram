@@ -32,6 +32,7 @@
         <EntityTypeShape EntityType="StudyOnline.HskLevel" Width="1.5" PointX="0.75" PointY="13.25" />
         <AssociationConnector Association="StudyOnline.FK_Theme_HskLevel" />
         <EntityTypeShape EntityType="StudyOnline.Orders" Width="1.5" PointX="5.375" PointY="11.75" />
+        <EntityTypeShape EntityType="StudyOnline.HsLevel" Width="1.5" PointX="7.375" PointY="11.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

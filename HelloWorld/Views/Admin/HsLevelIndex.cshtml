@@ -1,0 +1,71 @@
+﻿
+@{
+    PagedList<HsLevel> hsLevels = ViewBag.HSLevels;
+    Layout = null;
+}
+
+
+
+
+<div class="pageHeader">
+    <form id="pagerForm" onsubmit="return navTabSearch(this);" action='@Url.Action("HsLevelIndex")' method="post">
+        <input type="hidden" name="pageNum" value="@hsLevels.CurrentPageIndex" />
+        <input type="hidden" name="numPerPage" value="@hsLevels.PageSize" />
+        <div class="searchBar">
+            <ul class="searchContent">
+                <li>
+                    <label>我的客户：</label>
+                    <input type="text" />
+                </li>
+                <li>
+                    <select class="combox" name="province">
+                        <option value="">所有省市</option>
+                        <option value="北京">北京</option>
+                        <option value="上海">上海</option>
+                        <option value="天津">天津</option>
+                        <option value="重庆">重庆</option>
+                        <option value="广东">广东</option>
+                    </select>
+                </li>
+            </ul>
+
+            <div class="subBar">
+                <ul>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
+                    <li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+    <div class="panelBar">
+        <ul class="toolBar">
+            <li><a class="create" href='@Url.Action("HsLevelCreate")' target="dialog" mask="true" width="600" height="400"><span>添加</span></a></li>
+            <li><a class="delete" href='@Url.Action("HsLevelDelete", new { id = "{id}" })' target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
+            <li><a class="update" href='@Url.Action("HsLevelCreate",new  { id="{id}"})' target="dialog" mask="true" width="600" height="400" title="修改名称"><span>修改</span></a></li>
+            <li class="line">line</li>
+            <li><a class="icon" href='@Url.Action("HsLevelAppend",new  { id="{id}" })' targe target="dialog" mask="true" width="800" height="600"><span>添加话题</span></a></li>
+        </ul>
+    </div>
+    <table class="list" layoutH="138">
+        <thead>
+            <tr>
+                <th width="35">序号</th>
+                <th width="120">等级名称</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @{int i = 0;}
+            @foreach (var item in hsLevels)
+            {
+                <tr target="id" rel="@item.Id">
+                    <td>@(++i)</td>
+                    <td>@item.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @Html.NavTabPages(hsLevels, 10)
+</div>

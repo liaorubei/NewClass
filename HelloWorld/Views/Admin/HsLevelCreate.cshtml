@@ -1,0 +1,29 @@
+﻿@model HsLevel
+@{
+    Layout = null;
+}
+
+
+<div class="pageContent">
+
+    <form method="post" action='@Url.Action("HsLevelCreate")' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent " layoutH="58">
+
+            <dl>
+                <dt>必填：</dt>
+                <dd>
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <input type="text" class="required" name="Name" value="@Model.Name"/>
+                </dd>
+            </dl>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+
+</div>
+

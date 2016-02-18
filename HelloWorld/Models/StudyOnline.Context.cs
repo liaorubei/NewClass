@@ -41,5 +41,6 @@ namespace StudyOnline.Models
         public virtual DbSet<Android> Android { get; set; }
         public virtual DbSet<HskLevel> HskLevel { get; set; }
         public virtual DbSet<Orders> Orders { get; set; }
+        public virtual DbSet<HsLevel> HsLevel { get; set; }
     }
 }

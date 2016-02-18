@@ -1,8 +1,9 @@
-﻿@model Folder
-
+﻿@model HsLevel
 @{
     Layout = null;
 }
+
+
 <script>
     function addDocumentToFolder() {
         var $current = $.pdialog.getCurrent();
@@ -32,24 +33,20 @@
 
 
 
-
-
-
 <div class="panel" style="width:25%;float:left;" defH="515">
-    <h1>文章列表</h1>
+    <h1>已有话题</h1>
     <div>
-        <form method="post" action='@Url.Action("FolderSelect")' class="pageForm" onsubmit="return validateCallback(this, dialogAjaxDone)">
+        <form method="post" action='@Url.Action("HsLevelAppend")' class="pageForm" onsubmit="return validateCallback(this, dialogAjaxDone)">
             <input type="hidden" name="Id" value="@Model.Id" />
             <div id="folderAddedDocuments" class="unitBox" style="height:470px;overflow:auto">
-                @foreach (var item in Model.Document)
-                {
-                    <span class='docsList'>
-                        <input class="folderAdded" type='hidden' name='ids' value='@item.Id' />
-                        <span>@item.Title</span>
-                        <a href='javascript:;' class='close' title='移除' onclick='$(this).parent().remove();'></a>
-                    </span>
-                }
-            
+                @*@foreach (var item in Model.Document)
+                    {
+                        <span class='docsList'>
+                            <input class="folderAdded" type='hidden' name='ids' value='@item.Id' />
+                            <span>@item.Title</span>
+                            <a href='javascript:;' class='close' title='移除' onclick='$(this).parent().remove();'></a>
+                        </span>
+                    }*@
             </div>
             <div class="formBar">
                 <ul>
@@ -62,12 +59,10 @@
     </div>
 </div>
 <div class="panel" style="width:74%;margin-left:26%;">
-    <h1>所有文章</h1>
+    <h1>所有话题</h1>
     <div>
         <div id="jbsxBox3" class="unitBox">
-            @Html.Action("FolderCreateRight")
+            @Html.Action("HsLevelExpand")
         </div>
-
     </div>
-
 </div>

@@ -1,0 +1,71 @@
+﻿@{
+    Layout = null;
+    PagedList<Theme> themes = ViewBag.ExpandHsLevel;
+}
+<div class="pageHeader" style="border:1px #B8D0D6 solid">
+    <form id="pagerForm" onsubmit="return divSearch(this, 'jbsxBox3');" action="@Url.Action("HsLevelExpand")" method="post">
+        <input type="hidden" name="pageNum" value="@themes.CurrentPageIndex" />
+        <input type="hidden" name="numPerPage" value="@themes.PageSize" />
+        <div class="searchBar">
+            <table class="searchContent">
+                <tr>
+                    <td>
+                        关键字：<input type="text" name="keyword" value="@ViewBag.Keyword" />
+                    </td>
+                    <td>                        
+                        汉语水平：<select >
+                            <option value="-1">-所有的-</option>
+                            <option value="0">-未分级-</option>
+                            <option value="1">-级别1-</option>
+                            <option value="2">-级别2-</option>
+                            <option value="3">-级别3-</option>
+                        </select>
+                    </td>
+                    <td><div class="button"><div class="buttonContent"><button type="submit">检索</button></div></div></td>
+                    <td><div class="buttonActive"><div class="buttonContent"><button type="button" onclick="addDocumentToFolder();">添加</button></div></div></td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</div>
+
+<div style="border-left:1px #B8D0D6 solid;border-right:1px #B8D0D6 solid">
+
+    <table class="list" layoutH="110" style="width:98%">
+        <thead>
+            <tr>
+                <th width="22"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
+                <th width="35" align="center">序号</th>
+                <th>话题名称</th>
+                <th>汉语水平</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{int i = 0; }
+            @foreach (var item in themes)
+            {
+                <tr>
+                    <td><input name="ids" class="folderSelect" value="@item.Id" title="@item.Name" type="checkbox"></td>
+                    <td align="center">@(++i)</td>
+                    <td>@item.Name</td>
+                    <td>1</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="panelBar">
+        <div class="pages">
+            <span>显示</span>
+            <select class="combox" name="numPerPage" @*onchange="dwzPageBreak({ targetType: 'dialog', numPerPage: this.value }, 'jbsxBox3')"*@>
+                <option value="20" @(themes.PageSize == 20 ? "selected='selected'" : "")>20</option>
+                <option value="50" @(themes.PageSize == 50 ? "selected='selected'" : "")>50</option>
+                <option value="100" @(themes.PageSize == 100 ? "selected='selected'" : "")>100</option>
+                <option value="200" @(themes.PageSize == 200 ? "selected='selected'" : "")>200</option>
+            </select>
+            <span>条，共@(themes.TotalItemCount)条</span>
+        </div>
+
+        <div class="pagination" targetType="dialog" rel="jbsxBox3" totalCount="@themes.TotalItemCount" numPerPage="@themes.PageSize" pageNumShown="5" currentPage="@themes.CurrentPageIndex"></div>
+
+    </div>
+</div>
