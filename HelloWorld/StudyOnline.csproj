@@ -316,6 +316,7 @@
     <Compile Include="Utils\LyricParser.cs" />
     <Compile Include="Utils\OrderUtil.cs" />
     <Compile Include="Utils\RSA.cs" />
+	
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\dwz\dwz.frag.xml" />
