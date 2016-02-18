@@ -8,6 +8,7 @@ using System;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Linq;
 
 namespace StudyOnline.Areas.Api.Controllers
 {
@@ -171,6 +172,18 @@ namespace StudyOnline.Areas.Api.Controllers
 
             return Json(new { code = 200, desc = "交易成功", info = payment });
         }
+
+        [HttpPost]
+        public ActionResult OrderRecords(String username, Int32 skip, Int32 take)
+        {
+            var temp = entities.Orders.Where(o => o.UserName == username).Skip(skip).Take(take);
+            return Json(new { code = 200, desc = "", info = temp.Select(o => new { o.Id, o.Main }) });
+        }
+
+
+
+
+
     }
 
 }
