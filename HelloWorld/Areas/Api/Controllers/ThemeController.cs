@@ -28,10 +28,12 @@ namespace StudyOnline.Areas.Api.Controllers
             return Json(new { code = 200, desc = "", info = new { theme.Id, theme.Name, Questions = theme.Question.Select(o => new { o.Id, o.Name }) } });
         }
 
+
         // GET: Api/Theme/Create
-        public ActionResult Create()
+        public ActionResult HsLevelAndTheme()
         {
-            return View();
+            var hsLevels = entities.HsLevel.OrderBy(o => o.Id);
+            return Json(new { code = 200, desc = "", info = hsLevels.Select(o => new { o.Id, o.Name, Theme = o.Theme.Select(t => new { t.Id, t.Name }) }) });
         }
 
         // POST: Api/Theme/Create
