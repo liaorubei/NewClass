@@ -9,10 +9,16 @@
     <form method="post" action='@Url.Action("ThemeCreate")' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
         <div class="pageFormContent " layoutH="58">
             <dl>
-                <dt>必填：</dt>
+                <dt>主题名称：</dt>
                 <dd>
                     <input type="hidden" name="Id" value="@Model.Id" />
                     <input type="text" name="Name" maxlength="20" class="required" value="@Model.Name" />
+                </dd>
+            </dl>
+            <dl>
+                <dt>汉语水平：</dt>
+                <dd>
+                    @Html.DropDownList("HsLevelId",(List<SelectListItem>)ViewBag.SelectListItem, new { @class="combox"})
                 </dd>
             </dl>
         </div>

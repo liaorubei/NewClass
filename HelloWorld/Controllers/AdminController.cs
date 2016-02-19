@@ -561,10 +561,42 @@ namespace StudyOnline.Controllers
         public ActionResult ThemeIndex(FormCollection form)
         {
             //分页处理
-            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 20);
+            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 25);
             int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
+            int hsLevelId = ConvertUtil.ToInt32(form["hsLevelId"], -1);
 
-            ViewBag.Themes = entities.Theme.OrderBy(o => o.Id).ToPagedList(pageIndex, pageSize);
+            Expression<Func<Theme, bool>> keyword = o => true;
+            if (!String.IsNullOrEmpty(form["keyword"]))
+            {
+                String k = form["keyword"] + "";
+                keyword = o => o.Name.Contains(k);
+            }
+            ViewBag.Kerword = form["keyword"];
+
+            Expression<Func<Theme, bool>> predicate = o => true;
+            if (hsLevelId > 0)
+            {
+                predicate = o => o.HsLevelId == hsLevelId;
+            }
+            else if (hsLevelId == 0)
+            {
+                predicate = o => o.HsLevelId == null;
+            }
+
+            List<SelectListItem> items = new List<SelectListItem>();
+            var i = entities.HsLevel.ToList();
+            i.Insert(0, new HsLevel() { Id = -1, Name = "-所有的-" });
+            i.Insert(1, new HsLevel() { Id = 0, Name = "-未分级-" });
+
+            foreach (var h in i)
+            {
+                items.Add(new SelectListItem() {Value=h.Id.ToString(),Text=h.Name,Selected=h.Id==hsLevelId });
+            }
+
+            ViewBag.SelectListItems = items;
+
+            ViewBag.Themes = entities.Theme.Where(keyword).Where(predicate).OrderBy(o => o.Id).ToPagedList(pageIndex, pageSize);
+
             return View();
         }
 
@@ -579,6 +611,14 @@ namespace StudyOnline.Controllers
             {
                 theme = new Theme() { Id = 0 };
             }
+
+            var i = entities.HsLevel.ToList();
+            List<SelectListItem> items = new List<SelectListItem>();
+            foreach (var item in i)
+            {
+                items.Add(new SelectListItem() { Value = item.Id.ToString(), Text = item.Name, Selected = theme.HsLevelId == item.Id });
+            }
+            ViewBag.SelectListItem = items;
 
             ViewData.Model = theme;
             return View();
@@ -663,7 +703,6 @@ namespace StudyOnline.Controllers
         }
 
         #endregion
-
 
         #region 系统管理
         public ActionResult MenuIndex()
