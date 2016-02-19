@@ -86,8 +86,12 @@ create table Theme
    constraint     [PK_Theme] primary key (Id),
    constraint     [FK_Theme_HskLevel] foreign key  ([HskLevelId]) references [HskLevel] ([Id])
 )
---alter table theme add HskLevelId int ;
---alter table theme add constraint [FK_Theme_HskLevel] foreign key  ([HskLevelId]) references [HskLevel] ([Id])
+--alter table theme add HsLevelId int ;
+--alter table theme add constraint [FK_Theme_HsLevel] foreign key  ([HsLevelId]) references [HsLevel] ([Id])
+--alter table Theme drop constraint FK_Theme_HskLevel
+--alter table Theme drop column HskLevelId
+--drop table HskLevel
+--select * from Theme
 
 --创建问题
 create table Question
@@ -159,3 +163,6 @@ select * from LogTheme where ChatId =6236230176636676750
 select * from CallLog where source=9 order by Start 
 select * from nimuser order by username
 select * from android order by createdate
+select * from theme
+
+UPDATE Theme SET HsLevelId=null where HsLevelId=2

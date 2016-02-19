@@ -260,9 +260,6 @@
     <Compile Include="Models\Group.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\HskLevel.cs">
-      <DependentUpon>StudyOnline.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\HsLevel.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
@@ -286,6 +283,9 @@
     <Compile Include="Models\Question.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Recharge.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\StudyOnline.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -300,6 +300,9 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>StudyOnline.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Teacher.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Theme.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
@@ -1058,6 +1061,7 @@
     <Content Include="Views\Admin\HsLevelCreate.cshtml" />
     <Content Include="Views\Admin\HsLevelAppend.cshtml" />
     <Content Include="Views\Admin\HsLevelExpand.cshtml" />
+    <Content Include="Views\Admin\OrderIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

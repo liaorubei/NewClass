@@ -17,18 +17,18 @@ namespace StudyOnline.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Theme()
         {
-            this.Question = new HashSet<Question>();
             this.LogTheme = new HashSet<LogTheme>();
+            this.Question = new HashSet<Question>();
         }
     
         public int Id { get; set; }
         public string Name { get; set; }
-        public Nullable<int> HskLevelId { get; set; }
+        public Nullable<int> HsLevelId { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Question> Question { get; set; }
+        public virtual HsLevel HsLevel { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LogTheme> LogTheme { get; set; }
-        public virtual HskLevel HskLevel { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Question> Question { get; set; }
     }
 }

@@ -34,13 +34,14 @@ namespace StudyOnline.Models
         public virtual DbSet<NimUserEx> NimUserEx { get; set; }
         public virtual DbSet<UploadFile> UploadFile { get; set; }
         public virtual DbSet<User> User { get; set; }
-        public virtual DbSet<Question> Question { get; set; }
-        public virtual DbSet<Theme> Theme { get; set; }
         public virtual DbSet<CallLog> CallLog { get; set; }
-        public virtual DbSet<LogTheme> LogTheme { get; set; }
         public virtual DbSet<Android> Android { get; set; }
-        public virtual DbSet<HskLevel> HskLevel { get; set; }
         public virtual DbSet<Orders> Orders { get; set; }
         public virtual DbSet<HsLevel> HsLevel { get; set; }
+        public virtual DbSet<LogTheme> LogTheme { get; set; }
+        public virtual DbSet<Question> Question { get; set; }
+        public virtual DbSet<Recharge> Recharge { get; set; }
+        public virtual DbSet<Teacher> Teacher { get; set; }
+        public virtual DbSet<Theme> Theme { get; set; }
     }
 }

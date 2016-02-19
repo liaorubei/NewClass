@@ -1,6 +1,5 @@
-﻿
+﻿@model PagedList<Orders>
 @{
-    PagedList<HsLevel> hsLevels = ViewBag.HSLevels;
     Layout = null;
 }
 
@@ -8,9 +7,9 @@
 
 
 <div class="pageHeader">
-    <form id="pagerForm" onsubmit="return navTabSearch(this);" action='@Url.Action("HsLevelIndex")' method="post">
-        <input type="hidden" name="pageNum" value="@hsLevels.CurrentPageIndex" />
-        <input type="hidden" name="numPerPage" value="@hsLevels.PageSize" />
+    <form id="pagerForm" onsubmit="return navTabSearch(this);" action='@Url.Action("OrderIndex")' method="post">
+        <input type="hidden" name="pageNum" value="@Model.CurrentPageIndex" />
+        <input type="hidden" name="numPerPage" value="@Model.PageSize" />
         <div class="searchBar">
             <ul class="searchContent">
                 <li>
@@ -41,31 +40,40 @@
 <div class="pageContent">
     <div class="panelBar">
         <ul class="toolBar">
-            <li><a class="create" href='@Url.Action("HsLevelCreate")' target="dialog" mask="true" width="600" height="400"><span>添加</span></a></li>
-            <li><a class="delete" href='@Url.Action("HsLevelDelete", new { id = "{id}" })' target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
-            <li><a class="update" href='@Url.Action("HsLevelCreate",new  { id="{id}"})' target="dialog" mask="true" width="600" height="400" title="修改名称"><span>修改</span></a></li>
-            <li class="line">line</li>
-            <li><a class="icon" href='@Url.Action("HsLevelAppend",new  { id="{id}" })' targe target="dialog" mask="true" width="800" height="600"><span>管理话题</span></a></li>
-        </ul>
+            @*
+    <li><a class="create" href='@Url.Action("")' target="dialog" mask="true"><span>添加</span></a></li>
+    <li><a class="delete" href="demo/common/ajaxDone.html?uid={sid_user}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
+    <li><a class="update" href='@Url.Action("",new{id="{id}"})' target="dialog" mask="true"><span>修改</span></a></li>
+    <li class="line">line</li>
+    <li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targetType="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
+            *@ </ul>
     </div>
     <table class="list" layoutH="138">
         <thead>
             <tr>
                 <th width="35">序号</th>
-                <th width="120">等级名称</th>
-
+                <th>订单项目</th>
+                <th>订单总额</th>
+                <th width="100">订单状态</th>
+                <th width="150">订单时间</th>
+                <th width="80" align="center">订单用户</th>
             </tr>
         </thead>
         <tbody>
-            @{int i = 0;}
-            @foreach (var item in hsLevels)
+            @{Int32 i = 0;}
+            @foreach (var item in Model)
             {
                 <tr target="id" rel="@item.Id">
                     <td>@(++i)</td>
-                    <td>@item.Name</td>
+                    <td>@item.Main</td>
+                    <td>@item.Amount</td>
+                    <td>@item.TradeStatus</td>
+                    <td>@item.CreateTime</td>
+                    <td>@item.UserName</td>
                 </tr>
             }
+
         </tbody>
     </table>
-    @Html.NavTabPages(hsLevels, 10)
+    @Html.NavTabPages(Model, 10)
 </div>

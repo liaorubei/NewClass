@@ -501,7 +501,34 @@ namespace StudyOnline.Controllers
             //分页处理
             int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 20);
             int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
-            ViewBag.ExpandHsLevel = entities.Theme.OrderBy(o => o.Id).ToPagedList(pageIndex, pageSize);
+
+            int hsLevel = ConvertUtil.ToInt32(form["hsLevel"], 0);
+            ViewBag.HsLevel = hsLevel;
+            Expression<Func<Theme, bool>> predicate = o => true;
+            if (hsLevel > 0)
+            {
+                predicate = o => o.HsLevelId == hsLevel;
+            }
+            else if (hsLevel == 0)
+            {
+                predicate = o => o.HsLevelId == null;
+            }
+            ViewBag.ExpandHsLevel = entities.Theme.Where(predicate).OrderBy(o => o.Id).ToPagedList(pageIndex, pageSize);
+
+            List<SelectListItem> items = new List<SelectListItem>();
+            List<HsLevel> l = entities.HsLevel.ToList();
+            l.Insert(0, new HsLevel() { Id = -1, Name = "-请选择-" });
+            l.Insert(1, new HsLevel() { Id = 0, Name = "未分级" });
+
+            foreach (var item in l)
+            {
+                items.Add(new SelectListItem() { Value = item.Id.ToString(), Text = item.Name, Selected = item.Id == hsLevel });
+            }
+
+            ViewBag.HsLevelSelectListItem = items;
+
+
+            ViewBag.HSLevels = l;
 
             return View();
         }
@@ -512,7 +539,18 @@ namespace StudyOnline.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult HsLevelAppend(List<HskLevel> hsk) { return View(); }
+        public ActionResult HsLevelAppend(Int32 id, List<Int32> ids)
+        {
+            //SqlParameter para = new SqlParameter("@hsLevelId", id);
+            entities.Database.ExecuteSqlCommand("UPDATE Theme SET HsLevelId=null WHERE HsLevelId=@hsLevelId", new SqlParameter("@hsLevelId", id));
+            if (ids != null)
+            {
+                String sqlIn = String.Join(",", ids);
+                entities.Database.ExecuteSqlCommand("UPDATE Theme SET HsLevelId=@hsLevelId WHERE Id IN(" + sqlIn + ")", new SqlParameter("@hsLevelId", id));
+            }
+
+            return Json(new { statusCode = "200", message = "操作成功", navTabId = "AdminHsLevelIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" });
+        }
 
 
 
@@ -612,6 +650,20 @@ namespace StudyOnline.Controllers
 
 
         #endregion
+
+        #region 订单管理
+        public ActionResult OrderIndex(FormCollection form)
+        {
+            //分页处理
+            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 25);
+            int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
+            ViewData.Model = entities.Orders.OrderByDescending(o => o.CreateTime).ToPagedList(pageIndex, pageSize);
+
+            return View();
+        }
+
+        #endregion
+
 
         #region 系统管理
         public ActionResult MenuIndex()

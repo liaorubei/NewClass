@@ -79,13 +79,6 @@
           <Property Name="Notice" Type="nvarchar" MaxLength="1024" />
           <Property Name="CreateDate" Type="datetime" />
         </EntityType>
-        <EntityType Name="HskLevel">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
-        </EntityType>
         <EntityType Name="HsLevel">
           <Key>
             <PropertyRef Name="Id" />
@@ -166,13 +159,39 @@
           <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ThemeId" Type="int" />
         </EntityType>
+        <EntityType Name="Recharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="Currency" Type="nvarchar" MaxLength="16" Nullable="false" />
+          <Property Name="Amount" Type="float" Nullable="false" />
+          <Property Name="Quantity" Type="float" Nullable="false" />
+          <Property Name="Price" Type="float" Nullable="false" />
+          <Property Name="Main" Type="nvarchar" MaxLength="1024" />
+          <Property Name="Body" Type="nvarchar" MaxLength="2048" />
+          <Property Name="TradeNo" Type="nvarchar" MaxLength="128" />
+          <Property Name="TradeStatus" Type="nvarchar" MaxLength="128" />
+        </EntityType>
+        <EntityType Name="Teacher">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Category" Type="int" Nullable="false" />
+          <Property Name="IsOnline" Type="int" />
+          <Property Name="IsAvailable" Type="int" />
+          <Property Name="LastRefresh" Type="bigint" />
+          <Property Name="EnqueueTime" Type="bigint" />
+        </EntityType>
         <EntityType Name="Theme">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="HskLevelId" Type="int" />
+          <Property Name="HsLevelId" Type="int" />
         </EntityType>
         <EntityType Name="UploadFile">
           <Key>
@@ -327,15 +346,39 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Theme_HskLevel">
-          <End Role="HskLevel" Type="Self.HskLevel" Multiplicity="0..1" />
+        <Association Name="FK_Recharge_NimUser">
+          <End Role="NimUser" Type="Self.NimUser" Multiplicity="1" />
+          <End Role="Recharge" Type="Self.Recharge" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Recharge">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Teacher_NimUser">
+          <End Role="NimUser" Type="Self.NimUser" Multiplicity="1" />
+          <End Role="Teacher" Type="Self.Teacher" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Teacher">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Theme_HsLevel">
+          <End Role="HsLevel" Type="Self.HsLevel" Multiplicity="0..1" />
           <End Role="Theme" Type="Self.Theme" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="HskLevel">
+            <Principal Role="HsLevel">
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Theme">
-              <PropertyRef Name="HskLevelId" />
+              <PropertyRef Name="HsLevelId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -346,7 +389,6 @@
           <EntitySet Name="Document" EntityType="Self.Document" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Folder" EntityType="Self.Folder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Group" EntityType="Self.Group" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="HskLevel" EntityType="Self.HskLevel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HsLevel" EntityType="Self.HsLevel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Level" EntityType="Self.Level" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LogTheme" EntityType="Self.LogTheme" Schema="dbo" store:Type="Tables" />
@@ -354,6 +396,8 @@
           <EntitySet Name="NimUserEx" EntityType="Self.NimUserEx" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Question" EntityType="Self.Question" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Recharge" EntityType="Self.Recharge" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Teacher" EntityType="Self.Teacher" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Theme" EntityType="Self.Theme" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UploadFile" EntityType="Self.UploadFile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
@@ -397,8 +441,16 @@
             <End Role="Theme" EntitySet="Theme" />
             <End Role="Question" EntitySet="Question" />
           </AssociationSet>
-          <AssociationSet Name="FK_Theme_HskLevel" Association="Self.FK_Theme_HskLevel">
-            <End Role="HskLevel" EntitySet="HskLevel" />
+          <AssociationSet Name="FK_Recharge_NimUser" Association="Self.FK_Recharge_NimUser">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="Recharge" EntitySet="Recharge" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Teacher_NimUser" Association="Self.FK_Teacher_NimUser">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="Teacher" EntitySet="Teacher" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Theme_HsLevel" Association="Self.FK_Theme_HsLevel">
+            <End Role="HsLevel" EntitySet="HsLevel" />
             <End Role="Theme" EntitySet="Theme" />
           </AssociationSet>
         </EntityContainer>
@@ -494,6 +546,8 @@
           <Property Name="Enqueue" Type="Int64" />
           <NavigationProperty Name="CallLog" Relationship="StudyOnline.FK_CallLog_NimUser_Source" FromRole="NimUser" ToRole="CallLog" />
           <NavigationProperty Name="CallLog1" Relationship="StudyOnline.FK_CallLog_NimUser_Target" FromRole="NimUser" ToRole="CallLog" />
+          <NavigationProperty Name="Recharge" Relationship="StudyOnline.FK_Recharge_NimUser" FromRole="NimUser" ToRole="Recharge" />
+          <NavigationProperty Name="Teacher" Relationship="StudyOnline.FK_Teacher_NimUser" FromRole="NimUser" ToRole="Teacher" />
         </EntityType>
         <EntityType Name="NimUserEx">
           <Key>
@@ -643,12 +697,6 @@
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="NimUserEx" EntitySet="NimUserEx" />
           </AssociationSet>
-          <EntitySet Name="Question" EntityType="StudyOnline.Question" />
-          <EntitySet Name="Theme" EntityType="StudyOnline.Theme" />
-          <AssociationSet Name="FK_Question_Theme" Association="StudyOnline.FK_Question_Theme">
-            <End Role="Theme" EntitySet="Theme" />
-            <End Role="Question" EntitySet="Question" />
-          </AssociationSet>
           <EntitySet Name="CallLog" EntityType="StudyOnline.CallLog" />
           <AssociationSet Name="FK_CallLog_NimUser_Source" Association="StudyOnline.FK_CallLog_NimUser_Source">
             <End Role="NimUser" EntitySet="NimUser" />
@@ -658,52 +706,35 @@
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="CallLog" EntitySet="CallLog" />
           </AssociationSet>
+          <EntitySet Name="Android" EntityType="StudyOnline.Android" />
+          <EntitySet Name="Orders" EntityType="StudyOnline.Orders" />
+          <EntitySet Name="HsLevel" EntityType="StudyOnline.HsLevel" />
           <EntitySet Name="LogTheme" EntityType="StudyOnline.LogTheme" />
+          <EntitySet Name="Question" EntityType="StudyOnline.Question" />
+          <EntitySet Name="Recharge" EntityType="StudyOnline.Recharge" />
+          <EntitySet Name="Teacher" EntityType="StudyOnline.Teacher" />
+          <EntitySet Name="Theme" EntityType="StudyOnline.Theme" />
+          <AssociationSet Name="FK_Theme_HsLevel" Association="StudyOnline.FK_Theme_HsLevel">
+            <End Role="HsLevel" EntitySet="HsLevel" />
+            <End Role="Theme" EntitySet="Theme" />
+          </AssociationSet>
           <AssociationSet Name="FK_LogTheme_ThemeId" Association="StudyOnline.FK_LogTheme_ThemeId">
             <End Role="Theme" EntitySet="Theme" />
             <End Role="LogTheme" EntitySet="LogTheme" />
           </AssociationSet>
-          <EntitySet Name="Android" EntityType="StudyOnline.Android" />
-          <EntitySet Name="HskLevel" EntityType="StudyOnline.HskLevel" />
-          <AssociationSet Name="FK_Theme_HskLevel" Association="StudyOnline.FK_Theme_HskLevel">
-            <End Role="HskLevel" EntitySet="HskLevel" />
-            <End Role="Theme" EntitySet="Theme" />
+          <AssociationSet Name="FK_Recharge_NimUser" Association="StudyOnline.FK_Recharge_NimUser">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="Recharge" EntitySet="Recharge" />
           </AssociationSet>
-          <EntitySet Name="Orders" EntityType="StudyOnline.Orders" />
-          <EntitySet Name="HsLevel" EntityType="StudyOnline.HsLevel" />
+          <AssociationSet Name="FK_Teacher_NimUser" Association="StudyOnline.FK_Teacher_NimUser">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="Teacher" EntitySet="Teacher" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Question_Theme" Association="StudyOnline.FK_Question_Theme">
+            <End Role="Theme" EntitySet="Theme" />
+            <End Role="Question" EntitySet="Question" />
+          </AssociationSet>
         </EntityContainer>
-        <EntityType Name="Question">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="ThemeId" Type="Int32" />
-          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_Question_Theme" FromRole="Question" ToRole="Theme" />
-        </EntityType>
-        <EntityType Name="Theme">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Question" Relationship="StudyOnline.FK_Question_Theme" FromRole="Theme" ToRole="Question" />
-          <NavigationProperty Name="LogTheme" Relationship="StudyOnline.FK_LogTheme_ThemeId" FromRole="Theme" ToRole="LogTheme" />
-          <Property Name="HskLevelId" Type="Int32" />
-          <NavigationProperty Name="HskLevel" Relationship="StudyOnline.FK_Theme_HskLevel" FromRole="Theme" ToRole="HskLevel" />
-        </EntityType>
-        <Association Name="FK_Question_Theme">
-          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="0..1" />
-          <End Type="StudyOnline.Question" Role="Question" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Theme">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Question">
-              <PropertyRef Name="ThemeId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="CallLog">
           <Key>
             <PropertyRef Name="Id" />
@@ -743,27 +774,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="LogTheme">
-          <Key>
-            <PropertyRef Name="ChatId" />
-            <PropertyRef Name="ThemeId" />
-          </Key>
-          <Property Name="ChatId" Type="Int64" Nullable="false" />
-          <Property Name="ThemeId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_LogTheme_ThemeId" FromRole="LogTheme" ToRole="Theme" />
-        </EntityType>
-        <Association Name="FK_LogTheme_ThemeId">
-          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="1" />
-          <End Type="StudyOnline.LogTheme" Role="LogTheme" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Theme">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="LogTheme">
-              <PropertyRef Name="ThemeId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="Android">
           <Key>
             <PropertyRef Name="Id" />
@@ -776,26 +786,6 @@
           <Property Name="CreateDate" Type="DateTime" Precision="3" />
           <Property Name="VersionType" Type="Int32" />
         </EntityType>
-        <EntityType Name="HskLevel">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_Theme_HskLevel" FromRole="HskLevel" ToRole="Theme" />
-        </EntityType>
-        <Association Name="FK_Theme_HskLevel">
-          <End Type="StudyOnline.HskLevel" Role="HskLevel" Multiplicity="0..1" />
-          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="HskLevel">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Theme">
-              <PropertyRef Name="HskLevelId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="Orders">
           <Key>
             <PropertyRef Name="Id" />
@@ -818,7 +808,125 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_Theme_HsLevel" FromRole="HsLevel" ToRole="Theme" />
         </EntityType>
+        <EntityType Name="LogTheme">
+          <Key>
+            <PropertyRef Name="ChatId" />
+            <PropertyRef Name="ThemeId" />
+          </Key>
+          <Property Name="ChatId" Type="Int64" Nullable="false" />
+          <Property Name="ThemeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_LogTheme_ThemeId" FromRole="LogTheme" ToRole="Theme" />
+        </EntityType>
+        <EntityType Name="Question">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ThemeId" Type="Int32" />
+          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_Question_Theme" FromRole="Question" ToRole="Theme" />
+        </EntityType>
+        <EntityType Name="Recharge">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="Currency" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="true" />
+          <Property Name="Amount" Type="Double" Nullable="false" />
+          <Property Name="Quantity" Type="Double" Nullable="false" />
+          <Property Name="Price" Type="Double" Nullable="false" />
+          <Property Name="Main" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="Body" Type="String" MaxLength="2048" FixedLength="false" Unicode="true" />
+          <Property Name="TradeNo" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="TradeStatus" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="NimUser" Relationship="StudyOnline.FK_Recharge_NimUser" FromRole="Recharge" ToRole="NimUser" />
+        </EntityType>
+        <EntityType Name="Teacher">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Category" Type="Int32" Nullable="false" />
+          <Property Name="IsOnline" Type="Int32" />
+          <Property Name="IsAvailable" Type="Int32" />
+          <Property Name="LastRefresh" Type="Int64" />
+          <Property Name="EnqueueTime" Type="Int64" />
+          <NavigationProperty Name="NimUser" Relationship="StudyOnline.FK_Teacher_NimUser" FromRole="Teacher" ToRole="NimUser" />
+        </EntityType>
+        <EntityType Name="Theme">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="HsLevelId" Type="Int32" />
+          <NavigationProperty Name="HsLevel" Relationship="StudyOnline.FK_Theme_HsLevel" FromRole="Theme" ToRole="HsLevel" />
+          <NavigationProperty Name="LogTheme" Relationship="StudyOnline.FK_LogTheme_ThemeId" FromRole="Theme" ToRole="LogTheme" />
+          <NavigationProperty Name="Question" Relationship="StudyOnline.FK_Question_Theme" FromRole="Theme" ToRole="Question" />
+        </EntityType>
+        <Association Name="FK_Theme_HsLevel">
+          <End Type="StudyOnline.HsLevel" Role="HsLevel" Multiplicity="0..1" />
+          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="HsLevel">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Theme">
+              <PropertyRef Name="HsLevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LogTheme_ThemeId">
+          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="1" />
+          <End Type="StudyOnline.LogTheme" Role="LogTheme" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Theme">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LogTheme">
+              <PropertyRef Name="ThemeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Recharge_NimUser">
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
+          <End Type="StudyOnline.Recharge" Role="Recharge" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Recharge">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Teacher_NimUser">
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
+          <End Type="StudyOnline.Teacher" Role="Teacher" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Teacher">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Question_Theme">
+          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="0..1" />
+          <End Type="StudyOnline.Question" Role="Question" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Theme">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Question">
+              <PropertyRef Name="ThemeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -949,24 +1057,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Question">
-            <EntityTypeMapping TypeName="StudyOnline.Question">
-              <MappingFragment StoreEntitySet="Question">
-                <ScalarProperty Name="ThemeId" ColumnName="ThemeId" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Theme">
-            <EntityTypeMapping TypeName="StudyOnline.Theme">
-              <MappingFragment StoreEntitySet="Theme">
-                <ScalarProperty Name="HskLevelId" ColumnName="HskLevelId" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="CallLog">
             <EntityTypeMapping TypeName="StudyOnline.CallLog">
               <MappingFragment StoreEntitySet="CallLog">
@@ -981,14 +1071,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="LogTheme">
-            <EntityTypeMapping TypeName="StudyOnline.LogTheme">
-              <MappingFragment StoreEntitySet="LogTheme">
-                <ScalarProperty Name="ThemeId" ColumnName="ThemeId" />
-                <ScalarProperty Name="ChatId" ColumnName="ChatId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Android">
             <EntityTypeMapping TypeName="StudyOnline.Android">
               <MappingFragment StoreEntitySet="Android">
@@ -998,14 +1080,6 @@
                 <ScalarProperty Name="UpgradeInfo" ColumnName="UpgradeInfo" />
                 <ScalarProperty Name="PackageSize" ColumnName="PackageSize" />
                 <ScalarProperty Name="VersionName" ColumnName="VersionName" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="HskLevel">
-            <EntityTypeMapping TypeName="StudyOnline.HskLevel">
-              <MappingFragment StoreEntitySet="HskLevel">
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1030,6 +1104,60 @@
           <EntitySetMapping Name="HsLevel">
             <EntityTypeMapping TypeName="StudyOnline.HsLevel">
               <MappingFragment StoreEntitySet="HsLevel">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LogTheme">
+            <EntityTypeMapping TypeName="StudyOnline.LogTheme">
+              <MappingFragment StoreEntitySet="LogTheme">
+                <ScalarProperty Name="ThemeId" ColumnName="ThemeId" />
+                <ScalarProperty Name="ChatId" ColumnName="ChatId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Question">
+            <EntityTypeMapping TypeName="StudyOnline.Question">
+              <MappingFragment StoreEntitySet="Question">
+                <ScalarProperty Name="ThemeId" ColumnName="ThemeId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Recharge">
+            <EntityTypeMapping TypeName="StudyOnline.Recharge">
+              <MappingFragment StoreEntitySet="Recharge">
+                <ScalarProperty Name="TradeStatus" ColumnName="TradeStatus" />
+                <ScalarProperty Name="TradeNo" ColumnName="TradeNo" />
+                <ScalarProperty Name="Body" ColumnName="Body" />
+                <ScalarProperty Name="Main" ColumnName="Main" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Teacher">
+            <EntityTypeMapping TypeName="StudyOnline.Teacher">
+              <MappingFragment StoreEntitySet="Teacher">
+                <ScalarProperty Name="EnqueueTime" ColumnName="EnqueueTime" />
+                <ScalarProperty Name="LastRefresh" ColumnName="LastRefresh" />
+                <ScalarProperty Name="IsAvailable" ColumnName="IsAvailable" />
+                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Theme">
+            <EntityTypeMapping TypeName="StudyOnline.Theme">
+              <MappingFragment StoreEntitySet="Theme">
+                <ScalarProperty Name="HsLevelId" ColumnName="HsLevelId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

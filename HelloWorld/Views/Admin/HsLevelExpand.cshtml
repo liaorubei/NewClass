@@ -1,6 +1,8 @@
 ﻿@{
     Layout = null;
+    List<HsLevel> hsLevels = ViewBag.HSLevels;
     PagedList<Theme> themes = ViewBag.ExpandHsLevel;
+
 }
 <div class="pageHeader" style="border:1px #B8D0D6 solid">
     <form id="pagerForm" onsubmit="return divSearch(this, 'jbsxBox3');" action="@Url.Action("HsLevelExpand")" method="post">
@@ -12,17 +14,11 @@
                     <td>
                         关键字：<input type="text" name="keyword" value="@ViewBag.Keyword" />
                     </td>
-                    <td>                        
-                        汉语水平：<select >
-                            <option value="-1">-所有的-</option>
-                            <option value="0">-未分级-</option>
-                            <option value="1">-级别1-</option>
-                            <option value="2">-级别2-</option>
-                            <option value="3">-级别3-</option>
-                        </select>
+                    <td>
+                        汉语水平：@Html.DropDownList("hsLevel", (List<SelectListItem>) ViewBag.HsLevelSelectListItem)
                     </td>
                     <td><div class="button"><div class="buttonContent"><button type="submit">检索</button></div></div></td>
-                    <td><div class="buttonActive"><div class="buttonContent"><button type="button" onclick="addDocumentToFolder();">添加</button></div></div></td>
+                    <td><div class="buttonActive"><div class="buttonContent"><button type="button" onclick="addThemeToHsLevel();">添加</button></div></div></td>
                 </tr>
             </table>
         </div>
@@ -48,7 +44,7 @@
                     <td><input name="ids" class="folderSelect" value="@item.Id" title="@item.Name" type="checkbox"></td>
                     <td align="center">@(++i)</td>
                     <td>@item.Name</td>
-                    <td>1</td>
+                    <td>@(item.HsLevelId==null?"":item.HsLevel.Name)</td>
                 </tr>
             }
         </tbody>

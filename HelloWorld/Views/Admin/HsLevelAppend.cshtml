@@ -5,7 +5,7 @@
 
 
 <script>
-    function addDocumentToFolder() {
+    function addThemeToHsLevel() {
         var $current = $.pdialog.getCurrent();
         var $added = $(".folderAdded", $current);
 
@@ -24,7 +24,7 @@
                 if (!isAdded) {
                     var html = "<span class='docsList'><input class='folderAdded' type='hidden' name='ids' value='" + s.value + "' /><span>" + s.title + "</span>";
                     html += "<a href='javascript:;' class='close' title='移除' onclick='$(this).parent().remove();'></a></span>";
-                    $("#folderAddedDocuments").append(html);
+                    $("#hsLevelTheme").append(html);
                 }
             }
         });
@@ -38,15 +38,15 @@
     <div>
         <form method="post" action='@Url.Action("HsLevelAppend")' class="pageForm" onsubmit="return validateCallback(this, dialogAjaxDone)">
             <input type="hidden" name="Id" value="@Model.Id" />
-            <div id="folderAddedDocuments" class="unitBox" style="height:470px;overflow:auto">
-                @*@foreach (var item in Model.Document)
+            <div id="hsLevelTheme" class="unitBox" style="height:470px;overflow:auto">
+                @foreach (var item in Model.Theme)
                     {
                         <span class='docsList'>
                             <input class="folderAdded" type='hidden' name='ids' value='@item.Id' />
-                            <span>@item.Title</span>
+                            <span>@item.Name</span>
                             <a href='javascript:;' class='close' title='移除' onclick='$(this).parent().remove();'></a>
                         </span>
-                    }*@
+                    }
             </div>
             <div class="formBar">
                 <ul>

@@ -40,12 +40,12 @@
             <li><a class="update" href='@(Url.Action("ThemeUpdateQuestion",new { id = "{id}" }))' width="800" height="600"   mask="true" target="dialog" rel="AdminThemeCreate" title="管理问题"><span>管理问题</span></a></li>
         </ul>
     </div>
-    <table class="list" layoutH="116" style="width:100%;">
+    <table class="list" layoutH="116">
         <thead>
             <tr>
                 <th width="35">序号</th>
-                <th>主题名称</th>
-
+                <th width="200">主题名称</th>
+                <th width="200">汉语水平</th>
             </tr>
         </thead>
         <tbody>
@@ -55,6 +55,7 @@
                 <tr target="id" rel="@item.Id" >
                     <td>@(++i)</td>
                     <td>@item.Name</td>
+                    <td>@(item.HsLevelId==null?"":item.HsLevel.Name)</td>
                 </tr>
             }
         </tbody>
