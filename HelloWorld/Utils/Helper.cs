@@ -59,18 +59,18 @@ namespace StudyOnline.Utils
         {
             StringBuilder builder = new StringBuilder();
 
-            builder.AppendLine(String.Format("<div class='panelBar'>                                                                                                 "));
-            builder.AppendLine(String.Format("	<div class='pages'>                                                                                                  "));
-            builder.AppendLine(String.Format("		<span>显示</span>                                                                                                "));
-            builder.AppendLine("		<select class='combox' name='numPerPage' onchange='navTabPageBreak({numPerPage:this.value})'>                    ");
-            builder.AppendLine(String.Format("			<option value='25'>25</option>                                                                               "));
-            builder.AppendLine(String.Format("			<option value='50'>50</option>                                                                               "));
-            builder.AppendLine(String.Format("			<option value='75'>75</option>                                                                               "));
-            builder.AppendLine(String.Format("		</select>                                                                                                        "));
-            builder.AppendLine(String.Format("		<span>条，共{0}条</span>                                                                               ", list.TotalItemCount));
-            builder.AppendLine(String.Format("	</div>		                                                                                                         "));
+            builder.AppendLine(String.Format("<div class='panelBar'>"));
+            builder.AppendLine(String.Format("	<div class='pages'>"));
+            builder.AppendLine(String.Format("		<span>显示</span>"));
+            builder.AppendLine("		<select class='combox' name='numPerPage' onchange='navTabPageBreak({numPerPage:this.value})'>");
+            builder.AppendLine(String.Format("			<option value='25' {0}>25</option>", list.PageSize == 25 ? "selected='selected'" : ""));
+            builder.AppendLine(String.Format("			<option value='50' {0}>50</option>", list.PageSize == 50 ? "selected='selected'" : ""));
+            builder.AppendLine(String.Format("			<option value='75' {0}>75</option>", list.PageSize == 75 ? "selected='selected'" : ""));
+            builder.AppendLine(String.Format("		</select>"));
+            builder.AppendLine(String.Format("		<span>条，共{0}条</span>", list.TotalItemCount));
+            builder.AppendLine(String.Format("	</div>"));
             builder.AppendLine(String.Format("	<div class='pagination' targetType='navTab' totalCount='{0}' numPerPage='{1}' currentPage='{2}' pageNumShown='{3}' ></div>", list.TotalItemCount, list.PageSize, list.CurrentPageIndex, show));
-            builder.AppendLine(String.Format("</div>                                                                                                                 "));
+            builder.AppendLine(String.Format("</div>"));
 
             return new MvcHtmlString(builder.ToString());
         }
