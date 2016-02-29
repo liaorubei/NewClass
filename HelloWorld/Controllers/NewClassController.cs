@@ -22,7 +22,7 @@ namespace StudyOnline.Controllers
             bool b = folder ?? false;
             List<Level> levels = db.Level.ToList();
             Level l = levels.OrderBy(o => o.Sort).FirstOrDefault();
-            var temp = new { code = 200, desc = "", info = levels.Select(o => new { o.Id, Name = o.LevelName, o.Sort, o.Show, Folders = ((b && o.Id == l.Id) ? o.Folder.Select(f => new { f.Id, f.Name, f.Document.Count }) : null) }) };
+            var temp = new { code = 200, desc = "", info = levels.Select(o => new { o.Id,o.Name, o.Sort, o.Show, Folders = ((b && o.Id == l.Id) ? o.Folder.Select(f => new { f.Id, f.Name, f.Document.Count }) : null) }) };
             return Json(temp);
         }
 
@@ -71,7 +71,7 @@ namespace StudyOnline.Controllers
         public ActionResult Levels()
         {
             var data = db.Level.ToList();
-            var m = data.Select(t => new { t.Id, t.LevelName, Name = t.LevelName, DocCount = t.Document.Count, t.Sort, t.Show });
+            var m = data.Select(t => new { t.Id, t.Name, DocCount = t.Document.Count, t.Sort, t.Show });
             return Json(m, JsonRequestBehavior.AllowGet);
         }
 

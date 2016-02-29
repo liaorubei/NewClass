@@ -205,11 +205,7 @@ namespace StudyOnline.Controllers
         {
             if (level.Id > 0)
             {
-                Level oldLevel = entities.Level.FirstOrDefault(l => l.Id == level.Id);
-                oldLevel.LevelName = level.LevelName;
-                oldLevel.Sort = level.Sort;
-                oldLevel.Show = level.Show;
-                oldLevel.ShowBrowser = level.ShowBrowser;
+                entities.Entry(level).State = EntityState.Modified;
             }
             else
             {

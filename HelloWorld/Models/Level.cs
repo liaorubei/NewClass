@@ -26,6 +26,7 @@ namespace StudyOnline.Models
         public Nullable<int> Sort { get; set; }
         public Nullable<int> Show { get; set; }
         public Nullable<int> ShowBrowser { get; set; }
+        public string Name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Document> Document { get; set; }

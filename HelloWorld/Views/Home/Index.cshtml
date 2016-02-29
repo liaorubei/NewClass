@@ -23,7 +23,7 @@
             <ul>
                 @foreach (var item in levels)
                 {
-                    <li><a href='@Url.Action("Index", new { level = item.Id })'>@item.LevelName</a> </li>
+                    <li><a href='@Url.Action("Index", new { level = item.Id })'>@item.Name</a> </li>
                 }
             </ul>
         </div>
@@ -32,7 +32,7 @@
                 @foreach (var item in documents)
                 {
                     <li>
-                        <a href='@Url.Action("Index", new { level = item.LevelId })'><span style="color:#B26646;">[@item.Level.LevelName]</span></a>
+                        <a href='@Url.Action("Index", new { level = item.LevelId })'><span style="color:#B26646;">[@item.Level.Name]</span></a>
                         <a href="@Url.Action("Detail", new { id = item.Id })">@item.Title<span style="color:#57b4b7;padding-left:10px;">(@item.AuditDate.Value.ToString("yyyy-MM-dd"))</span></a>
                     </li>
                 }
@@ -40,7 +40,7 @@
             @Html.Pager(documents, new PagerOptions() { AutoHide = true, ShowFirstLast = false, AlwaysShowFirstLastPageNumber = false, CssClass = "end fy", CurrentPagerItemWrapperFormatString = "<span class='fyed'>{0}</span>", PagerItemWrapperFormatString = "<span class='fye'>{0}</span>", NumericPagerItemCount = 5, PageIndexParameterName = "index", PagerItemsSeperator = "" })
         </div>
    <div style="position:relative;width:150px;background:#f00;left:800px;top:-100px">
-       <div style="position:absolute;">
+       <div style="position:absolute;top:200px">
            <h5>学生端</h5>
            <img src="@Url.Content("~/images/app-student-release.png")" style="width:150px; height:150px;"/>
            <div style="height:50px;"></div>

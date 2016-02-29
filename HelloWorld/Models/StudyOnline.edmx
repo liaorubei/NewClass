@@ -95,6 +95,7 @@
           <Property Name="Sort" Type="int" />
           <Property Name="Show" Type="int" />
           <Property Name="ShowBrowser" Type="int" />
+          <Property Name="Name" Type="varchar" MaxLength="256" />
         </EntityType>
         <EntityType Name="LogTheme">
           <Key>
@@ -458,48 +459,6 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="StudyOnline" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Comment">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="DocumentId" Type="Int32" />
-          <Property Name="Score" Type="Double" />
-          <Property Name="MainBody" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Document" Relationship="Self.FK_Comment_Document" FromRole="Comment" ToRole="Document" />
-        </EntityType>
-        <EntityType Name="Document">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="LevelId" Type="Int32" Nullable="false" />
-          <Property Name="Title" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Lyrics" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Contents" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="SoundPath" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="AddDate" Type="DateTime" Precision="3" />
-          <Property Name="Duration" Type="Double" />
-          <Property Name="Length" Type="Double" />
-          <Property Name="TitleTwo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="LengthString" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="FolderId" Type="Int32" />
-          <Property Name="AuditDate" Type="DateTime" Precision="3" />
-          <Property Name="AuditCase" Type="Int32" />
-          <NavigationProperty Name="Comment" Relationship="Self.FK_Comment_Document" FromRole="Document" ToRole="Comment" />
-          <NavigationProperty Name="Folder" Relationship="Self.FK_Document_Folder" FromRole="Document" ToRole="Folder" />
-          <NavigationProperty Name="Level" Relationship="Self.FK_Document_Level" FromRole="Document" ToRole="Level" />
-        </EntityType>
-        <EntityType Name="Folder">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="LevelId" Type="Int32" />
-          <NavigationProperty Name="Document" Relationship="Self.FK_Document_Folder" FromRole="Folder" ToRole="Document" />
-          <NavigationProperty Name="Level" Relationship="Self.FK_Folder_Level" FromRole="Folder" ToRole="Level" />
-        </EntityType>
         <EntityType Name="Group">
           <Key>
             <PropertyRef Name="Id" />
@@ -513,18 +472,6 @@
           <Property Name="Notice" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
           <Property Name="CreateDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="NimUser" Relationship="Self.FK_Group_NimUser" FromRole="Group" ToRole="NimUser" />
-        </EntityType>
-        <EntityType Name="Level">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="LevelName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Sort" Type="Int32" />
-          <Property Name="Show" Type="Int32" />
-          <Property Name="ShowBrowser" Type="Int32" />
-          <NavigationProperty Name="Document" Relationship="Self.FK_Document_Level" FromRole="Level" ToRole="Document" />
-          <NavigationProperty Name="Folder" Relationship="Self.FK_Folder_Level" FromRole="Level" ToRole="Folder" />
         </EntityType>
         <EntityType Name="NimUser">
           <Key>
@@ -589,56 +536,6 @@
           <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="NickName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
         </EntityType>
-        <Association Name="FK_Comment_Document">
-          <End Role="Document" Type="Self.Document" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="Comment" Type="Self.Comment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Document">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Comment">
-              <PropertyRef Name="DocumentId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Document_Folder">
-          <End Role="Folder" Type="Self.Folder" Multiplicity="0..1" />
-          <End Role="Document" Type="Self.Document" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Folder">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Document">
-              <PropertyRef Name="FolderId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Document_Level">
-          <End Role="Level" Type="Self.Level" Multiplicity="1" />
-          <End Role="Document" Type="Self.Document" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Level">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Document">
-              <PropertyRef Name="LevelId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Folder_Level">
-          <End Role="Level" Type="Self.Level" Multiplicity="0..1" />
-          <End Role="Folder" Type="Self.Folder" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Level">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Folder">
-              <PropertyRef Name="LevelId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Group_NimUser">
           <End Role="NimUser" Type="Self.NimUser" Multiplicity="0..1" />
           <End Role="Group" Type="Self.Group" Multiplicity="*" />
@@ -664,31 +561,11 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="StudyOnlineEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Comment" EntityType="Self.Comment" />
-          <EntitySet Name="Document" EntityType="Self.Document" />
-          <EntitySet Name="Folder" EntityType="Self.Folder" />
           <EntitySet Name="Group" EntityType="Self.Group" />
-          <EntitySet Name="Level" EntityType="Self.Level" />
           <EntitySet Name="NimUser" EntityType="Self.NimUser" />
           <EntitySet Name="NimUserEx" EntityType="Self.NimUserEx" />
           <EntitySet Name="UploadFile" EntityType="Self.UploadFile" />
           <EntitySet Name="User" EntityType="Self.User" />
-          <AssociationSet Name="FK_Comment_Document" Association="Self.FK_Comment_Document">
-            <End Role="Document" EntitySet="Document" />
-            <End Role="Comment" EntitySet="Comment" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Document_Folder" Association="Self.FK_Document_Folder">
-            <End Role="Folder" EntitySet="Folder" />
-            <End Role="Document" EntitySet="Document" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Document_Level" Association="Self.FK_Document_Level">
-            <End Role="Level" EntitySet="Level" />
-            <End Role="Document" EntitySet="Document" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Folder_Level" Association="Self.FK_Folder_Level">
-            <End Role="Level" EntitySet="Level" />
-            <End Role="Folder" EntitySet="Folder" />
-          </AssociationSet>
           <AssociationSet Name="FK_Group_NimUser" Association="Self.FK_Group_NimUser">
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="Group" EntitySet="Group" />
@@ -733,6 +610,26 @@
           <AssociationSet Name="FK_Question_Theme" Association="StudyOnline.FK_Question_Theme">
             <End Role="Theme" EntitySet="Theme" />
             <End Role="Question" EntitySet="Question" />
+          </AssociationSet>
+          <EntitySet Name="Comment" EntityType="StudyOnline.Comment" />
+          <EntitySet Name="Document" EntityType="StudyOnline.Document" />
+          <EntitySet Name="Folder" EntityType="StudyOnline.Folder" />
+          <EntitySet Name="Level" EntityType="StudyOnline.Level" />
+          <AssociationSet Name="FK_Comment_Document" Association="StudyOnline.FK_Comment_Document">
+            <End Role="Document" EntitySet="Document" />
+            <End Role="Comment" EntitySet="Comment" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Document_Folder" Association="StudyOnline.FK_Document_Folder">
+            <End Role="Folder" EntitySet="Folder" />
+            <End Role="Document" EntitySet="Document" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Document_Level" Association="StudyOnline.FK_Document_Level">
+            <End Role="Level" EntitySet="Level" />
+            <End Role="Document" EntitySet="Document" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Folder_Level" Association="StudyOnline.FK_Folder_Level">
+            <End Role="Level" EntitySet="Level" />
+            <End Role="Folder" EntitySet="Folder" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="CallLog">
@@ -927,51 +824,117 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Comment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DocumentId" Type="Int32" />
+          <Property Name="Score" Type="Double" />
+          <Property Name="MainBody" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Document" Relationship="StudyOnline.FK_Comment_Document" FromRole="Comment" ToRole="Document" />
+        </EntityType>
+        <EntityType Name="Document">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LevelId" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Lyrics" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Contents" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SoundPath" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="AddDate" Type="DateTime" Precision="3" />
+          <Property Name="Duration" Type="Double" />
+          <Property Name="Length" Type="Double" />
+          <Property Name="TitleTwo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="LengthString" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FolderId" Type="Int32" />
+          <Property Name="AuditDate" Type="DateTime" Precision="3" />
+          <Property Name="AuditCase" Type="Int32" />
+          <NavigationProperty Name="Comment" Relationship="StudyOnline.FK_Comment_Document" FromRole="Document" ToRole="Comment" />
+          <NavigationProperty Name="Folder" Relationship="StudyOnline.FK_Document_Folder" FromRole="Document" ToRole="Folder" />
+          <NavigationProperty Name="Level" Relationship="StudyOnline.FK_Document_Level" FromRole="Document" ToRole="Level" />
+        </EntityType>
+        <EntityType Name="Folder">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LevelId" Type="Int32" />
+          <NavigationProperty Name="Document" Relationship="StudyOnline.FK_Document_Folder" FromRole="Folder" ToRole="Document" />
+          <NavigationProperty Name="Level" Relationship="StudyOnline.FK_Folder_Level" FromRole="Folder" ToRole="Level" />
+        </EntityType>
+        <EntityType Name="Level">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LevelName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Sort" Type="Int32" />
+          <Property Name="Show" Type="Int32" />
+          <Property Name="ShowBrowser" Type="Int32" />
+          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Document" Relationship="StudyOnline.FK_Document_Level" FromRole="Level" ToRole="Document" />
+          <NavigationProperty Name="Folder" Relationship="StudyOnline.FK_Folder_Level" FromRole="Level" ToRole="Folder" />
+        </EntityType>
+        <Association Name="FK_Comment_Document">
+          <End Type="StudyOnline.Document" Role="Document" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="StudyOnline.Comment" Role="Comment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Document">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Comment">
+              <PropertyRef Name="DocumentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Document_Folder">
+          <End Type="StudyOnline.Folder" Role="Folder" Multiplicity="0..1" />
+          <End Type="StudyOnline.Document" Role="Document" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Folder">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Document">
+              <PropertyRef Name="FolderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Document_Level">
+          <End Type="StudyOnline.Level" Role="Level" Multiplicity="1" />
+          <End Type="StudyOnline.Document" Role="Document" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Level">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Document">
+              <PropertyRef Name="LevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Folder_Level">
+          <End Type="StudyOnline.Level" Role="Level" Multiplicity="0..1" />
+          <End Type="StudyOnline.Folder" Role="Folder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Level">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Folder">
+              <PropertyRef Name="LevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="StudyOnlineStoreContainer" CdmEntityContainer="StudyOnlineEntities">
-          <EntitySetMapping Name="Comment">
-            <EntityTypeMapping TypeName="StudyOnline.Comment">
-              <MappingFragment StoreEntitySet="Comment">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
-                <ScalarProperty Name="Score" ColumnName="Score" />
-                <ScalarProperty Name="MainBody" ColumnName="MainBody" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Document">
-            <EntityTypeMapping TypeName="StudyOnline.Document">
-              <MappingFragment StoreEntitySet="Document">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="Lyrics" ColumnName="Lyrics" />
-                <ScalarProperty Name="Contents" ColumnName="Contents" />
-                <ScalarProperty Name="SoundPath" ColumnName="SoundPath" />
-                <ScalarProperty Name="AddDate" ColumnName="AddDate" />
-                <ScalarProperty Name="Duration" ColumnName="Duration" />
-                <ScalarProperty Name="Length" ColumnName="Length" />
-                <ScalarProperty Name="TitleTwo" ColumnName="TitleTwo" />
-                <ScalarProperty Name="LengthString" ColumnName="LengthString" />
-                <ScalarProperty Name="FolderId" ColumnName="FolderId" />
-                <ScalarProperty Name="AuditDate" ColumnName="AuditDate" />
-                <ScalarProperty Name="AuditCase" ColumnName="AuditCase" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Folder">
-            <EntityTypeMapping TypeName="StudyOnline.Folder">
-              <MappingFragment StoreEntitySet="Folder">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Group">
             <EntityTypeMapping TypeName="StudyOnline.Group">
               <MappingFragment StoreEntitySet="Group">
@@ -983,17 +946,6 @@
                 <ScalarProperty Name="Theme" ColumnName="Theme" />
                 <ScalarProperty Name="Notice" ColumnName="Notice" />
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Level">
-            <EntityTypeMapping TypeName="StudyOnline.Level">
-              <MappingFragment StoreEntitySet="Level">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="LevelName" ColumnName="LevelName" />
-                <ScalarProperty Name="Sort" ColumnName="Sort" />
-                <ScalarProperty Name="Show" ColumnName="Show" />
-                <ScalarProperty Name="ShowBrowser" ColumnName="ShowBrowser" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1159,6 +1111,57 @@
               <MappingFragment StoreEntitySet="Theme">
                 <ScalarProperty Name="HsLevelId" ColumnName="HsLevelId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Comment">
+            <EntityTypeMapping TypeName="StudyOnline.Comment">
+              <MappingFragment StoreEntitySet="Comment">
+                <ScalarProperty Name="MainBody" ColumnName="MainBody" />
+                <ScalarProperty Name="Score" ColumnName="Score" />
+                <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Document">
+            <EntityTypeMapping TypeName="StudyOnline.Document">
+              <MappingFragment StoreEntitySet="Document">
+                <ScalarProperty Name="AuditCase" ColumnName="AuditCase" />
+                <ScalarProperty Name="AuditDate" ColumnName="AuditDate" />
+                <ScalarProperty Name="FolderId" ColumnName="FolderId" />
+                <ScalarProperty Name="LengthString" ColumnName="LengthString" />
+                <ScalarProperty Name="TitleTwo" ColumnName="TitleTwo" />
+                <ScalarProperty Name="Length" ColumnName="Length" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="AddDate" ColumnName="AddDate" />
+                <ScalarProperty Name="SoundPath" ColumnName="SoundPath" />
+                <ScalarProperty Name="Contents" ColumnName="Contents" />
+                <ScalarProperty Name="Lyrics" ColumnName="Lyrics" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Folder">
+            <EntityTypeMapping TypeName="StudyOnline.Folder">
+              <MappingFragment StoreEntitySet="Folder">
+                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Level">
+            <EntityTypeMapping TypeName="StudyOnline.Level">
+              <MappingFragment StoreEntitySet="Level">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ShowBrowser" ColumnName="ShowBrowser" />
+                <ScalarProperty Name="Show" ColumnName="Show" />
+                <ScalarProperty Name="Sort" ColumnName="Sort" />
+                <ScalarProperty Name="LevelName" ColumnName="LevelName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

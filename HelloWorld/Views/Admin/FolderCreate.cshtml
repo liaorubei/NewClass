@@ -6,7 +6,7 @@
 @{
     Layout = null;
     List<Level> levels = ViewBag.Levels;
-    levels.Insert(0, new Level() { Id = 0, LevelName = "-请选择-" });
+    levels.Insert(0, new Level() { Id = 0, Name = "-请选择-" });
 }
 <div class="pageContent">
 
@@ -22,7 +22,7 @@
                 <select class="required" name="LevelId">
                     @foreach (var item in levels)
                     {
-                        <option value="@(item.Id==0?"":item.Id+"")" @(Model.LevelId == item.Id ? "selected='selected'" : "")>@item.LevelName</option>
+                        <option value="@(item.Id==0?"":item.Id+"")" @(Model.LevelId == item.Id ? "selected='selected'" : "")>@item.Name</option>
                     }
                 </select>
             </div>

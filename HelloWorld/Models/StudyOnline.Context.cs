@@ -25,11 +25,7 @@ namespace StudyOnline.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Comment> Comment { get; set; }
-        public virtual DbSet<Document> Document { get; set; }
-        public virtual DbSet<Folder> Folder { get; set; }
         public virtual DbSet<Group> Group { get; set; }
-        public virtual DbSet<Level> Level { get; set; }
         public virtual DbSet<NimUser> NimUser { get; set; }
         public virtual DbSet<NimUserEx> NimUserEx { get; set; }
         public virtual DbSet<UploadFile> UploadFile { get; set; }
@@ -43,5 +39,9 @@ namespace StudyOnline.Models
         public virtual DbSet<Recharge> Recharge { get; set; }
         public virtual DbSet<Teacher> Teacher { get; set; }
         public virtual DbSet<Theme> Theme { get; set; }
+        public virtual DbSet<Comment> Comment { get; set; }
+        public virtual DbSet<Document> Document { get; set; }
+        public virtual DbSet<Folder> Folder { get; set; }
+        public virtual DbSet<Level> Level { get; set; }
     }
 }

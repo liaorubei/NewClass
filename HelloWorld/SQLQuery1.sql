@@ -103,6 +103,10 @@ create table Question
    constraint [FK_Question_Theme] foreign key (ThemeId) references [Theme] ([Id])
 )
 
+--alter table Level add Name varchar(256)
+--update Level set Name=LevelName
+select * from Level
+
 --通话记录
 create table CallLog(
 	[Id]         NVARCHAR (32) NOT NULL,

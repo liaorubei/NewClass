@@ -7,7 +7,7 @@
     Layout = null;
     PagedList<Document> docs = ViewBag.Docs;
     List<Level> levels = ViewBag.Levels;
-    levels.Insert(0, new Level() { LevelName = "-请选择-" });
+    levels.Insert(0, new Level() { Name = "-请选择-" });
     int levelId = ViewBag.LevelId;
 
     List<Folder> folders = ViewBag.Folders;
@@ -29,7 +29,7 @@
                     <select class="combox" name="levelId">
                         @foreach (var item in levels)
                         {
-                            <option value="@item.Id" @(levelId == item.Id ? "selected='selected'" : "")>@item.LevelName</option>
+                            <option value="@item.Id" @(levelId == item.Id ? "selected='selected'" : "")>@item.Name</option>
                         }
                     </select>
                 </li>
@@ -82,7 +82,7 @@
                         <td align="center">@(++i)</td>
                         <td>@item.Title</td>
                         <td align="center">@(item.Folder == null ? "" : item.Folder.Name)</td>
-                        <td align="center">@item.Level.LevelName</td>
+                        <td align="center">@item.Level.Name</td>
                         <td align="center">@(item.AuditDate == null ?  "":item.AuditDate.Value.ToString("yyyy-MM-dd"))</td>
                     </tr>
                 }

@@ -7,7 +7,7 @@
     Layout = null;
     PagedList<Document> docs = ViewBag.Docs;
     List<Level> levels = ViewBag.Levels;
-    levels.Insert(0, new Level() { LevelName = "-请选择-" });
+    levels.Insert(0, new Level() { Name = "-请选择-" });
     int levelId = ViewBag.LevelId;
 }
 <form id="pagerForm" action='@Url.Action("DocsLookup")'>
@@ -28,7 +28,7 @@
                     <select class="combox" name="levelId">
                         @foreach (var item in levels)
                         {
-                            <option value="@item.Id" @(levelId == item.Id ? "selected='selected'" : "")>@item.LevelName</option>
+                            <option value="@item.Id" @(levelId == item.Id ? "selected='selected'" : "")>@item.Name</option>
                         }
                     </select>
                 </li>
@@ -61,7 +61,7 @@
                     <td><input type="checkbox" name="document" value="{DocsIds:'@item.Id', Titles:'@item.Title'}" /></td>
                     <td>@(++i)</td>
                     <td>@item.Title</td>
-                    <td>@item.Level.LevelName</td>
+                    <td>@item.Level.Name</td>
                     <td>@item.AddDate</td>
                 </tr>
             }

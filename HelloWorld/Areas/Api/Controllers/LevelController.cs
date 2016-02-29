@@ -15,13 +15,14 @@ namespace StudyOnline.Areas.Api.Controllers
         public ActionResult Select()
         {
             var temp = entities.Level.Where(o => o.Show == 1).OrderBy(o => o.Sort);
-            return Json(new { code = 200, desc = "查询成功", info = temp.Select(o => new { o.Id, o.LevelName, o.Sort, Name = o.LevelName }) });
+            return Json(new { code = 200, desc = "查询成功", info = temp.Select(o => new { o.Id, o.Name, o.Sort }) });
         }
 
-        // GET: Api/Level/Details/5
-        public ActionResult Details(int id)
+        [HttpPost]
+        public ActionResult SelectLevelAndFolders()
         {
-            return View();
+            var temp = entities.Level.Where(o => o.Show == 1).OrderBy(o => o.Sort).ToList();
+            return Json(new { code = 200, desc = "查询成功", info = temp.Select(o => new { o.Id, o.Name, o.Sort, Folders = o.Folder.Select(f => new { f.Id, f.Name, DocsCount = f.Document.Count }) }) });
         }
 
         // GET: Api/Level/Create
