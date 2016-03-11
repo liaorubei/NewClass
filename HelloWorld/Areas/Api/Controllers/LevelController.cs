@@ -22,7 +22,7 @@ namespace StudyOnline.Areas.Api.Controllers
         public ActionResult SelectLevelAndFolders()
         {
             var temp = entities.Level.Where(o => o.Show == 1).OrderBy(o => o.Sort).ToList();
-            return Json(new { code = 200, desc = "查询成功", info = temp.Select(o => new { o.Id, o.Name, o.Sort, Folders = o.Folder.Select(f => new { f.Id, f.Name, DocsCount = f.Document.Count }) }) });
+            return Json(new { code = 200, desc = "查询成功", info = temp.Select(o => new { o.Id, o.Name, o.Sort, Folders = o.Folder.OrderByDescending(f => f.Id).Take(25).Select(f => new { f.Id, f.Name, DocsCount = f.Document.Count }) }) });
         }
 
         // GET: Api/Level/Create

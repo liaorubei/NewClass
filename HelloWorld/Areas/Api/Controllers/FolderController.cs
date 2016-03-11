@@ -13,7 +13,7 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult GetByLevelId(Int32 levelId, Int32 skip, Int32 take)
         {
-            var temp = entities.Folder.Where(o => o.LevelId == levelId).OrderBy(o => o.Name).Skip(skip).Take(take);
+            var temp = entities.Folder.Where(o => o.LevelId == levelId).OrderByDescending(o => o.Id).Skip(skip).Take(take);
             return Json(new { code = 200, desc = "查询成功", info = temp.Select(o => new { o.Id, o.Name, DocsCount = o.Document.Count, o.LevelId }) });
         }
 
