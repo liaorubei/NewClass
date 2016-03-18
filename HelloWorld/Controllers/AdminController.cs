@@ -235,15 +235,33 @@ namespace StudyOnline.Controllers
             int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
 
             //关键字处理
+            String keyword = form["keyword"];
             Expression<Func<Folder, bool>> predicate = o => true;
-            if (!String.IsNullOrEmpty(form["keyword"]))
+            if (!String.IsNullOrEmpty(keyword))
             {
-                String keyword = form["keyword"];
                 predicate = o => o.Name.Contains(keyword);
-                ViewBag.Keyword = form["keyword"];
+            }
+            ViewBag.Keyword = form["keyword"];
+
+            //等级
+            int levelId = ConvertUtil.ToInt32(form["levelId"], -1);
+            Expression<Func<Folder, bool>> predicateLevel = o => true;
+            if (levelId > 0)
+            {
+                predicateLevel = o => o.LevelId == levelId;
             }
 
-            PagedList<Folder> folders = entities.Folder.Where(predicate).OrderByDescending(t => t.Id).ToPagedList(pageIndex, pageSize);
+            List<Level> levels = entities.Level.ToList();
+            List<SelectListItem> items = new List<SelectListItem>();
+            items.Add(new SelectListItem() { Text = "-请选择-", Value = "-1" });
+            foreach (var item in levels)
+            {
+                items.Add(new SelectListItem() { Text = item.Name, Value = item.Id.ToString(), Selected = levelId == item.Id });
+            }
+            ViewBag.Levels = items;
+
+
+            PagedList<Folder> folders = entities.Folder.Where(predicate).Where(predicateLevel).OrderByDescending(t => t.Id).ToPagedList(pageIndex, pageSize);
             ViewBag.Folders = folders;
             return View();
         }
@@ -586,7 +604,7 @@ namespace StudyOnline.Controllers
 
             foreach (var h in i)
             {
-                items.Add(new SelectListItem() {Value=h.Id.ToString(),Text=h.Name,Selected=h.Id==hsLevelId });
+                items.Add(new SelectListItem() { Value = h.Id.ToString(), Text = h.Name, Selected = h.Id == hsLevelId });
             }
 
             ViewBag.SelectListItems = items;

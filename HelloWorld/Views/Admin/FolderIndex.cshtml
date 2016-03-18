@@ -14,8 +14,11 @@
         <div class="searchBar">
             <ul class="searchContent">
                 <li>
-                    <label>分类名称：</label>
-                    <input type="text" name="keyword" placeholder="请输入要检索的关键字" value="@ViewBag.Keyword"/>
+                    <label>名称：</label>
+                    <input type="text" name="keyword" placeholder="请输入" value="@ViewBag.Keyword"/>
+                </li>
+                <li>
+                    <label>级别：</label>@Html.DropDownList("levelId",(List<SelectListItem>)ViewBag.Levels, new {@class="combox" })
                 </li>
             </ul>
 
