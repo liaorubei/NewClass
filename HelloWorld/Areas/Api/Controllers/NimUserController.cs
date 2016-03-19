@@ -11,6 +11,7 @@ using System.Web.Mvc;
 using System.Linq.Expressions;
 using System.Data.Entity;
 using System.IO;
+using AutoMapper;
 
 namespace StudyOnline.Areas.Api.Controllers
 {
@@ -107,7 +108,7 @@ namespace StudyOnline.Areas.Api.Controllers
         /// <param name="info">用户信息</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Update(int id, String Name, HttpPostedFileBase icon, String Email, DateTime? Birth, String Mobile, Int32? Gender)
+        public ActionResult Update(int id, String Name, HttpPostedFileBase icon, String Email, DateTime? Birth, String Mobile, Int32? Gender, String Country, String Language, String Job, HttpPostedFileBase Voice, String About)
         {
             NimUserEx info = entities.NimUserEx.Find(id);
             //  NimUserEx info = new NimUserEx() { Icon = "默认图片" };
@@ -116,6 +117,7 @@ namespace StudyOnline.Areas.Api.Controllers
                 return Json(new { code = 201, desc = "用户不存在", info = info });
             }
 
+            //处理图片文件
             if (icon != null)
             {
                 String fileName = "";
@@ -132,11 +134,30 @@ namespace StudyOnline.Areas.Api.Controllers
                 info.Icon = filePath;
             }
 
+            //处理音频文件
+            if (Voice != null)
+            {
+                String fileName = "";
+                String filePath = String.Format("/{0}/{1}/{2}{3}", "File", DateTime.Now.ToString("yyyyMMdd"), Guid.NewGuid(), Path.GetExtension(Voice.FileName));
+                FileInfo file = new FileInfo(Server.MapPath("~" + filePath));
+                if (!file.Directory.Exists)
+                {
+                    file.Directory.Create();
+                }
+                fileName = Voice.FileName;
+                Voice.SaveAs(file.FullName);
+                info.Voice = filePath;
+            }
+
             info.Name = Name;
             info.Email = Email;
             info.Birth = Birth;
             info.Mobile = Mobile;
             info.Gender = Gender;
+            info.Country = Country;
+            info.Language = Language;
+            info.Job = Job;
+            info.About = About;
 
             try
             {
@@ -191,7 +212,11 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.NimUserEx.Gender,
                     user.NimUserEx.Email,
                     user.NimUserEx.Mobile,
-                    Birth = (user.NimUserEx.Birth == null ? "" : user.NimUserEx.Birth.Value.ToString("yyyy-MM-dd"))
+                    Birth = (user.NimUserEx.Birth == null ? "" : user.NimUserEx.Birth.Value.ToString("yyyy-MM-dd")),
+                    user.NimUserEx.Country,
+                    user.NimUserEx.Language,
+                    user.NimUserEx.Job,
+                    user.NimUserEx.Voice
                 }
             });
         }
@@ -244,7 +269,7 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 return Json(new { code = 2001, desc = "没有这个人", info = new { Accid = accid } });
             }
-            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.Username, user.NimUserEx.Name, NickName = user.NimUserEx.Name ,user.NimUserEx.Icon} });
+            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.Username, user.NimUserEx.Name, NickName = user.NimUserEx.Name, user.NimUserEx.Icon } });
         }
 
         [HttpPost]
@@ -255,7 +280,7 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 return Json(new { code = 2001, desc = "没有这个人", info = new { Accid = username } });
             }
-            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.Username, user.NimUserEx.Name, NickName = user.NimUserEx.Name,user.NimUserEx.Icon } });
+            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.Username, user.NimUserEx.Name, NickName = user.NimUserEx.Name, user.NimUserEx.Icon } });
         }
 
         /// <summary>
@@ -349,8 +374,12 @@ namespace StudyOnline.Areas.Api.Controllers
             user.Refresh = now;
 
             entities.SaveChanges();
-
-            return Json(new { code = 200, desc = "", info = new { } });
+            Mapper.Initialize(o => o.CreateMap<NimUserEx, StudyOnline.Models.AndroidBean.User>());
+            StudyOnline.Models.AndroidBean.User s = Mapper.Map<NimUserEx, StudyOnline.Models.AndroidBean.User>(user.NimUserEx);
+            s.Id = user.Id;
+            s.Username = user.Username;
+            s.Password = user.Password;
+            return Json(new { code = 200, desc = "", info = s });
         }
 
         /// <summary>
@@ -393,8 +422,10 @@ namespace StudyOnline.Areas.Api.Controllers
             user.Refresh = now;
 
             entities.SaveChanges();
+            Mapper.Initialize(o => o.CreateMap<NimUserEx, StudyOnline.Models.AndroidBean.User>());
+            StudyOnline.Models.AndroidBean.User s = Mapper.Map<NimUserEx, StudyOnline.Models.AndroidBean.User>(user.NimUserEx);
 
-            return Json(new { code = 200, desc = "", info = new { } });
+            return Json(new { code = 200, desc = "", info = s });
         }
 
         /// <summary>
@@ -454,7 +485,7 @@ namespace StudyOnline.Areas.Api.Controllers
 
             teacher.IsEnable = 0;
             entities.SaveChanges();
-            return Json(new { code = 200, desc = "选择成功", info = new { teacher.Id, teacher.Accid, teacher.NimUserEx.Name, teacher.Username, teacher.NimUserEx.Icon } });
+            return Json(new { code = 200, desc = "选择成功", info = new { teacher.Id, teacher.Accid, teacher.NimUserEx.Name, teacher.Username, teacher.NimUserEx.Icon, teacher.NimUserEx.Voice } });
         }
 
         /// <summary>
@@ -472,7 +503,7 @@ namespace StudyOnline.Areas.Api.Controllers
             Expression<Func<NimUser, bool>> predicate = o => o.IsOnline == 1 && o.IsEnable == 1 && o.Category == 1 && (o.Enqueue < now) && (o.Refresh > refresh);//默认category=1为老师  //要求是老师,在线,可用
             Expression<Func<NimUser, long?>> keySelector = o => o.Enqueue;
             List<NimUser> teachers = entities.NimUser.Where(predicate).OrderBy(keySelector).Skip(skip).Take(take).ToList();
-            return Json(new { code = 200, desc = "查询成功", info = teachers.Select(o => new { o.Id, o.Accid, o.NimUserEx.Name, o.Username, o.Category, o.NimUserEx.Icon }) });
+            return Json(new { code = 200, desc = "查询成功", info = teachers.Select(o => new { o.Id, o.Accid, o.NimUserEx.Name, o.Username, o.Category, o.NimUserEx.Icon, o.NimUserEx.Voice, o.NimUserEx.Country }) });
         }
 
     }

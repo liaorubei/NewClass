@@ -135,6 +135,11 @@
           <Property Name="Mobile" Type="nvarchar" MaxLength="32" />
           <Property Name="Gender" Type="int" />
           <Property Name="Ex" Type="nvarchar" MaxLength="512" />
+          <Property Name="Country" Type="nvarchar" MaxLength="256" />
+          <Property Name="Language" Type="nvarchar" MaxLength="256" />
+          <Property Name="Job" Type="nvarchar" MaxLength="256" />
+          <Property Name="About" Type="nvarchar" MaxLength="1024" />
+          <Property Name="Voice" Type="nvarchar" MaxLength="1024" />
         </EntityType>
         <EntityType Name="Orders">
           <Key>
@@ -510,6 +515,11 @@
           <Property Name="Gender" Type="Int32" />
           <Property Name="Ex" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="NimUser" Relationship="Self.FK_NimUserEx_NimUser" FromRole="NimUserEx" ToRole="NimUser" />
+          <Property Name="Country" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Language" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Job" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="About" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="Voice" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="UploadFile">
           <Key>
@@ -970,6 +980,11 @@
           <EntitySetMapping Name="NimUserEx">
             <EntityTypeMapping TypeName="StudyOnline.NimUserEx">
               <MappingFragment StoreEntitySet="NimUserEx">
+                <ScalarProperty Name="Voice" ColumnName="Voice" />
+                <ScalarProperty Name="About" ColumnName="About" />
+                <ScalarProperty Name="Job" ColumnName="Job" />
+                <ScalarProperty Name="Language" ColumnName="Language" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Icon" ColumnName="Icon" />

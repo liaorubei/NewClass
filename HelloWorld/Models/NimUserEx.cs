@@ -23,6 +23,11 @@ namespace StudyOnline.Models
         public string Mobile { get; set; }
         public Nullable<int> Gender { get; set; }
         public string Ex { get; set; }
+        public string Country { get; set; }
+        public string Language { get; set; }
+        public string Job { get; set; }
+        public string About { get; set; }
+        public string Voice { get; set; }
     
         public virtual NimUser NimUser { get; set; }
     }

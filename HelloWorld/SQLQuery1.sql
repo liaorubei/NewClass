@@ -39,6 +39,14 @@ CREATE TABLE [NimUserEx]
 	CONSTRAINT [FK_NimUserEx_NimUser] FOREIGN KEY ([Id]) REFERENCES [NimUser] ([Id])
 );
 GO
+--alter table [NimUserEx] add [Country] nvarchar(256);
+--alter table [NimUserEx] add [Language] nvarchar(256);
+--alter table [NimUserEx] add [Job] nvarchar(256);
+--alter table [NimUserEx] add [About] nvarchar(1024);
+--alter table [NimUserEx] add [Voice] nvarchar(1024);
+select * from [NimUserEx]
+
+
 
 --创建教师表
 CREATE TABLE [Teacher] 
