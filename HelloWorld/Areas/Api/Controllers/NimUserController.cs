@@ -12,6 +12,7 @@ using System.Linq.Expressions;
 using System.Data.Entity;
 using System.IO;
 using AutoMapper;
+using System.Text.RegularExpressions;
 
 namespace StudyOnline.Areas.Api.Controllers
 {
@@ -61,27 +62,46 @@ namespace StudyOnline.Areas.Api.Controllers
         /// <summary>
         /// 创建新用户
         /// </summary>
-        /// <param name="username">用户名,手机号码</param>
+        /// <param name="email">用户名,手机号码</param>
         /// <param name="password">密码</param>
-        /// <param name="nickname">昵称</param>
         /// <param name="category">用户类型,1是老师,0是学生</param>
         /// <returns>如果成功,返回code=200</returns>
         [HttpPost]
-        public ActionResult Create(String username, String password, String nickname, Int32 category)
+        public ActionResult Create(String email, String password, Int32 category)
         {
-            if (String.IsNullOrEmpty(username) || String.IsNullOrEmpty(password))
+            if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(password))
             {
                 return Json(new { code = 20001, desc = "参数不能为空" });
             }
 
+            Regex regex = new Regex("^\\s*([A-Za-z0-9_-]+(\\.\\w+)*@(\\w+\\.)+\\w{2,5})\\s*$");
+            if (!regex.IsMatch(email))
+            {
+                return Json(new { code = 20001, desc = "邮箱格式不对" });
+            }
+
+            if (password.Length < 8)
+            {
+                return Json(new { code = 20001, desc = "密码长度不够" });
+            }
+
+            if (entities.NimUser.Any(o => o.Username == email || o.NimUserEx.Email == email))
+            {
+                return Json(new { code = 20001, desc = "用户名被注册" });
+            }
+
+
+
+
+
             NimUser user = new NimUser();
             user.Accid = Guid.NewGuid().ToString().Replace("-", "");
-            user.Username = username;
+            user.Username = email;
             user.Password = EncryptionUtil.Md5Encode(password);
             user.Category = category;
             user.CreateDate = DateTime.Now;
 
-            String json = NimUtil.UserCreate(user.Accid, null, null, HttpUtility.UrlEncode(nickname));
+            String json = NimUtil.UserCreate(user.Accid, null, null, HttpUtility.UrlEncode(email));
             Answer a = JsonConvert.DeserializeObject<Answer>(json);
             if (a.code != 200)
             {
@@ -91,14 +111,14 @@ namespace StudyOnline.Areas.Api.Controllers
             try
             {
                 user.Token = a.info.token;
-                user.NimUserEx = new NimUserEx() { Name = nickname };
+                user.NimUserEx = new NimUserEx() { Email = email, Name = email };
                 entities.NimUser.Add(user);
                 entities.SaveChanges();
                 return Json(new { code = 200, desc = "添加成功", info = new { user.Id, user.Accid, user.Token } });
             }
             catch (Exception ex)
             {
-                return Json(new { code = 20002, desc = ex.Message, info = "" });
+                return Json(new { code = 20002, desc = "添加失败", info = ex });
             }
         }
 
@@ -216,7 +236,8 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.NimUserEx.Country,
                     user.NimUserEx.Language,
                     user.NimUserEx.Job,
-                    user.NimUserEx.Voice
+                    user.NimUserEx.Voice,
+                    user.NimUserEx.About
                 }
             });
         }
@@ -253,7 +274,30 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 return Json(new { code = 2001, desc = "没有这个人", info = new { Id = id } });
             }
-            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.Username, user.NimUserEx.Name, user.NimUserEx.Icon } });
+            return Json(new
+            {
+                code = 200,
+                desc = "",
+                info = new
+                {
+                    user.Id,
+                    user.Accid,
+                    user.Username,
+                    user.NimUserEx.Icon,
+                    Avater = user.NimUserEx.Icon,
+                    user.NimUserEx.Name,
+                    NickName = user.NimUserEx.Name,
+                    user.NimUserEx.Gender,
+                    user.NimUserEx.Email,
+                    user.NimUserEx.Mobile,
+                    Birth = (user.NimUserEx.Birth == null ? "" : user.NimUserEx.Birth.Value.ToString("yyyy-MM-dd")),
+                    user.NimUserEx.Country,
+                    user.NimUserEx.Language,
+                    user.NimUserEx.Job,
+                    user.NimUserEx.Voice,
+                    user.NimUserEx.About
+                }
+            });
         }
 
         /// <summary>
@@ -269,7 +313,30 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 return Json(new { code = 2001, desc = "没有这个人", info = new { Accid = accid } });
             }
-            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.Username, user.NimUserEx.Name, NickName = user.NimUserEx.Name, user.NimUserEx.Icon } });
+            return Json(new
+            {
+                code = 200,
+                desc = "",
+                info = new
+                {
+                    user.Id,
+                    user.Accid,
+                    user.Username,
+                    user.NimUserEx.Icon,
+                    Avater = user.NimUserEx.Icon,
+                    user.NimUserEx.Name,
+                    NickName = user.NimUserEx.Name,
+                    user.NimUserEx.Gender,
+                    user.NimUserEx.Email,
+                    user.NimUserEx.Mobile,
+                    Birth = (user.NimUserEx.Birth == null ? "" : user.NimUserEx.Birth.Value.ToString("yyyy-MM-dd")),
+                    user.NimUserEx.Country,
+                    user.NimUserEx.Language,
+                    user.NimUserEx.Job,
+                    user.NimUserEx.Voice,
+                    user.NimUserEx.About
+                }
+            });
         }
 
         [HttpPost]
@@ -280,7 +347,30 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 return Json(new { code = 2001, desc = "没有这个人", info = new { Accid = username } });
             }
-            return Json(new { code = 200, desc = "", info = new { user.Id, user.Accid, user.Username, user.NimUserEx.Name, NickName = user.NimUserEx.Name, user.NimUserEx.Icon } });
+            return Json(new
+            {
+                code = 200,
+                desc = "",
+                info = new
+                {
+                    user.Id,
+                    user.Accid,
+                    user.Username,
+                    user.NimUserEx.Icon,
+                    Avater = user.NimUserEx.Icon,
+                    user.NimUserEx.Name,
+                    NickName = user.NimUserEx.Name,
+                    user.NimUserEx.Gender,
+                    user.NimUserEx.Email,
+                    user.NimUserEx.Mobile,
+                    Birth = (user.NimUserEx.Birth == null ? "" : user.NimUserEx.Birth.Value.ToString("yyyy-MM-dd")),
+                    user.NimUserEx.Country,
+                    user.NimUserEx.Language,
+                    user.NimUserEx.Job,
+                    user.NimUserEx.Voice,
+                    user.NimUserEx.About
+                }
+            });
         }
 
         /// <summary>
@@ -353,8 +443,33 @@ namespace StudyOnline.Areas.Api.Controllers
             Expression<Func<NimUser, bool>> predicate = o => o.IsOnline == 1 && o.IsEnable == 1 && o.Category == 1 && o.Enqueue <= user.Enqueue && o.Refresh >= (user.Refresh - 3000000000L);
 
             var teachers = entities.NimUser.Where(predicate).OrderBy(o => o.Enqueue);
-            var temp = teachers.Skip(0).Take(5);
-            return Json(new { code = 200, desc = "排队成功", info = new { Data = temp.Select(o => new { o.Id, o.Accid, o.NimUserEx.Name, o.Username, o.Category }), Rank = teachers.Count() } });
+            var temp = teachers.Skip(0).Take(5).ToList();
+            return Json(new
+            {
+                code = 200,
+                desc = "排队成功",
+                info = new
+                {
+                    Data = temp.Select(o => new
+                    {
+                        o.Id,
+                        o.Accid,
+                        o.Username,
+                        o.NimUserEx.Name,
+                        o.NimUserEx.Icon,
+                        o.NimUserEx.Email,
+                        o.NimUserEx.Birth,
+                        o.NimUserEx.Mobile,
+                        o.NimUserEx.Gender,
+                        o.NimUserEx.Country,
+                        o.NimUserEx.Language,
+                        o.NimUserEx.Job,
+                        o.NimUserEx.About,
+                        o.NimUserEx.Voice
+                    }),
+                    Rank = teachers.Count()
+                }
+            });
         }
 
         /// <summary>
@@ -374,12 +489,30 @@ namespace StudyOnline.Areas.Api.Controllers
             user.Refresh = now;
 
             entities.SaveChanges();
-            Mapper.Initialize(o => o.CreateMap<NimUserEx, StudyOnline.Models.AndroidBean.User>());
-            StudyOnline.Models.AndroidBean.User s = Mapper.Map<NimUserEx, StudyOnline.Models.AndroidBean.User>(user.NimUserEx);
-            s.Id = user.Id;
-            s.Username = user.Username;
-            s.Password = user.Password;
-            return Json(new { code = 200, desc = "", info = s });
+            return Json(new
+            {
+                code = 200,
+                desc = "",
+                info = new
+                {
+                    user.Id,
+                    user.Accid,
+                    user.Username,
+                    user.NimUserEx.Icon,
+                    Avater = user.NimUserEx.Icon,
+                    user.NimUserEx.Name,
+                    NickName = user.NimUserEx.Name,
+                    user.NimUserEx.Gender,
+                    user.NimUserEx.Email,
+                    user.NimUserEx.Mobile,
+                    Birth = (user.NimUserEx.Birth == null ? "" : user.NimUserEx.Birth.Value.ToString("yyyy-MM-dd")),
+                    user.NimUserEx.Country,
+                    user.NimUserEx.Language,
+                    user.NimUserEx.Job,
+                    user.NimUserEx.Voice,
+                    user.NimUserEx.About
+                }
+            });
         }
 
         /// <summary>
@@ -399,9 +532,30 @@ namespace StudyOnline.Areas.Api.Controllers
             user.Enqueue = now;
             user.Refresh = now;
 
-            entities.SaveChanges();
-
-            return Json(new { code = 200, desc = "", info = new { } });
+            entities.SaveChanges(); return Json(new
+            {
+                code = 200,
+                desc = "",
+                info = new
+                {
+                    user.Id,
+                    user.Accid,
+                    user.Username,
+                    user.NimUserEx.Icon,
+                    Avater = user.NimUserEx.Icon,
+                    user.NimUserEx.Name,
+                    NickName = user.NimUserEx.Name,
+                    user.NimUserEx.Gender,
+                    user.NimUserEx.Email,
+                    user.NimUserEx.Mobile,
+                    Birth = (user.NimUserEx.Birth == null ? "" : user.NimUserEx.Birth.Value.ToString("yyyy-MM-dd")),
+                    user.NimUserEx.Country,
+                    user.NimUserEx.Language,
+                    user.NimUserEx.Job,
+                    user.NimUserEx.Voice,
+                    user.NimUserEx.About
+                }
+            });
 
         }
 
@@ -422,10 +576,30 @@ namespace StudyOnline.Areas.Api.Controllers
             user.Refresh = now;
 
             entities.SaveChanges();
-            Mapper.Initialize(o => o.CreateMap<NimUserEx, StudyOnline.Models.AndroidBean.User>());
-            StudyOnline.Models.AndroidBean.User s = Mapper.Map<NimUserEx, StudyOnline.Models.AndroidBean.User>(user.NimUserEx);
-
-            return Json(new { code = 200, desc = "", info = s });
+            return Json(new
+            {
+                code = 200,
+                desc = "",
+                info = new
+                {
+                    user.Id,
+                    user.Accid,
+                    user.Username,
+                    user.NimUserEx.Icon,
+                    Avater = user.NimUserEx.Icon,
+                    user.NimUserEx.Name,
+                    NickName = user.NimUserEx.Name,
+                    user.NimUserEx.Gender,
+                    user.NimUserEx.Email,
+                    user.NimUserEx.Mobile,
+                    Birth = (user.NimUserEx.Birth == null ? "" : user.NimUserEx.Birth.Value.ToString("yyyy-MM-dd")),
+                    user.NimUserEx.Country,
+                    user.NimUserEx.Language,
+                    user.NimUserEx.Job,
+                    user.NimUserEx.Voice,
+                    user.NimUserEx.About
+                }
+            });
         }
 
         /// <summary>
@@ -503,7 +677,22 @@ namespace StudyOnline.Areas.Api.Controllers
             Expression<Func<NimUser, bool>> predicate = o => o.IsOnline == 1 && o.IsEnable == 1 && o.Category == 1 && (o.Enqueue < now) && (o.Refresh > refresh);//默认category=1为老师  //要求是老师,在线,可用
             Expression<Func<NimUser, long?>> keySelector = o => o.Enqueue;
             List<NimUser> teachers = entities.NimUser.Where(predicate).OrderBy(keySelector).Skip(skip).Take(take).ToList();
-            return Json(new { code = 200, desc = "查询成功", info = teachers.Select(o => new { o.Id, o.Accid, o.NimUserEx.Name, o.Username, o.Category, o.NimUserEx.Icon, o.NimUserEx.Voice, o.NimUserEx.Country }) });
+            return Json(new
+            {
+                code = 200,
+                desc = "查询成功",
+                info = teachers.Select(o => new
+                {
+                    o.Id,
+                    o.Accid,
+                    o.NimUserEx.Name,
+                    o.Username,
+                    o.Category,
+                    o.NimUserEx.Icon,
+                    o.NimUserEx.Voice,
+                    o.NimUserEx.Country
+                })
+            });
         }
 
     }

@@ -6,8 +6,8 @@ namespace ChineseChat.Library
 {
     public class NimUtil
     {
-        public static readonly string AppKey = "db75c3901c1a2029d0dd668975b580e0";
-        public static readonly string AppSecret = "8b928c19e4cc";
+        public static readonly string AppKey = "599551c5de7282b9a1d686ee40abf74c";
+        public static readonly string AppSecret = "64e52bd091da";
         private readonly static string UserCreatePath = "https://api.netease.im/nimserver/user/create.action";
         private static readonly string UserUpdatePath = "https://api.netease.im/nimserver/user/update.action";
 
