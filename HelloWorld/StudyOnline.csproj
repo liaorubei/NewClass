@@ -54,10 +54,6 @@
       <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="AutoMapper, Version=4.2.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.4.2.1\lib\net45\AutoMapper.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -68,6 +64,10 @@
     </Reference>
     <Reference Include="Kfstorm.LrcParser">
       <HintPath>..\packages\Kfstorm.LrcParser.1.0.3\lib\portable-net40+sl50+win+wpa81+wp80\Kfstorm.LrcParser.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp">
@@ -229,10 +229,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\Api\ApiAreaRegistration.cs" />
     <Compile Include="Areas\Api\Controllers\CallLogController.cs" />
+    <Compile Include="Areas\Api\Controllers\FeedbackController.cs" />
     <Compile Include="Areas\Api\Controllers\FolderController.cs" />
     <Compile Include="Areas\Api\Controllers\GroupController.cs" />
     <Compile Include="Areas\Api\Controllers\LevelController.cs" />
     <Compile Include="Areas\Api\Controllers\PaymentController.cs" />
+    <Compile Include="Areas\Api\Controllers\ProductController.cs" />
     <Compile Include="Areas\Api\Controllers\StudentController.cs" />
     <Compile Include="Areas\Api\Controllers\TeacherController.cs" />
     <Compile Include="Areas\Api\Controllers\NimUserController.cs" />
@@ -248,8 +250,10 @@
     <Compile Include="Models\Android.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\AndroidBean\User.cs" />
     <Compile Include="Models\AuditCase.cs" />
+    <Compile Include="Models\AuthCode.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\CallLog.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
@@ -257,6 +261,9 @@
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Document.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Feedback.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Folder.cs">
@@ -285,10 +292,10 @@
     <Compile Include="Models\Orders.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Question.cs">
+    <Compile Include="Models\Product.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Recharge.cs">
+    <Compile Include="Models\Question.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\StudyOnline.Context.cs">
@@ -326,6 +333,7 @@
     <Compile Include="Utils\ConvertUtil.cs" />
     <Compile Include="Utils\Helper.cs" />
     <Compile Include="Utils\LyricParser.cs" />
+    <Compile Include="Utils\MyEmail.cs" />
     <Compile Include="Utils\OrderUtil.cs" />
     <Compile Include="Utils\RSA.cs" />
   </ItemGroup>
@@ -633,10 +641,10 @@
     <Content Include="Scripts\jquery-1.9.1.min.js" />
     <Content Include="Scripts\jquery.treegrid.js" />
     <Content Include="Scripts\jquery.treegrid.min.js" />
-    <Content Include="SQLQuery1.sql" />
-    <Content Include="system.sql" />
+    <Content Include="App_Data\table.sql" />
+    <Content Include="App_Data\system.sql" />
     <Content Include="Views\Shared\_index.html" />
-    <Content Include="有道翻译API申请.png" />
+    <Content Include="App_Data\有道翻译API申请.png" />
     <Content Include="Areas\Api\Views\web.config" />
     <EntityDeploy Include="Models\StudyOnline.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
@@ -650,7 +658,7 @@
     </None>
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Images\background.png" />
-    <Content Include="readme.txt" />
+    <Content Include="App_Data\readme1.txt" />
     <Content Include="Scripts\bylazRm4.js" />
     <Content Include="Scripts\chart\g.bar.js" />
     <Content Include="Scripts\chart\g.dot.js" />
@@ -1067,14 +1075,17 @@
     <Content Include="Views\Admin\HsLevelAppend.cshtml" />
     <Content Include="Views\Admin\HsLevelExpand.cshtml" />
     <Content Include="Views\Admin\OrderIndex.cshtml" />
+    <Content Include="Views\Home\UserServiceAgreement.cshtml" />
+    <Content Include="Views\Home\UserHelp.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Areas\Api\Views\CallLog\" />
+    <Folder Include="Areas\Api\Views\Feedback\" />
     <Folder Include="Areas\Api\Views\Folder\" />
     <Folder Include="Areas\Api\Views\Group\" />
     <Folder Include="Areas\Api\Views\Level\" />
     <Folder Include="Areas\Api\Views\Payment\" />
+    <Folder Include="Areas\Api\Views\Product\" />
     <Folder Include="Areas\Api\Views\Shared\" />
     <Folder Include="Areas\Api\Views\Student\" />
     <Folder Include="Areas\Api\Views\Teacher\" />

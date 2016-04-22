@@ -22,6 +22,8 @@ namespace StudyOnline.Models
         public Nullable<long> ChatId { get; set; }
         public Nullable<int> ChatType { get; set; }
         public Nullable<int> Score { get; set; }
+        public Nullable<System.DateTime> Refresh { get; set; }
+        public Nullable<int> Coins { get; set; }
     
         public virtual NimUser Student { get; set; }
         public virtual NimUser Teacher { get; set; }

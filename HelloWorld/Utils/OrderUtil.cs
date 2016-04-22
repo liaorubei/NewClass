@@ -47,7 +47,7 @@ namespace StudyOnline.Utils
             orderInfo += "&total_fee=" + "\"" + order.Amount + "\"";
 
             // 服务器异步通知页面路径
-            orderInfo += "&notify_url=" + "\"" + "http://notify.msp.hk/notify.htm" + "\"";
+            orderInfo += "&notify_url=" + "\"" + "http://voc2015.azurewebsites.net/api/Payment/AlipayNotify" + "\"";//http://voc2015.azurewebsites.net/api/Payment/AlipayNotify
 
             // 服务接口名称， 固定值
             orderInfo += "&service=\"mobile.securitypay.pay\"";

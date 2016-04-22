@@ -22,7 +22,6 @@ namespace StudyOnline.Models
         }
     
         public int Id { get; set; }
-        public string LevelName { get; set; }
         public Nullable<int> Sort { get; set; }
         public Nullable<int> Show { get; set; }
         public Nullable<int> ShowBrowser { get; set; }

@@ -28,6 +28,9 @@ namespace StudyOnline.Models
         public string Job { get; set; }
         public string About { get; set; }
         public string Voice { get; set; }
+        public Nullable<int> Coins { get; set; }
+        public Nullable<double> Score { get; set; }
+        public string School { get; set; }
     
         public virtual NimUser NimUser { get; set; }
     }

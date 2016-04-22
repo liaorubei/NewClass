@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using StudyOnline.Models;
 using Webdiyer.WebControls.Mvc;
+using System.IO;
 
 namespace StudyOnline.Utils
 {
@@ -73,6 +75,28 @@ namespace StudyOnline.Utils
             builder.AppendLine(String.Format("</div>"));
 
             return new MvcHtmlString(builder.ToString());
+        }
+
+
+
+        internal static UploadFile SaveUploadFile(HttpServerUtilityBase server, HttpPostedFileBase item)
+        {
+            UploadFile uploadFile = new UploadFile();
+            String filePath = String.Format("/{0}/{1}/{2}{3}", "File", DateTime.Now.ToString("yyyyMMdd"), Guid.NewGuid(), Path.GetExtension(item.FileName));
+            FileInfo file = new FileInfo(server.MapPath("~" + filePath));
+            if (!file.Directory.Exists)
+            {
+                file.Directory.Create();
+            }
+
+            item.SaveAs(file.FullName);
+
+            uploadFile.Extension = Path.GetExtension(item.FileName);
+            uploadFile.Size = item.ContentLength;
+            uploadFile.Info = item.FileName;
+            uploadFile.Path = filePath;
+            uploadFile.AddDate = DateTime.Now;
+            return uploadFile;
         }
     }
 

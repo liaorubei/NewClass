@@ -5,37 +5,40 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="767fb3cbf87146c8a047e1fff03dce29" Name="Diagram1" ZoomLevel="63">
-        <EntityTypeShape EntityType="StudyOnline.Group" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="StudyOnline.NimUser" Width="1.5" PointX="0.75" PointY="4.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="StudyOnline.NimUserEx" Width="1.5" PointX="3" PointY="4.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="StudyOnline.UploadFile" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="StudyOnline.User" Width="1.5" PointX="9.75" PointY="0.75" IsExpanded="true" />
-        <AssociationConnector Association="StudyOnline.FK_Group_NimUser" ManuallyRouted="false" />
-        <AssociationConnector Association="StudyOnline.FK_NimUserEx_NimUser" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="StudyOnline.CallLog" Width="1.5" PointX="0.625" PointY="10" />
+        <EntityTypeShape EntityType="StudyOnline.Android" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="StudyOnline.AuthCode" Width="1.5" PointX="7.75" PointY="5.75" />
+        <EntityTypeShape EntityType="StudyOnline.CallLog" Width="1.5" PointX="5.25" PointY="13.125" />
+        <EntityTypeShape EntityType="StudyOnline.Comment" Width="1.5" PointX="14.5" PointY="12" />
+        <EntityTypeShape EntityType="StudyOnline.Document" Width="1.5" PointX="12.25" PointY="10.875" />
+        <EntityTypeShape EntityType="StudyOnline.Feedback" Width="1.5" PointX="9.75" PointY="6.75" />
+        <EntityTypeShape EntityType="StudyOnline.Folder" Width="1.5" PointX="10" PointY="14.5" />
+        <EntityTypeShape EntityType="StudyOnline.Group" Width="1.5" PointX="5.25" PointY="1.5" />
+        <EntityTypeShape EntityType="StudyOnline.HsLevel" Width="1.5" PointX="7.75" PointY="2.25" />
+        <EntityTypeShape EntityType="StudyOnline.Level" Width="1.5" PointX="7.75" PointY="9.375" />
+        <EntityTypeShape EntityType="StudyOnline.LogTheme" Width="1.5" PointX="12.25" PointY="1" />
+        <EntityTypeShape EntityType="StudyOnline.NimUser" Width="1.5" PointX="3" PointY="6.75" />
+        <EntityTypeShape EntityType="StudyOnline.NimUserEx" Width="1.5" PointX="5.25" PointY="5" />
+        <EntityTypeShape EntityType="StudyOnline.Orders" Width="1.5" PointX="11.75" PointY="6.75" />
+        <EntityTypeShape EntityType="StudyOnline.Product" Width="1.5" PointX="0.75" PointY="12.75" />
+        <EntityTypeShape EntityType="StudyOnline.Question" Width="1.5" PointX="12.25" PointY="3.375" />
+        <EntityTypeShape EntityType="StudyOnline.Teacher" Width="1.5" PointX="5.25" PointY="10" />
+        <EntityTypeShape EntityType="StudyOnline.Theme" Width="1.5" PointX="10" PointY="2" />
+        <EntityTypeShape EntityType="StudyOnline.UploadFile" Width="1.5" PointX="0.75" PointY="7.75" />
+        <EntityTypeShape EntityType="StudyOnline.User" Width="1.5" PointX="13.75" PointY="6.75" />
         <AssociationConnector Association="StudyOnline.FK_CallLog_NimUser_Source" />
         <AssociationConnector Association="StudyOnline.FK_CallLog_NimUser_Target" />
-        <EntityTypeShape EntityType="StudyOnline.Android" Width="1.5" PointX="10.375" PointY="10.75" />
-        <EntityTypeShape EntityType="StudyOnline.Orders" Width="1.5" PointX="8.75" PointY="10.75" />
-        <EntityTypeShape EntityType="StudyOnline.HsLevel" Width="1.5" PointX="12.375" PointY="10.25" />
-        <EntityTypeShape EntityType="StudyOnline.LogTheme" Width="1.5" PointX="16.875" PointY="11.5" />
-        <EntityTypeShape EntityType="StudyOnline.Question" Width="1.5" PointX="16.875" PointY="9" />
-        <EntityTypeShape EntityType="StudyOnline.Recharge" Width="1.5" PointX="3" PointY="8.75" />
-        <EntityTypeShape EntityType="StudyOnline.Teacher" Width="1.5" PointX="3" PointY="12.5" />
-        <EntityTypeShape EntityType="StudyOnline.Theme" Width="1.5" PointX="14.625" PointY="10" />
-        <AssociationConnector Association="StudyOnline.FK_Theme_HsLevel" />
-        <AssociationConnector Association="StudyOnline.FK_LogTheme_ThemeId" />
-        <AssociationConnector Association="StudyOnline.FK_Recharge_NimUser" />
-        <AssociationConnector Association="StudyOnline.FK_Teacher_NimUser" />
-        <AssociationConnector Association="StudyOnline.FK_Question_Theme" />
-        <EntityTypeShape EntityType="StudyOnline.Comment" Width="1.5" PointX="12.125" PointY="19.875" />
-        <EntityTypeShape EntityType="StudyOnline.Document" Width="1.5" PointX="9.875" PointY="18.75" />
-        <EntityTypeShape EntityType="StudyOnline.Folder" Width="1.5" PointX="7.625" PointY="22.5" />
-        <EntityTypeShape EntityType="StudyOnline.Level" Width="1.5" PointX="5.375" PointY="17.375" />
         <AssociationConnector Association="StudyOnline.FK_Comment_Document" />
         <AssociationConnector Association="StudyOnline.FK_Document_Folder" />
         <AssociationConnector Association="StudyOnline.FK_Document_Level" />
         <AssociationConnector Association="StudyOnline.FK_Folder_Level" />
+        <AssociationConnector Association="StudyOnline.FK_Group_NimUser" />
+        <AssociationConnector Association="StudyOnline.FK_Theme_HsLevel" />
+        <AssociationConnector Association="StudyOnline.FK_LogTheme_ThemeId" />
+        <AssociationConnector Association="StudyOnline.FK_NimUserEx_NimUser" />
+        <AssociationConnector Association="StudyOnline.FK_Teacher_NimUser" />
+        <AssociationConnector Association="StudyOnline.FK_Question_Theme" />
+        <AssociationConnector Association="StudyOnline.Photo" />
+        <AssociationConnector Association="StudyOnline.Avatar" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

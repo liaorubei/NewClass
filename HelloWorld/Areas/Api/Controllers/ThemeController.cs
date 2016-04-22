@@ -22,18 +22,14 @@ namespace StudyOnline.Areas.Api.Controllers
         public ActionResult GetById(int id)
         {
             Theme theme = entities.Theme.Find(id);
-
-
-
-            return Json(new { code = 200, desc = "", info = new { theme.Id, theme.Name, Questions = theme.Question.Select(o => new { o.Id, o.Name }) } });
+            return Json(new { code = 200, desc = "查询成功", info = new { theme.Id, theme.Name, Questions = theme.Question.Select(o => new { o.Id, o.Name }) } });
         }
 
-
-        // GET: Api/Theme/Create
+        [HttpPost]
         public ActionResult HsLevelAndTheme()
         {
             var hsLevels = entities.HsLevel.OrderBy(o => o.Id);
-            return Json(new { code = 200, desc = "", info = hsLevels.Select(o => new { o.Id, o.Name, Theme = o.Theme.Select(t => new { t.Id, t.Name }) }) });
+            return Json(new { code = 200, desc = "查询成功", info = hsLevels.Select(o => new { o.Id, o.Name, Theme = o.Theme.Select(t => new { t.Id, t.Name }) }) });
         }
 
         // POST: Api/Theme/Create

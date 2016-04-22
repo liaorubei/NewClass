@@ -17,13 +17,14 @@ namespace StudyOnline.Models
         public string Id { get; set; }
         public string UserName { get; set; }
         public string Currency { get; set; }
-        public double Amount { get; set; }
-        public double Quantity { get; set; }
-        public double Price { get; set; }
+        public Nullable<decimal> Amount { get; set; }
+        public Nullable<decimal> Quantity { get; set; }
+        public Nullable<decimal> Price { get; set; }
         public string Main { get; set; }
         public string Body { get; set; }
         public string TradeNo { get; set; }
         public string TradeStatus { get; set; }
         public Nullable<System.DateTime> CreateTime { get; set; }
+        public Nullable<int> Coin { get; set; }
     }
 }

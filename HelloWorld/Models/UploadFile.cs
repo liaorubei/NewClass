@@ -14,6 +14,13 @@ namespace StudyOnline.Models
     
     public partial class UploadFile
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public UploadFile()
+        {
+            this.NimUser = new HashSet<NimUser>();
+            this.NimUser1 = new HashSet<NimUser>();
+        }
+    
         public int Id { get; set; }
         public double Size { get; set; }
         public string Path { get; set; }
@@ -21,5 +28,10 @@ namespace StudyOnline.Models
         public Nullable<System.DateTime> AddDate { get; set; }
         public string Extension { get; set; }
         public string VersionName { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<NimUser> NimUser { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<NimUser> NimUser1 { get; set; }
     }
 }

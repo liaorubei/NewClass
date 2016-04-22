@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyOnline", "HelloWorld\S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChineseChat.Library", "ChineseChat.Library\ChineseChat.Library.csproj", "{C4F0C56F-ED28-4518-AEA9-E01D886AAC2D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTest", "ConsoleTest\ConsoleTest.csproj", "{8BE15C13-6A55-4BDD-B9E6-08F99ADF8379}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{C4F0C56F-ED28-4518-AEA9-E01D886AAC2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4F0C56F-ED28-4518-AEA9-E01D886AAC2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4F0C56F-ED28-4518-AEA9-E01D886AAC2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BE15C13-6A55-4BDD-B9E6-08F99ADF8379}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BE15C13-6A55-4BDD-B9E6-08F99ADF8379}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BE15C13-6A55-4BDD-B9E6-08F99ADF8379}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BE15C13-6A55-4BDD-B9E6-08F99ADF8379}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

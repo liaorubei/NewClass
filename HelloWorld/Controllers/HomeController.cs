@@ -135,5 +135,15 @@ namespace StudyOnline.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult UserServiceAgreement()
+        {
+            return View();
+        }
+
+        public ActionResult UserHelp()
+        {
+            return View();
+        }
+
     }
 }

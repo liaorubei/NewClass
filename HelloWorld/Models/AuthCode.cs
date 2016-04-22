@@ -12,19 +12,11 @@ namespace StudyOnline.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Recharge
+    public partial class AuthCode
     {
         public string Id { get; set; }
-        public int UserId { get; set; }
-        public string Currency { get; set; }
-        public double Amount { get; set; }
-        public double Quantity { get; set; }
-        public double Price { get; set; }
-        public string Main { get; set; }
-        public string Body { get; set; }
-        public string TradeNo { get; set; }
-        public string TradeStatus { get; set; }
-    
-        public virtual NimUser NimUser { get; set; }
+        public string Code { get; set; }
+        public string Contact { get; set; }
+        public Nullable<System.DateTime> Createtime { get; set; }
     }
 }

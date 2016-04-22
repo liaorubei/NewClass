@@ -15,11 +15,11 @@ namespace StudyOnline.Models
     public partial class Android
     {
         public int Id { get; set; }
+        public Nullable<int> VersionType { get; set; }
         public string VersionName { get; set; }
         public Nullable<int> PackageSize { get; set; }
         public string UpgradeInfo { get; set; }
         public string PackagePath { get; set; }
         public Nullable<System.DateTime> CreateDate { get; set; }
-        public Nullable<int> VersionType { get; set; }
     }
 }

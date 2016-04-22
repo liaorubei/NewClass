@@ -17,10 +17,11 @@ namespace StudyOnline.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public NimUser()
         {
-            this.Group = new HashSet<Group>();
             this.CallLog = new HashSet<CallLog>();
             this.CallLog1 = new HashSet<CallLog>();
-            this.Recharge = new HashSet<Recharge>();
+            this.Group = new HashSet<Group>();
+            this.UploadFile = new HashSet<UploadFile>();
+            this.UploadFile1 = new HashSet<UploadFile>();
         }
     
         public int Id { get; set; }
@@ -37,14 +38,16 @@ namespace StudyOnline.Models
         public Nullable<long> Enqueue { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Group> Group { get; set; }
-        public virtual NimUserEx NimUserEx { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CallLog> CallLog { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CallLog> CallLog1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Recharge> Recharge { get; set; }
+        public virtual ICollection<Group> Group { get; set; }
+        public virtual NimUserEx NimUserEx { get; set; }
         public virtual Teacher Teacher { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UploadFile> UploadFile { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UploadFile> UploadFile1 { get; set; }
     }
 }

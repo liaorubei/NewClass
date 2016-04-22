@@ -10,6 +10,7 @@ namespace StudyOnline.Areas.Api.Controllers
 {
     public class CallLogController : Controller
     {
+        readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         StudyOnlineEntities entities = new StudyOnlineEntities();
 
         /// <summary>
@@ -30,6 +31,7 @@ namespace StudyOnline.Areas.Api.Controllers
             log.Source = source;
             log.Target = target;
             log.Start = DateTime.Now;
+            log.Coins = 0;//必须写上,不然为空不好计算
 
             entities.CallLog.Add(log);
             entities.SaveChanges();
@@ -44,15 +46,102 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult Finish(Int64 chatId)
         {
-            CallLog model = entities.CallLog.FirstOrDefault(o => o.ChatId == chatId);
-
-            if (model == null)
+            logger.Debug(String.Format("{0}对话结束-{1}", chatId, DateTime.Now.ToString("yyyy-MM-dd HH.mm.sss")));
+            CallLog chat = entities.CallLog.FirstOrDefault(o => o.ChatId == chatId);
+            if (chat == null)
             {
-                return Json(new { code = 2001, desc = "目标记录没有找到", info = new { model.Id, model.Source, model.Target, model.Start.Value.Ticks, model.Finish } });
+                return Json(new { code = 2001, desc = "挂断失败" });
             }
-            model.Finish = DateTime.Now;
+
+            if (chat.Finish == null)
+            {
+                chat.Finish = DateTime.Now;
+            }
+
+            //扣费情况,一分钟一个币
+            var span = chat.Finish - chat.Start;
+            int coin = Convert.ToInt32(span.Value.TotalMinutes);//29秒不算,但是如果满30秒,当一秒算,如:5:30,按6MIN算
+
+            //如果大于30秒,算一分钟
+
+            //如果不够,则补够
+            NimUserEx user = entities.NimUserEx.Find(chat.Source);
+
+            //老师重新入队
+            NimUser teacher = entities.NimUser.Find(chat.Target);
+            teacher.IsEnable = 1;
+            teacher.IsOnline = 1;
+            teacher.Enqueue = DateTime.Now.Ticks;
+            teacher.Refresh = DateTime.Now.Ticks;
+
+            user.Coins -= coin;//从学生的帐号中去掉学币数
+            chat.Coins = coin;//把这次的浑身说写入聊天
+
             entities.SaveChanges();
-            return Json(new { code = 200, desc = "", info = new { model.Id, model.Source, model.Target, model.Start.Value.Ticks, model.Finish } });
+            return Json(new
+            {
+                code = 200,
+                desc = "挂断成功",
+                info = new
+                {
+                    chat.Id,
+                    Student = new
+                    {
+                        chat.Student.NimUserEx.Id,
+                        Nickname = chat.Student.NimUserEx.Name,
+                        chat.Student.NimUserEx.Coins
+                    },
+                    chat.Source,
+                    chat.Target,
+                    chat.Coins,
+                    span.Value.TotalSeconds
+                }
+            });
+        }
+
+        /// <summary>
+        /// 刷新通话记录,按要求每分钟刷新一次
+        /// </summary>
+        /// <param name="callId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Refresh(String callId, Int64? chatId)
+        {
+            CallLog call = entities.CallLog.Find(callId);
+            call.Refresh = DateTime.Now;
+            NimUserEx user = entities.NimUserEx.Find(call.Source);
+            entities.SaveChanges();
+
+            var span = call.Refresh - call.Start;
+            var coins = (user.Coins.Value - (Int32)span.Value.TotalMinutes);
+
+            if (coins <= 0)
+            {
+                return Json(new
+                {
+                    code = 201,
+                    desc = "学币不足",
+                    info = new
+                    {
+                        user.Id,
+                        user.Name,
+                        Nickname = user.Name,
+                        Coins = coins
+                    }
+                });
+            }
+            return Json(new
+            {
+                code = 200,
+                desc = "刷新成功",
+                info = new
+                {
+                    user.Id,
+                    user.Name,
+                    Nickname = user.Name,
+                    Coins = coins
+                }
+            });
         }
 
         /// <summary>
@@ -101,21 +190,66 @@ namespace StudyOnline.Areas.Api.Controllers
                     o.Target,
                     Start = (o.Start == null ? null : o.Start.Value.ToString("yyyy-MM-dd HH:mm:ss")),
                     Finish = (o.Finish == null ? null : o.Finish.Value.ToString("yyyy-MM-dd HH:mm:ss")),
-                    Teacher = new { o.Teacher.Id, o.Teacher.NimUserEx.Name },
-                    Student = new { o.Student.Id, o.Student.NimUserEx.Name },
+                    (o.Finish - o.Start).Value.TotalSeconds,
+                    Teacher = new
+                    {
+                        o.Teacher.Id,
+                        o.Teacher.NimUserEx.Name,
+                        Nickname = o.Teacher.NimUserEx.Name
+                    },
+                    Student = new
+                    {
+                        o.Student.Id,
+                        o.Student.NimUserEx.Name,
+                        Nickname = o.Student.NimUserEx.Name
+                    },
                     Themes = entities.LogTheme.Where(i => i.ChatId == o.ChatId).Select(i => new { i.Theme.Name }),
-                    o.Score
+                    o.Score,
+                    o.Coins
                 })
             });
         }
 
-        //public ActionResult GetCallLog(String accid, Int32 category, Int32 skip, Int32 take)
-        //{
-        //    Expression<Func<CallLog, bool>> predicate = o=> category==0?o=>;
-
-        //    entities.CallLog.Where(o => o.Start != null && o.Finish != null).Where(predicate);
-        //    return null;
-        //}
+        [HttpPost]
+        public ActionResult GetStudentByUsername(String username, Int32 skip, Int32 take)
+        {
+            try
+            {
+                NimUser nimuser = entities.NimUser.Single(o => o.Username == username);
+                var temp = entities.CallLog.Where(o => o.Source == nimuser.Id && o.Start != null && o.Finish != null).OrderByDescending(o => o.Start).Skip(skip).Take(take).ToList();
+                return Json(new
+                {
+                    code = 200,
+                    desc = "查询成功",
+                    info = temp.Select(o => new
+                    {
+                        o.Target,
+                        Start = o.Start.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                        Finish = o.Finish.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                        (o.Finish - o.Start).Value.TotalSeconds,
+                        Teacher = new
+                        {
+                            o.Teacher.Id,
+                            Nickname = o.Teacher.NimUserEx.Name,
+                            o.Teacher.Username
+                        },
+                        Student = new
+                        {
+                            o.Student.Id,
+                            Nickname = o.Student.NimUserEx.Name,
+                            o.Student.Username
+                        },
+                        Themes = entities.LogTheme.Where(i => i.ChatId == o.ChatId).Select(i => new { i.Theme.Name }),
+                        o.Score,
+                        o.Coins
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
+        }
 
         /// <summary>
         /// 给指定目标的通话ID添加对话主题
@@ -126,12 +260,19 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult AddTheme(Int64 chatId, int themeId)
         {
-            LogTheme model = new LogTheme();
-            model.ChatId = chatId;
-            model.ThemeId = themeId;
-            entities.LogTheme.Add(model);
-            entities.SaveChanges();
-            return Json(new { code = 200, desc = "", info = new { model.ChatId, model.ThemeId } });
+            try
+            {
+                LogTheme model = new LogTheme();
+                model.ChatId = chatId;
+                model.ThemeId = themeId;
+                entities.LogTheme.Add(model);
+                entities.SaveChanges();
+                return Json(new { code = 200, desc = "添加成功", info = new { model.ChatId, model.ThemeId } });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
         }
 
         /// <summary>

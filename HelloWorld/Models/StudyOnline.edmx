@@ -17,6 +17,23 @@
           <Property Name="PackagePath" Type="nvarchar" MaxLength="1024" />
           <Property Name="CreateDate" Type="datetime" />
         </EntityType>
+        <EntityType Name="AuthCode">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="32" />
+          <Property Name="Contact" Type="nvarchar" MaxLength="128" />
+          <Property Name="Createtime" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Avatar">
+          <Key>
+            <PropertyRef Name="FileId" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="FileId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="CallLog">
           <Key>
             <PropertyRef Name="Id" />
@@ -29,6 +46,8 @@
           <Property Name="ChatId" Type="bigint" />
           <Property Name="ChatType" Type="int" />
           <Property Name="Score" Type="int" />
+          <Property Name="Refresh" Type="datetime" />
+          <Property Name="Coins" Type="int" />
         </EntityType>
         <EntityType Name="Comment">
           <Key>
@@ -57,6 +76,15 @@
           <Property Name="FolderId" Type="int" />
           <Property Name="AuditDate" Type="datetime" />
           <Property Name="AuditCase" Type="int" />
+        </EntityType>
+        <EntityType Name="Feedback">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="Contact" Type="nvarchar" MaxLength="128" />
+          <Property Name="Createtime" Type="datetime" />
         </EntityType>
         <EntityType Name="Folder">
           <Key>
@@ -91,11 +119,10 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="LevelName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Sort" Type="int" />
           <Property Name="Show" Type="int" />
           <Property Name="ShowBrowser" Type="int" />
-          <Property Name="Name" Type="varchar" MaxLength="256" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" />
         </EntityType>
         <EntityType Name="LogTheme">
           <Key>
@@ -140,6 +167,9 @@
           <Property Name="Job" Type="nvarchar" MaxLength="256" />
           <Property Name="About" Type="nvarchar" MaxLength="1024" />
           <Property Name="Voice" Type="nvarchar" MaxLength="1024" />
+          <Property Name="Coins" Type="int" />
+          <Property Name="Score" Type="float" />
+          <Property Name="School" Type="nvarchar" MaxLength="256" />
         </EntityType>
         <EntityType Name="Orders">
           <Key>
@@ -148,14 +178,35 @@
           <Property Name="Id" Type="nvarchar" MaxLength="64" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Currency" Type="nvarchar" MaxLength="16" Nullable="false" />
-          <Property Name="Amount" Type="float" Nullable="false" />
-          <Property Name="Quantity" Type="float" Nullable="false" />
-          <Property Name="Price" Type="float" Nullable="false" />
+          <Property Name="Amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Quantity" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Price" Type="decimal" Precision="10" Scale="2" />
           <Property Name="Main" Type="nvarchar" MaxLength="1024" />
           <Property Name="Body" Type="nvarchar" MaxLength="2048" />
           <Property Name="TradeNo" Type="nvarchar" MaxLength="128" />
           <Property Name="TradeStatus" Type="nvarchar" MaxLength="128" />
           <Property Name="CreateTime" Type="datetime" />
+          <Property Name="Coin" Type="int" />
+        </EntityType>
+        <EntityType Name="Photo">
+          <Key>
+            <PropertyRef Name="FileId" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="FileId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Product">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Coin" Type="float" />
+          <Property Name="USD" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="CNY" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Sort" Type="int" />
+          <Property Name="Enabled" Type="int" />
+          <Property Name="Createtime" Type="datetime" />
         </EntityType>
         <EntityType Name="Question">
           <Key>
@@ -164,21 +215,6 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ThemeId" Type="int" />
-        </EntityType>
-        <EntityType Name="Recharge">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="nvarchar" MaxLength="32" Nullable="false" />
-          <Property Name="UserId" Type="int" Nullable="false" />
-          <Property Name="Currency" Type="nvarchar" MaxLength="16" Nullable="false" />
-          <Property Name="Amount" Type="float" Nullable="false" />
-          <Property Name="Quantity" Type="float" Nullable="false" />
-          <Property Name="Price" Type="float" Nullable="false" />
-          <Property Name="Main" Type="nvarchar" MaxLength="1024" />
-          <Property Name="Body" Type="nvarchar" MaxLength="2048" />
-          <Property Name="TradeNo" Type="nvarchar" MaxLength="128" />
-          <Property Name="TradeStatus" Type="nvarchar" MaxLength="128" />
         </EntityType>
         <EntityType Name="Teacher">
           <Key>
@@ -224,6 +260,30 @@
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
           <Property Name="NickName" Type="nvarchar" MaxLength="256" />
         </EntityType>
+        <Association Name="FK_Avatar_File">
+          <End Role="UploadFile" Type="Self.UploadFile" Multiplicity="1" />
+          <End Role="Avatar" Type="Self.Avatar" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UploadFile">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Avatar">
+              <PropertyRef Name="FileId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Avatar_User">
+          <End Role="NimUser" Type="Self.NimUser" Multiplicity="1" />
+          <End Role="Avatar" Type="Self.Avatar" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Avatar">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CallLog_NimUser_Source">
           <End Role="NimUser" Type="Self.NimUser" Multiplicity="1" />
           <End Role="CallLog" Type="Self.CallLog" Multiplicity="*" />
@@ -340,6 +400,30 @@
         <!--生成过程中发现错误:
 警告 6035: 关系“FK_Orders_NimUser”在关系主端上有一些列不属于表的键的一部分。已排除了此关系。
         <Association Name="FK_Orders_NimUser" />-->
+        <Association Name="FK_Photo_File">
+          <End Role="UploadFile" Type="Self.UploadFile" Multiplicity="1" />
+          <End Role="Photo" Type="Self.Photo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UploadFile">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Photo">
+              <PropertyRef Name="FileId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Photo_User">
+          <End Role="NimUser" Type="Self.NimUser" Multiplicity="1" />
+          <End Role="Photo" Type="Self.Photo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Photo">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Question_Theme">
           <End Role="Theme" Type="Self.Theme" Multiplicity="0..1" />
           <End Role="Question" Type="Self.Question" Multiplicity="*" />
@@ -349,18 +433,6 @@
             </Principal>
             <Dependent Role="Question">
               <PropertyRef Name="ThemeId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Recharge_NimUser">
-          <End Role="NimUser" Type="Self.NimUser" Multiplicity="1" />
-          <End Role="Recharge" Type="Self.Recharge" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="NimUser">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Recharge">
-              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -390,9 +462,12 @@
         </Association>
         <EntityContainer Name="StudyOnlineStoreContainer">
           <EntitySet Name="Android" EntityType="Self.Android" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AuthCode" EntityType="Self.AuthCode" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Avatar" EntityType="Self.Avatar" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CallLog" EntityType="Self.CallLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Comment" EntityType="Self.Comment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Document" EntityType="Self.Document" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Feedback" EntityType="Self.Feedback" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Folder" EntityType="Self.Folder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Group" EntityType="Self.Group" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HsLevel" EntityType="Self.HsLevel" Schema="dbo" store:Type="Tables" />
@@ -401,12 +476,21 @@
           <EntitySet Name="NimUser" EntityType="Self.NimUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NimUserEx" EntityType="Self.NimUserEx" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Photo" EntityType="Self.Photo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Product" EntityType="Self.Product" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Question" EntityType="Self.Question" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Recharge" EntityType="Self.Recharge" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Teacher" EntityType="Self.Teacher" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Theme" EntityType="Self.Theme" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UploadFile" EntityType="Self.UploadFile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Avatar_File" Association="Self.FK_Avatar_File">
+            <End Role="UploadFile" EntitySet="UploadFile" />
+            <End Role="Avatar" EntitySet="Avatar" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Avatar_User" Association="Self.FK_Avatar_User">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="Avatar" EntitySet="Avatar" />
+          </AssociationSet>
           <AssociationSet Name="FK_CallLog_NimUser_Source" Association="Self.FK_CallLog_NimUser_Source">
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="CallLog" EntitySet="CallLog" />
@@ -443,13 +527,17 @@
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="NimUserEx" EntitySet="NimUserEx" />
           </AssociationSet>
+          <AssociationSet Name="FK_Photo_File" Association="Self.FK_Photo_File">
+            <End Role="UploadFile" EntitySet="UploadFile" />
+            <End Role="Photo" EntitySet="Photo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Photo_User" Association="Self.FK_Photo_User">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="Photo" EntitySet="Photo" />
+          </AssociationSet>
           <AssociationSet Name="FK_Question_Theme" Association="Self.FK_Question_Theme">
             <End Role="Theme" EntitySet="Theme" />
             <End Role="Question" EntitySet="Question" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Recharge_NimUser" Association="Self.FK_Recharge_NimUser">
-            <End Role="NimUser" EntitySet="NimUser" />
-            <End Role="Recharge" EntitySet="Recharge" />
           </AssociationSet>
           <AssociationSet Name="FK_Teacher_NimUser" Association="Self.FK_Teacher_NimUser">
             <End Role="NimUser" EntitySet="NimUser" />
@@ -464,127 +552,27 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="StudyOnline" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Group">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" MaxLength="32" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Host" Type="Int32" />
-          <Property Name="Name" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
-          <Property Name="Time" Type="DateTime" Precision="3" />
-          <Property Name="Level" Type="Int32" />
-          <Property Name="Theme" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <Property Name="Notice" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <Property Name="CreateDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="NimUser" Relationship="Self.FK_Group_NimUser" FromRole="Group" ToRole="NimUser" />
-        </EntityType>
-        <EntityType Name="NimUser">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Accid" Type="String" MaxLength="32" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Token" Type="String" MaxLength="32" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Username" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Password" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="CreateDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Group" Relationship="Self.FK_Group_NimUser" FromRole="NimUser" ToRole="Group" />
-          <NavigationProperty Name="NimUserEx" Relationship="Self.FK_NimUserEx_NimUser" FromRole="NimUser" ToRole="NimUserEx" />
-          <Property Name="Category" Type="Int32" />
-          <Property Name="IsOnline" Type="Int32" />
-          <Property Name="IsActive" Type="Int32" />
-          <Property Name="IsEnable" Type="Int32" />
-          <Property Name="Refresh" Type="Int64" />
-          <Property Name="Enqueue" Type="Int64" />
-          <NavigationProperty Name="CallLog" Relationship="StudyOnline.FK_CallLog_NimUser_Source" FromRole="NimUser" ToRole="CallLog" />
-          <NavigationProperty Name="CallLog1" Relationship="StudyOnline.FK_CallLog_NimUser_Target" FromRole="NimUser" ToRole="CallLog" />
-          <NavigationProperty Name="Recharge" Relationship="StudyOnline.FK_Recharge_NimUser" FromRole="NimUser" ToRole="Recharge" />
-          <NavigationProperty Name="Teacher" Relationship="StudyOnline.FK_Teacher_NimUser" FromRole="NimUser" ToRole="Teacher" />
-        </EntityType>
-        <EntityType Name="NimUserEx">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
-          <Property Name="Icon" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="Sign" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="Email" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
-          <Property Name="Birth" Type="DateTime" Precision="3" />
-          <Property Name="Mobile" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
-          <Property Name="Gender" Type="Int32" />
-          <Property Name="Ex" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="NimUser" Relationship="Self.FK_NimUserEx_NimUser" FromRole="NimUserEx" ToRole="NimUser" />
-          <Property Name="Country" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="Language" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="Job" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="About" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <Property Name="Voice" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="UploadFile">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Size" Type="Double" Nullable="false" />
-          <Property Name="Path" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Info" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="AddDate" Type="DateTime" Precision="3" />
-          <Property Name="Extension" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="VersionName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="User">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Password" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Phone" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="IsOnline" Type="Int32" Nullable="false" />
-          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="NickName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <Association Name="FK_Group_NimUser">
-          <End Role="NimUser" Type="Self.NimUser" Multiplicity="0..1" />
-          <End Role="Group" Type="Self.Group" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="NimUser">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Group">
-              <PropertyRef Name="Host" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_NimUserEx_NimUser">
-          <End Role="NimUser" Type="Self.NimUser" Multiplicity="1" />
-          <End Role="NimUserEx" Type="Self.NimUserEx" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="NimUser">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="NimUserEx">
-              <PropertyRef Name="Id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="StudyOnlineEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Group" EntityType="Self.Group" />
-          <EntitySet Name="NimUser" EntityType="Self.NimUser" />
-          <EntitySet Name="NimUserEx" EntityType="Self.NimUserEx" />
-          <EntitySet Name="UploadFile" EntityType="Self.UploadFile" />
-          <EntitySet Name="User" EntityType="Self.User" />
-          <AssociationSet Name="FK_Group_NimUser" Association="Self.FK_Group_NimUser">
-            <End Role="NimUser" EntitySet="NimUser" />
-            <End Role="Group" EntitySet="Group" />
-          </AssociationSet>
-          <AssociationSet Name="FK_NimUserEx_NimUser" Association="Self.FK_NimUserEx_NimUser">
-            <End Role="NimUser" EntitySet="NimUser" />
-            <End Role="NimUserEx" EntitySet="NimUserEx" />
-          </AssociationSet>
+          <EntitySet Name="Android" EntityType="StudyOnline.Android" />
+          <EntitySet Name="AuthCode" EntityType="StudyOnline.AuthCode" />
           <EntitySet Name="CallLog" EntityType="StudyOnline.CallLog" />
+          <EntitySet Name="Comment" EntityType="StudyOnline.Comment" />
+          <EntitySet Name="Document" EntityType="StudyOnline.Document" />
+          <EntitySet Name="Feedback" EntityType="StudyOnline.Feedback" />
+          <EntitySet Name="Folder" EntityType="StudyOnline.Folder" />
+          <EntitySet Name="Group" EntityType="StudyOnline.Group" />
+          <EntitySet Name="HsLevel" EntityType="StudyOnline.HsLevel" />
+          <EntitySet Name="Level" EntityType="StudyOnline.Level" />
+          <EntitySet Name="LogTheme" EntityType="StudyOnline.LogTheme" />
+          <EntitySet Name="NimUser" EntityType="StudyOnline.NimUser" />
+          <EntitySet Name="NimUserEx" EntityType="StudyOnline.NimUserEx" />
+          <EntitySet Name="Orders" EntityType="StudyOnline.Orders" />
+          <EntitySet Name="Product" EntityType="StudyOnline.Product" />
+          <EntitySet Name="Question" EntityType="StudyOnline.Question" />
+          <EntitySet Name="Teacher" EntityType="StudyOnline.Teacher" />
+          <EntitySet Name="Theme" EntityType="StudyOnline.Theme" />
+          <EntitySet Name="UploadFile" EntityType="StudyOnline.UploadFile" />
+          <EntitySet Name="User" EntityType="StudyOnline.User" />
           <AssociationSet Name="FK_CallLog_NimUser_Source" Association="StudyOnline.FK_CallLog_NimUser_Source">
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="CallLog" EntitySet="CallLog" />
@@ -593,38 +581,6 @@
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="CallLog" EntitySet="CallLog" />
           </AssociationSet>
-          <EntitySet Name="Android" EntityType="StudyOnline.Android" />
-          <EntitySet Name="Orders" EntityType="StudyOnline.Orders" />
-          <EntitySet Name="HsLevel" EntityType="StudyOnline.HsLevel" />
-          <EntitySet Name="LogTheme" EntityType="StudyOnline.LogTheme" />
-          <EntitySet Name="Question" EntityType="StudyOnline.Question" />
-          <EntitySet Name="Recharge" EntityType="StudyOnline.Recharge" />
-          <EntitySet Name="Teacher" EntityType="StudyOnline.Teacher" />
-          <EntitySet Name="Theme" EntityType="StudyOnline.Theme" />
-          <AssociationSet Name="FK_Theme_HsLevel" Association="StudyOnline.FK_Theme_HsLevel">
-            <End Role="HsLevel" EntitySet="HsLevel" />
-            <End Role="Theme" EntitySet="Theme" />
-          </AssociationSet>
-          <AssociationSet Name="FK_LogTheme_ThemeId" Association="StudyOnline.FK_LogTheme_ThemeId">
-            <End Role="Theme" EntitySet="Theme" />
-            <End Role="LogTheme" EntitySet="LogTheme" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Recharge_NimUser" Association="StudyOnline.FK_Recharge_NimUser">
-            <End Role="NimUser" EntitySet="NimUser" />
-            <End Role="Recharge" EntitySet="Recharge" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Teacher_NimUser" Association="StudyOnline.FK_Teacher_NimUser">
-            <End Role="NimUser" EntitySet="NimUser" />
-            <End Role="Teacher" EntitySet="Teacher" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Question_Theme" Association="StudyOnline.FK_Question_Theme">
-            <End Role="Theme" EntitySet="Theme" />
-            <End Role="Question" EntitySet="Question" />
-          </AssociationSet>
-          <EntitySet Name="Comment" EntityType="StudyOnline.Comment" />
-          <EntitySet Name="Document" EntityType="StudyOnline.Document" />
-          <EntitySet Name="Folder" EntityType="StudyOnline.Folder" />
-          <EntitySet Name="Level" EntityType="StudyOnline.Level" />
           <AssociationSet Name="FK_Comment_Document" Association="StudyOnline.FK_Comment_Document">
             <End Role="Document" EntitySet="Document" />
             <End Role="Comment" EntitySet="Comment" />
@@ -641,7 +597,60 @@
             <End Role="Level" EntitySet="Level" />
             <End Role="Folder" EntitySet="Folder" />
           </AssociationSet>
+          <AssociationSet Name="FK_Group_NimUser" Association="StudyOnline.FK_Group_NimUser">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="Group" EntitySet="Group" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Theme_HsLevel" Association="StudyOnline.FK_Theme_HsLevel">
+            <End Role="HsLevel" EntitySet="HsLevel" />
+            <End Role="Theme" EntitySet="Theme" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LogTheme_ThemeId" Association="StudyOnline.FK_LogTheme_ThemeId">
+            <End Role="Theme" EntitySet="Theme" />
+            <End Role="LogTheme" EntitySet="LogTheme" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NimUserEx_NimUser" Association="StudyOnline.FK_NimUserEx_NimUser">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="NimUserEx" EntitySet="NimUserEx" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Teacher_NimUser" Association="StudyOnline.FK_Teacher_NimUser">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="Teacher" EntitySet="Teacher" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Question_Theme" Association="StudyOnline.FK_Question_Theme">
+            <End Role="Theme" EntitySet="Theme" />
+            <End Role="Question" EntitySet="Question" />
+          </AssociationSet>
+          <AssociationSet Name="Photo" Association="StudyOnline.Photo">
+            <End Role="UploadFile" EntitySet="UploadFile" />
+            <End Role="NimUser" EntitySet="NimUser" />
+          </AssociationSet>
+          <AssociationSet Name="Avatar" Association="StudyOnline.Avatar">
+            <End Role="UploadFile" EntitySet="UploadFile" />
+            <End Role="NimUser" EntitySet="NimUser" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Android">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VersionType" Type="Int32" />
+          <Property Name="VersionName" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="PackageSize" Type="Int32" />
+          <Property Name="UpgradeInfo" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="PackagePath" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="AuthCode">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Code" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Contact" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Createtime" Type="DateTime" Precision="3" />
+        </EntityType>
         <EntityType Name="CallLog">
           <Key>
             <PropertyRef Name="Id" />
@@ -651,189 +660,14 @@
           <Property Name="Target" Type="Int32" Nullable="false" />
           <Property Name="Start" Type="DateTime" Precision="3" />
           <Property Name="Finish" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Student" Relationship="StudyOnline.FK_CallLog_NimUser_Source" FromRole="CallLog" ToRole="NimUser" />
-          <NavigationProperty Name="Teacher" Relationship="StudyOnline.FK_CallLog_NimUser_Target" FromRole="CallLog" ToRole="NimUser" />
           <Property Name="ChatId" Type="Int64" />
           <Property Name="ChatType" Type="Int32" />
           <Property Name="Score" Type="Int32" />
+          <Property Name="Refresh" Type="DateTime" Precision="3" />
+          <Property Name="Coins" Type="Int32" />
+          <NavigationProperty Name="Student" Relationship="StudyOnline.FK_CallLog_NimUser_Source" FromRole="CallLog" ToRole="NimUser" />
+          <NavigationProperty Name="Teacher" Relationship="StudyOnline.FK_CallLog_NimUser_Target" FromRole="CallLog" ToRole="NimUser" />
         </EntityType>
-        <Association Name="FK_CallLog_NimUser_Source">
-          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
-          <End Type="StudyOnline.CallLog" Role="CallLog" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="NimUser">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="CallLog">
-              <PropertyRef Name="Source" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_CallLog_NimUser_Target">
-          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
-          <End Type="StudyOnline.CallLog" Role="CallLog" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="NimUser">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="CallLog">
-              <PropertyRef Name="Target" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="Android">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="VersionName" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <Property Name="PackageSize" Type="Int32" />
-          <Property Name="UpgradeInfo" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <Property Name="PackagePath" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <Property Name="CreateDate" Type="DateTime" Precision="3" />
-          <Property Name="VersionType" Type="Int32" />
-        </EntityType>
-        <EntityType Name="Orders">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="true" />
-          <Property Name="UserName" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="Currency" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="true" />
-          <Property Name="Amount" Type="Double" Nullable="false" />
-          <Property Name="Quantity" Type="Double" Nullable="false" />
-          <Property Name="Price" Type="Double" Nullable="false" />
-          <Property Name="Main" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <Property Name="Body" Type="String" MaxLength="2048" FixedLength="false" Unicode="true" />
-          <Property Name="TradeNo" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="TradeStatus" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="CreateTime" Type="DateTime" Precision="3" />
-        </EntityType>
-        <EntityType Name="HsLevel">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_Theme_HsLevel" FromRole="HsLevel" ToRole="Theme" />
-        </EntityType>
-        <EntityType Name="LogTheme">
-          <Key>
-            <PropertyRef Name="ChatId" />
-            <PropertyRef Name="ThemeId" />
-          </Key>
-          <Property Name="ChatId" Type="Int64" Nullable="false" />
-          <Property Name="ThemeId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_LogTheme_ThemeId" FromRole="LogTheme" ToRole="Theme" />
-        </EntityType>
-        <EntityType Name="Question">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="ThemeId" Type="Int32" />
-          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_Question_Theme" FromRole="Question" ToRole="Theme" />
-        </EntityType>
-        <EntityType Name="Recharge">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-          <Property Name="Currency" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="true" />
-          <Property Name="Amount" Type="Double" Nullable="false" />
-          <Property Name="Quantity" Type="Double" Nullable="false" />
-          <Property Name="Price" Type="Double" Nullable="false" />
-          <Property Name="Main" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <Property Name="Body" Type="String" MaxLength="2048" FixedLength="false" Unicode="true" />
-          <Property Name="TradeNo" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="TradeStatus" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="NimUser" Relationship="StudyOnline.FK_Recharge_NimUser" FromRole="Recharge" ToRole="NimUser" />
-        </EntityType>
-        <EntityType Name="Teacher">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Category" Type="Int32" Nullable="false" />
-          <Property Name="IsOnline" Type="Int32" />
-          <Property Name="IsAvailable" Type="Int32" />
-          <Property Name="LastRefresh" Type="Int64" />
-          <Property Name="EnqueueTime" Type="Int64" />
-          <NavigationProperty Name="NimUser" Relationship="StudyOnline.FK_Teacher_NimUser" FromRole="Teacher" ToRole="NimUser" />
-        </EntityType>
-        <EntityType Name="Theme">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="HsLevelId" Type="Int32" />
-          <NavigationProperty Name="HsLevel" Relationship="StudyOnline.FK_Theme_HsLevel" FromRole="Theme" ToRole="HsLevel" />
-          <NavigationProperty Name="LogTheme" Relationship="StudyOnline.FK_LogTheme_ThemeId" FromRole="Theme" ToRole="LogTheme" />
-          <NavigationProperty Name="Question" Relationship="StudyOnline.FK_Question_Theme" FromRole="Theme" ToRole="Question" />
-        </EntityType>
-        <Association Name="FK_Theme_HsLevel">
-          <End Type="StudyOnline.HsLevel" Role="HsLevel" Multiplicity="0..1" />
-          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="HsLevel">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Theme">
-              <PropertyRef Name="HsLevelId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_LogTheme_ThemeId">
-          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="1" />
-          <End Type="StudyOnline.LogTheme" Role="LogTheme" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Theme">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="LogTheme">
-              <PropertyRef Name="ThemeId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Recharge_NimUser">
-          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
-          <End Type="StudyOnline.Recharge" Role="Recharge" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="NimUser">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Recharge">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Teacher_NimUser">
-          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
-          <End Type="StudyOnline.Teacher" Role="Teacher" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="NimUser">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Teacher">
-              <PropertyRef Name="Id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Question_Theme">
-          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="0..1" />
-          <End Type="StudyOnline.Question" Role="Question" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Theme">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Question">
-              <PropertyRef Name="ThemeId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="Comment">
           <Key>
             <PropertyRef Name="Id" />
@@ -866,6 +700,15 @@
           <NavigationProperty Name="Folder" Relationship="StudyOnline.FK_Document_Folder" FromRole="Document" ToRole="Folder" />
           <NavigationProperty Name="Level" Relationship="StudyOnline.FK_Document_Level" FromRole="Document" ToRole="Level" />
         </EntityType>
+        <EntityType Name="Feedback">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Contact" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Createtime" Type="DateTime" Precision="3" />
+        </EntityType>
         <EntityType Name="Folder">
           <Key>
             <PropertyRef Name="Id" />
@@ -876,19 +719,208 @@
           <NavigationProperty Name="Document" Relationship="StudyOnline.FK_Document_Folder" FromRole="Folder" ToRole="Document" />
           <NavigationProperty Name="Level" Relationship="StudyOnline.FK_Folder_Level" FromRole="Folder" ToRole="Level" />
         </EntityType>
+        <EntityType Name="Group">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Host" Type="Int32" />
+          <Property Name="Name" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="Time" Type="DateTime" Precision="3" />
+          <Property Name="Level" Type="Int32" />
+          <Property Name="Theme" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="Notice" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="NimUser" Relationship="StudyOnline.FK_Group_NimUser" FromRole="Group" ToRole="NimUser" />
+        </EntityType>
+        <EntityType Name="HsLevel">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_Theme_HsLevel" FromRole="HsLevel" ToRole="Theme" />
+        </EntityType>
         <EntityType Name="Level">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="LevelName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Sort" Type="Int32" />
           <Property Name="Show" Type="Int32" />
           <Property Name="ShowBrowser" Type="Int32" />
-          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Document" Relationship="StudyOnline.FK_Document_Level" FromRole="Level" ToRole="Document" />
           <NavigationProperty Name="Folder" Relationship="StudyOnline.FK_Folder_Level" FromRole="Level" ToRole="Folder" />
         </EntityType>
+        <EntityType Name="LogTheme">
+          <Key>
+            <PropertyRef Name="ChatId" />
+            <PropertyRef Name="ThemeId" />
+          </Key>
+          <Property Name="ChatId" Type="Int64" Nullable="false" />
+          <Property Name="ThemeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_LogTheme_ThemeId" FromRole="LogTheme" ToRole="Theme" />
+        </EntityType>
+        <EntityType Name="NimUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Accid" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Token" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="Category" Type="Int32" />
+          <Property Name="IsOnline" Type="Int32" />
+          <Property Name="IsActive" Type="Int32" />
+          <Property Name="IsEnable" Type="Int32" />
+          <Property Name="Refresh" Type="Int64" />
+          <Property Name="Enqueue" Type="Int64" />
+          <NavigationProperty Name="CallLog" Relationship="StudyOnline.FK_CallLog_NimUser_Source" FromRole="NimUser" ToRole="CallLog" />
+          <NavigationProperty Name="CallLog1" Relationship="StudyOnline.FK_CallLog_NimUser_Target" FromRole="NimUser" ToRole="CallLog" />
+          <NavigationProperty Name="Group" Relationship="StudyOnline.FK_Group_NimUser" FromRole="NimUser" ToRole="Group" />
+          <NavigationProperty Name="NimUserEx" Relationship="StudyOnline.FK_NimUserEx_NimUser" FromRole="NimUser" ToRole="NimUserEx" />
+          <NavigationProperty Name="Teacher" Relationship="StudyOnline.FK_Teacher_NimUser" FromRole="NimUser" ToRole="Teacher" />
+          <NavigationProperty Name="UploadFile" Relationship="StudyOnline.Photo" FromRole="NimUser" ToRole="UploadFile" />
+          <NavigationProperty Name="UploadFile1" Relationship="StudyOnline.Avatar" FromRole="NimUser" ToRole="UploadFile" />
+        </EntityType>
+        <EntityType Name="NimUserEx">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="Icon" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Sign" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="Birth" Type="DateTime" Precision="3" />
+          <Property Name="Mobile" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Gender" Type="Int32" />
+          <Property Name="Ex" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="Country" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Language" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Job" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="About" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="Voice" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="Coins" Type="Int32" />
+          <Property Name="Score" Type="Double" />
+          <Property Name="School" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="NimUser" Relationship="StudyOnline.FK_NimUserEx_NimUser" FromRole="NimUserEx" ToRole="NimUser" />
+        </EntityType>
+        <EntityType Name="Orders">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Currency" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="true" />
+          <Property Name="Amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Quantity" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Price" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Main" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="Body" Type="String" MaxLength="2048" FixedLength="false" Unicode="true" />
+          <Property Name="TradeNo" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="TradeStatus" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="CreateTime" Type="DateTime" Precision="3" />
+          <Property Name="Coin" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Product">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Coin" Type="Double" />
+          <Property Name="USD" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="CNY" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Sort" Type="Int32" />
+          <Property Name="Enabled" Type="Int32" />
+          <Property Name="Createtime" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Question">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ThemeId" Type="Int32" />
+          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_Question_Theme" FromRole="Question" ToRole="Theme" />
+        </EntityType>
+        <EntityType Name="Teacher">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Category" Type="Int32" Nullable="false" />
+          <Property Name="IsOnline" Type="Int32" />
+          <Property Name="IsAvailable" Type="Int32" />
+          <Property Name="LastRefresh" Type="Int64" />
+          <Property Name="EnqueueTime" Type="Int64" />
+          <NavigationProperty Name="NimUser" Relationship="StudyOnline.FK_Teacher_NimUser" FromRole="Teacher" ToRole="NimUser" />
+        </EntityType>
+        <EntityType Name="Theme">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="HsLevelId" Type="Int32" />
+          <NavigationProperty Name="HsLevel" Relationship="StudyOnline.FK_Theme_HsLevel" FromRole="Theme" ToRole="HsLevel" />
+          <NavigationProperty Name="LogTheme" Relationship="StudyOnline.FK_LogTheme_ThemeId" FromRole="Theme" ToRole="LogTheme" />
+          <NavigationProperty Name="Question" Relationship="StudyOnline.FK_Question_Theme" FromRole="Theme" ToRole="Question" />
+        </EntityType>
+        <EntityType Name="UploadFile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Size" Type="Double" Nullable="false" />
+          <Property Name="Path" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Info" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AddDate" Type="DateTime" Precision="3" />
+          <Property Name="Extension" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="VersionName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="NimUser" Relationship="StudyOnline.Photo" FromRole="UploadFile" ToRole="NimUser" />
+          <NavigationProperty Name="NimUser1" Relationship="StudyOnline.Avatar" FromRole="UploadFile" ToRole="NimUser" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="IsOnline" Type="Int32" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="NickName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK_CallLog_NimUser_Source">
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
+          <End Type="StudyOnline.CallLog" Role="CallLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CallLog">
+              <PropertyRef Name="Source" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CallLog_NimUser_Target">
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
+          <End Type="StudyOnline.CallLog" Role="CallLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CallLog">
+              <PropertyRef Name="Target" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Comment_Document">
           <End Type="StudyOnline.Document" Role="Document" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -939,94 +971,120 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
+        <Association Name="FK_Group_NimUser">
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="0..1" />
+          <End Type="StudyOnline.Group" Role="Group" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Group">
+              <PropertyRef Name="Host" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Theme_HsLevel">
+          <End Type="StudyOnline.HsLevel" Role="HsLevel" Multiplicity="0..1" />
+          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="HsLevel">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Theme">
+              <PropertyRef Name="HsLevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LogTheme_ThemeId">
+          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="1" />
+          <End Type="StudyOnline.LogTheme" Role="LogTheme" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Theme">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LogTheme">
+              <PropertyRef Name="ThemeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NimUserEx_NimUser">
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
+          <End Type="StudyOnline.NimUserEx" Role="NimUserEx" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="NimUserEx">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Teacher_NimUser">
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
+          <End Type="StudyOnline.Teacher" Role="Teacher" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Teacher">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Question_Theme">
+          <End Type="StudyOnline.Theme" Role="Theme" Multiplicity="0..1" />
+          <End Type="StudyOnline.Question" Role="Question" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Theme">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Question">
+              <PropertyRef Name="ThemeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Photo">
+          <End Type="StudyOnline.UploadFile" Role="UploadFile" Multiplicity="*" />
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="*" />
+        </Association>
+        <Association Name="Avatar">
+          <End Type="StudyOnline.UploadFile" Role="UploadFile" Multiplicity="*" />
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="*" />
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="StudyOnlineStoreContainer" CdmEntityContainer="StudyOnlineEntities">
-          <EntitySetMapping Name="Group">
-            <EntityTypeMapping TypeName="StudyOnline.Group">
-              <MappingFragment StoreEntitySet="Group">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Host" ColumnName="Host" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-                <ScalarProperty Name="Level" ColumnName="Level" />
-                <ScalarProperty Name="Theme" ColumnName="Theme" />
-                <ScalarProperty Name="Notice" ColumnName="Notice" />
+          <EntitySetMapping Name="Android">
+            <EntityTypeMapping TypeName="StudyOnline.Android">
+              <MappingFragment StoreEntitySet="Android">
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="NimUser">
-            <EntityTypeMapping TypeName="StudyOnline.NimUser">
-              <MappingFragment StoreEntitySet="NimUser">
-                <ScalarProperty Name="Enqueue" ColumnName="Enqueue" />
-                <ScalarProperty Name="Refresh" ColumnName="Refresh" />
-                <ScalarProperty Name="IsEnable" ColumnName="IsEnable" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
-                <ScalarProperty Name="Category" ColumnName="Category" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Accid" ColumnName="Accid" />
-                <ScalarProperty Name="Token" ColumnName="Token" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="NimUserEx">
-            <EntityTypeMapping TypeName="StudyOnline.NimUserEx">
-              <MappingFragment StoreEntitySet="NimUserEx">
-                <ScalarProperty Name="Voice" ColumnName="Voice" />
-                <ScalarProperty Name="About" ColumnName="About" />
-                <ScalarProperty Name="Job" ColumnName="Job" />
-                <ScalarProperty Name="Language" ColumnName="Language" />
-                <ScalarProperty Name="Country" ColumnName="Country" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Icon" ColumnName="Icon" />
-                <ScalarProperty Name="Sign" ColumnName="Sign" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Birth" ColumnName="Birth" />
-                <ScalarProperty Name="Mobile" ColumnName="Mobile" />
-                <ScalarProperty Name="Gender" ColumnName="Gender" />
-                <ScalarProperty Name="Ex" ColumnName="Ex" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="UploadFile">
-            <EntityTypeMapping TypeName="StudyOnline.UploadFile">
-              <MappingFragment StoreEntitySet="UploadFile">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Size" ColumnName="Size" />
-                <ScalarProperty Name="Path" ColumnName="Path" />
-                <ScalarProperty Name="Info" ColumnName="Info" />
-                <ScalarProperty Name="AddDate" ColumnName="AddDate" />
-                <ScalarProperty Name="Extension" ColumnName="Extension" />
+                <ScalarProperty Name="PackagePath" ColumnName="PackagePath" />
+                <ScalarProperty Name="UpgradeInfo" ColumnName="UpgradeInfo" />
+                <ScalarProperty Name="PackageSize" ColumnName="PackageSize" />
                 <ScalarProperty Name="VersionName" ColumnName="VersionName" />
+                <ScalarProperty Name="VersionType" ColumnName="VersionType" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="User">
-            <EntityTypeMapping TypeName="StudyOnline.User">
-              <MappingFragment StoreEntitySet="User">
+          <EntitySetMapping Name="AuthCode">
+            <EntityTypeMapping TypeName="StudyOnline.AuthCode">
+              <MappingFragment StoreEntitySet="AuthCode">
+                <ScalarProperty Name="Createtime" ColumnName="Createtime" />
+                <ScalarProperty Name="Contact" ColumnName="Contact" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="Phone" ColumnName="Phone" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
-                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-                <ScalarProperty Name="NickName" ColumnName="NickName" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="CallLog">
             <EntityTypeMapping TypeName="StudyOnline.CallLog">
               <MappingFragment StoreEntitySet="CallLog">
+                <ScalarProperty Name="Coins" ColumnName="Coins" />
+                <ScalarProperty Name="Refresh" ColumnName="Refresh" />
                 <ScalarProperty Name="Score" ColumnName="Score" />
                 <ScalarProperty Name="ChatType" ColumnName="ChatType" />
                 <ScalarProperty Name="ChatId" ColumnName="ChatId" />
@@ -1034,98 +1092,6 @@
                 <ScalarProperty Name="Start" ColumnName="Start" />
                 <ScalarProperty Name="Target" ColumnName="Target" />
                 <ScalarProperty Name="Source" ColumnName="Source" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Android">
-            <EntityTypeMapping TypeName="StudyOnline.Android">
-              <MappingFragment StoreEntitySet="Android">
-                <ScalarProperty Name="VersionType" ColumnName="VersionType" />
-                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-                <ScalarProperty Name="PackagePath" ColumnName="PackagePath" />
-                <ScalarProperty Name="UpgradeInfo" ColumnName="UpgradeInfo" />
-                <ScalarProperty Name="PackageSize" ColumnName="PackageSize" />
-                <ScalarProperty Name="VersionName" ColumnName="VersionName" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Orders">
-            <EntityTypeMapping TypeName="StudyOnline.Orders">
-              <MappingFragment StoreEntitySet="Orders">
-                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
-                <ScalarProperty Name="TradeStatus" ColumnName="TradeStatus" />
-                <ScalarProperty Name="TradeNo" ColumnName="TradeNo" />
-                <ScalarProperty Name="Body" ColumnName="Body" />
-                <ScalarProperty Name="Main" ColumnName="Main" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="Currency" ColumnName="Currency" />
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="HsLevel">
-            <EntityTypeMapping TypeName="StudyOnline.HsLevel">
-              <MappingFragment StoreEntitySet="HsLevel">
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="LogTheme">
-            <EntityTypeMapping TypeName="StudyOnline.LogTheme">
-              <MappingFragment StoreEntitySet="LogTheme">
-                <ScalarProperty Name="ThemeId" ColumnName="ThemeId" />
-                <ScalarProperty Name="ChatId" ColumnName="ChatId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Question">
-            <EntityTypeMapping TypeName="StudyOnline.Question">
-              <MappingFragment StoreEntitySet="Question">
-                <ScalarProperty Name="ThemeId" ColumnName="ThemeId" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Recharge">
-            <EntityTypeMapping TypeName="StudyOnline.Recharge">
-              <MappingFragment StoreEntitySet="Recharge">
-                <ScalarProperty Name="TradeStatus" ColumnName="TradeStatus" />
-                <ScalarProperty Name="TradeNo" ColumnName="TradeNo" />
-                <ScalarProperty Name="Body" ColumnName="Body" />
-                <ScalarProperty Name="Main" ColumnName="Main" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="Currency" ColumnName="Currency" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Teacher">
-            <EntityTypeMapping TypeName="StudyOnline.Teacher">
-              <MappingFragment StoreEntitySet="Teacher">
-                <ScalarProperty Name="EnqueueTime" ColumnName="EnqueueTime" />
-                <ScalarProperty Name="LastRefresh" ColumnName="LastRefresh" />
-                <ScalarProperty Name="IsAvailable" ColumnName="IsAvailable" />
-                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
-                <ScalarProperty Name="Category" ColumnName="Category" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Theme">
-            <EntityTypeMapping TypeName="StudyOnline.Theme">
-              <MappingFragment StoreEntitySet="Theme">
-                <ScalarProperty Name="HsLevelId" ColumnName="HsLevelId" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1160,10 +1126,42 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Feedback">
+            <EntityTypeMapping TypeName="StudyOnline.Feedback">
+              <MappingFragment StoreEntitySet="Feedback">
+                <ScalarProperty Name="Createtime" ColumnName="Createtime" />
+                <ScalarProperty Name="Contact" ColumnName="Contact" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Folder">
             <EntityTypeMapping TypeName="StudyOnline.Folder">
               <MappingFragment StoreEntitySet="Folder">
                 <ScalarProperty Name="LevelId" ColumnName="LevelId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Group">
+            <EntityTypeMapping TypeName="StudyOnline.Group">
+              <MappingFragment StoreEntitySet="Group">
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Notice" ColumnName="Notice" />
+                <ScalarProperty Name="Theme" ColumnName="Theme" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Host" ColumnName="Host" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HsLevel">
+            <EntityTypeMapping TypeName="StudyOnline.HsLevel">
+              <MappingFragment StoreEntitySet="HsLevel">
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
@@ -1176,11 +1174,163 @@
                 <ScalarProperty Name="ShowBrowser" ColumnName="ShowBrowser" />
                 <ScalarProperty Name="Show" ColumnName="Show" />
                 <ScalarProperty Name="Sort" ColumnName="Sort" />
-                <ScalarProperty Name="LevelName" ColumnName="LevelName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="LogTheme">
+            <EntityTypeMapping TypeName="StudyOnline.LogTheme">
+              <MappingFragment StoreEntitySet="LogTheme">
+                <ScalarProperty Name="ThemeId" ColumnName="ThemeId" />
+                <ScalarProperty Name="ChatId" ColumnName="ChatId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NimUser">
+            <EntityTypeMapping TypeName="StudyOnline.NimUser">
+              <MappingFragment StoreEntitySet="NimUser">
+                <ScalarProperty Name="Enqueue" ColumnName="Enqueue" />
+                <ScalarProperty Name="Refresh" ColumnName="Refresh" />
+                <ScalarProperty Name="IsEnable" ColumnName="IsEnable" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Token" ColumnName="Token" />
+                <ScalarProperty Name="Accid" ColumnName="Accid" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NimUserEx">
+            <EntityTypeMapping TypeName="StudyOnline.NimUserEx">
+              <MappingFragment StoreEntitySet="NimUserEx">
+                <ScalarProperty Name="School" ColumnName="School" />
+                <ScalarProperty Name="Score" ColumnName="Score" />
+                <ScalarProperty Name="Coins" ColumnName="Coins" />
+                <ScalarProperty Name="Voice" ColumnName="Voice" />
+                <ScalarProperty Name="About" ColumnName="About" />
+                <ScalarProperty Name="Job" ColumnName="Job" />
+                <ScalarProperty Name="Language" ColumnName="Language" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
+                <ScalarProperty Name="Ex" ColumnName="Ex" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Mobile" ColumnName="Mobile" />
+                <ScalarProperty Name="Birth" ColumnName="Birth" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Sign" ColumnName="Sign" />
+                <ScalarProperty Name="Icon" ColumnName="Icon" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="StudyOnline.Orders">
+              <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="Coin" ColumnName="Coin" />
+                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+                <ScalarProperty Name="TradeStatus" ColumnName="TradeStatus" />
+                <ScalarProperty Name="TradeNo" ColumnName="TradeNo" />
+                <ScalarProperty Name="Body" ColumnName="Body" />
+                <ScalarProperty Name="Main" ColumnName="Main" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Product">
+            <EntityTypeMapping TypeName="StudyOnline.Product">
+              <MappingFragment StoreEntitySet="Product">
+                <ScalarProperty Name="Createtime" ColumnName="Createtime" />
+                <ScalarProperty Name="Enabled" ColumnName="Enabled" />
+                <ScalarProperty Name="Sort" ColumnName="Sort" />
+                <ScalarProperty Name="CNY" ColumnName="CNY" />
+                <ScalarProperty Name="USD" ColumnName="USD" />
+                <ScalarProperty Name="Coin" ColumnName="Coin" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Question">
+            <EntityTypeMapping TypeName="StudyOnline.Question">
+              <MappingFragment StoreEntitySet="Question">
+                <ScalarProperty Name="ThemeId" ColumnName="ThemeId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Teacher">
+            <EntityTypeMapping TypeName="StudyOnline.Teacher">
+              <MappingFragment StoreEntitySet="Teacher">
+                <ScalarProperty Name="EnqueueTime" ColumnName="EnqueueTime" />
+                <ScalarProperty Name="LastRefresh" ColumnName="LastRefresh" />
+                <ScalarProperty Name="IsAvailable" ColumnName="IsAvailable" />
+                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Theme">
+            <EntityTypeMapping TypeName="StudyOnline.Theme">
+              <MappingFragment StoreEntitySet="Theme">
+                <ScalarProperty Name="HsLevelId" ColumnName="HsLevelId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UploadFile">
+            <EntityTypeMapping TypeName="StudyOnline.UploadFile">
+              <MappingFragment StoreEntitySet="UploadFile">
+                <ScalarProperty Name="VersionName" ColumnName="VersionName" />
+                <ScalarProperty Name="Extension" ColumnName="Extension" />
+                <ScalarProperty Name="AddDate" ColumnName="AddDate" />
+                <ScalarProperty Name="Info" ColumnName="Info" />
+                <ScalarProperty Name="Path" ColumnName="Path" />
+                <ScalarProperty Name="Size" ColumnName="Size" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User">
+            <EntityTypeMapping TypeName="StudyOnline.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="NickName" ColumnName="NickName" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="Photo" TypeName="StudyOnline.Photo" StoreEntitySet="Photo">
+            <EndProperty Name="NimUser">
+              <ScalarProperty Name="Id" ColumnName="UserId" />
+            </EndProperty>
+            <EndProperty Name="UploadFile">
+              <ScalarProperty Name="Id" ColumnName="FileId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="Avatar" TypeName="StudyOnline.Avatar" StoreEntitySet="Avatar">
+            <EndProperty Name="NimUser">
+              <ScalarProperty Name="Id" ColumnName="UserId" />
+            </EndProperty>
+            <EndProperty Name="UploadFile">
+              <ScalarProperty Name="Id" ColumnName="FileId" />
+            </EndProperty>
+          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

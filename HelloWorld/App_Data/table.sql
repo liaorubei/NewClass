@@ -31,7 +31,7 @@ CREATE TABLE [NimUserEx]
 	[Sign]	 NVARCHAR (256),
 	[Email]	 NVARCHAR (64) ,
 	[Birth]	 DATETIME      ,
-	[Mobile] NVARCHAR (32) ,
+	[Mobile] NVARCHAR (32) , 
 	[Gender] INT		   ,
 	[Ex]     NVARCHAR (512),
 
@@ -44,39 +44,40 @@ GO
 --alter table [NimUserEx] add [Job] nvarchar(256);
 --alter table [NimUserEx] add [About] nvarchar(1024);
 --alter table [NimUserEx] add [Voice] nvarchar(1024);
-select * from [NimUserEx]
+--alter table [NimUserEx] add [Coins] int
+--alter table [NimUserEx] add [Score] float
+select * from [orders] order by createtime
 
 
+----创建教师表
+--CREATE TABLE [Teacher] 
+--(
+--    [Id]     int,
+--    [Category]         INT              NOT NULL, --教师分类,如专职,兼职的
+--    [IsOnline]         INT              ,		  --是否在线	
+--	[IsAvailable]      INT              ,         --当前是否可以连接
+--	[LastRefresh]      BIGINT           ,     --上次刷新在线状态的时间DateTime.Now.Ticks
+--	[EnqueueTime]      BIGINT           ,     --上次入队的时间
 
---创建教师表
-CREATE TABLE [Teacher] 
-(
-    [Id]     int,
-    [Category]         INT              NOT NULL, --教师分类,如专职,兼职的
-    [IsOnline]         INT              ,		  --是否在线	
-	[IsAvailable]      INT              ,         --当前是否可以连接
-	[LastRefresh]      BIGINT           ,     --上次刷新在线状态的时间DateTime.Now.Ticks
-	[EnqueueTime]      BIGINT           ,     --上次入队的时间
+--	CONSTRAINT [PK_Teacher]         PRIMARY KEY ([Id]),
+--	CONSTRAINT [FK_Teacher_NimUser] FOREIGN KEY ([Id]) REFERENCES [NimUser] ([Id])
+--);
+--GO
 
-	CONSTRAINT [PK_Teacher]         PRIMARY KEY ([Id]),
-	CONSTRAINT [FK_Teacher_NimUser] FOREIGN KEY ([Id]) REFERENCES [NimUser] ([Id])
-);
-GO
-
---创建群组,群聊
-CREATE TABLE [Group]
-(
-	[Id]           NVARCHAR (32)    NOT NULL,
-	[Host]         int  ,
-	[Name]         NVARCHAR (64)    ,
-	[Time]         DATETIME		    ,
-	[Level]		   INT,		
-	[Theme]        NVARCHAR (1024)  ,
-	[Notice]       NVARCHAR (1024)  ,
-	[CreateDate]   DATETIME         ,
-	CONSTRAINT [PK_Group]         PRIMARY KEY (Id),
-	CONSTRAINT [FK_Group_NimUser] FOREIGN KEY (Host) REFERENCES [NimUser] ([Id])
-)
+----创建群组,群聊
+--CREATE TABLE [Group]
+--(
+--	[Id]           NVARCHAR (32)    NOT NULL,
+--	[Host]         int  ,
+--	[Name]         NVARCHAR (64)    ,
+--	[Time]         DATETIME		    ,
+--	[Level]		   INT,		
+--	[Theme]        NVARCHAR (1024)  ,
+--	[Notice]       NVARCHAR (1024)  ,
+--	[CreateDate]   DATETIME         ,
+--	CONSTRAINT [PK_Group]         PRIMARY KEY (Id),
+--	CONSTRAINT [FK_Group_NimUser] FOREIGN KEY (Host) REFERENCES [NimUser] ([Id])
+--)
 
 --创建汉语等级表
 create table HsLevel(
@@ -111,7 +112,16 @@ create table Question
    constraint [FK_Question_Theme] foreign key (ThemeId) references [Theme] ([Id])
 )
 
---alter table Level add Name varchar(256)
+
+create table Level(
+Id int identity(1,1),
+Name nvarchar(256) not null,
+Sort int not null,
+Show int not null,--是否显示在客户端
+ShowBrowser int , --是否在浏览器端显示
+constraint PK_Level primary key(Id)
+)
+--alter table Level add Name nvarchar(256)
 --update Level set Name=LevelName
 select * from Level
 
@@ -130,7 +140,7 @@ create table CallLog(
 	CONSTRAINT [FK_CallLog_NimUser_Target] FOREIGN KEY([Target]) REFERENCES [NimUser]([Id])
 )
 CREATE UNIQUE NONCLUSTERED INDEX [Index_CallLog_ChatId] ON [CallLog]([ChatId] ASC);
-
+alter table  callLog add  Refresh datetime,Coins int
 
 --学习记录的主题表
 create table LogTheme(
@@ -139,6 +149,54 @@ create table LogTheme(
 CONSTRAINT [PK_LogTheme]         PRIMARY KEY([ChatId],[ThemeId]),
 CONSTRAINT [FK_LogTheme_CallLog] FOREIGN KEY([ChatId]) REFERENCES [CallLog]([ChatId]),
 CONSTRAINT [FK_LogTheme_ThemeId] FOREIGN KEY([ThemeId]) REFERENCES [Theme]([Id])
+)
+
+--反馈/投诉/建议表
+create table Feedback(
+[Id] int identity(1,1),
+[Content] nvarchar(max),
+[Contact] nvarchar(128),
+[Createtime] datetime,
+constraint [PK_Feedback] primary key ([Id])
+)
+
+--alter table [dbo].[Orders]
+--alter column [Quantity] decimal(10,2)
+--alter column [Price] decimal(10,2)
+--alter column [Amount] decimal(10,2)
+
+select * from product
+
+--充值价格条目表
+create table Product(
+Id     int identity(1,1),
+[Coin] float,
+[USD]  decimal(10,2),
+[CNY]  decimal(10,2),
+[Sort] int ,
+[Enabled] int,
+[Createtime] datetime,
+constraint [PK_Product] primary key ([Id])
+)
+--alter table [dbo].[Product]
+--alter column [USD] decimal(10,2)
+--alter column [CNY] decimal(10,2)
+
+--数据初始化
+--insert into product(Coin,USD,CNY,Sort,[Enabled]) values(300,18.6,120.00,1,1)
+--insert into product(Coin,USD,CNY,Sort,[Enabled]) values(500,31.00,200.00,2,1)
+--insert into product(Coin,USD,CNY,Sort,[Enabled]) values(1000,62.00,400.00,3,1)
+--insert into product(Coin,USD,CNY,Sort,[Enabled]) values(3000,186.00,1200.00,4,1)
+--insert into product(Coin,USD,CNY,Sort,[Enabled]) values(5000,310.00,2000.00,5,1)
+--insert into product(Coin,USD,CNY,Sort,[Enabled]) values(10000,620.00,4000.00,6,1)
+
+--验证码表
+create table AuthCode(
+Id     NVARCHAR (32) NOT NULL,
+[Code] NVARCHAR (32),
+[Contact]  NVARCHAR (128),
+[Createtime] datetime,
+constraint [PK_AuthCode] primary key ([Id])
 )
 
 --安卓管理

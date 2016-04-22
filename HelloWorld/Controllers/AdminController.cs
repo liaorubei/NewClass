@@ -176,10 +176,6 @@ namespace StudyOnline.Controllers
         }
 
         #region 分类相关
-
-
-
-
         public ActionResult LevelList(FormCollection form)
         {
             PagedList<Level> levels = entities.Level.OrderBy(l => l.Id).ToPagedList(1, 20);

@@ -4,15 +4,14 @@ using StudyOnline.Models;
 using System;
 using System.Web;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Web.Mvc;
 using System.Linq.Expressions;
 using System.Data.Entity;
 using System.IO;
-using AutoMapper;
 using System.Text.RegularExpressions;
+using StudyOnline.Utils;
+using System.Data.SqlClient;
 
 namespace StudyOnline.Areas.Api.Controllers
 {
@@ -23,40 +22,180 @@ namespace StudyOnline.Areas.Api.Controllers
         /// <summary>
         /// 获取验证码
         /// </summary>
-        /// <param name="phone">手机号码</param>
+        /// <param name="email">手机号码</param>
         /// <returns>目前一直返回12306</returns>
         [HttpPost]
-        public ActionResult GetCode(String phone)
+        public ActionResult GetCode(String email)
         {
-            return Json(new { code = 200, desc = "", info = new { captcha = "12306" } });
+            Regex regex = new Regex("^\\s*([A-Za-z0-9_-]+(\\.\\w+)*@(\\w+\\.)+\\w{2,5})\\s*$");
+            if (!regex.IsMatch(email))
+            {
+                return Json(new { code = 20001, desc = "邮箱格式不对" });
+            }
+
+            if (!entities.NimUser.Any(o => o.Username == email))
+            {
+                return Json(new { code = 201, desc = "你所输入的帐号不存在", info = "严肃点,好不" });
+            }
+
+            //写入数据库
+            //生成随机值
+            Random random = new Random();
+            int code = random.Next(1000, 9999);
+
+            entities.Database.ExecuteSqlCommand("update authcode set code=null where contact=@contact", new SqlParameter("@contact", email));
+
+            AuthCode auth = new AuthCode();
+            auth.Id = Guid.NewGuid().ToString().Replace("-", "");
+            auth.Contact = email;
+            auth.Code = code + "";
+            auth.Createtime = DateTime.Now;
+            entities.AuthCode.Add(auth);
+            entities.SaveChanges();
+
+            //发送到邮箱
+            try
+            {
+                string senderServerIp = "smtp-n.global-mail.cn";
+                string mailPort = "25";
+                string toMailAddress = email;
+                string fromMailAddress = "Service@chinesechat.cn";//公司服务邮箱
+                string subjectInfo = "ChineseChat验证码邮件,请及时查看";
+                string bodyInfo = "你好,验证码为:" + code + ",有效时间是10分钟,请注意!<br/>使用汉问客户端";
+                string mailUsername = "Service@chinesechat.cn";
+                string mailPassword = "60190466hwdfKF"; //发送邮箱的密码（）
+
+                MyEmail my = new MyEmail(senderServerIp, toMailAddress, fromMailAddress, subjectInfo, bodyInfo, mailUsername, mailPassword, mailPort, false, false);
+                my.Send();
+            }
+            catch (Exception ex)
+            {
+                //返回信息
+                return Json(new { code = 201, desc = "验证码生成失败", info = ex.Message });
+            }
+
+            //返回信息
+            return Json(new { code = 200, desc = "请求成功", info = "验证码已经发送到你的邮箱" });
         }
 
         /// <summary>
         /// 验证验证码
         /// </summary>
-        /// <param name="phone">手机号码</param>
+        /// <param name="contact">联系方式</param>
         /// <param name="captcha">验证码</param>
         /// <returns>如果验证成功,返回code=200</returns>
         [HttpPost]
-        public ActionResult Verify(String phone, String captcha)
+        public ActionResult Verify(String contact, String captcha)
         {
-            if (String.IsNullOrEmpty(phone) || String.IsNullOrEmpty(captcha))
+            if (String.IsNullOrEmpty(contact) || String.IsNullOrEmpty(captcha))
             {
                 return Json(new { code = "20001", desc = "不能为空" });
             }
 
-            NimUser user = entities.NimUser.FirstOrDefault(o => o.Username == phone);
-            if (user != null)
+            AuthCode authcode = entities.AuthCode.OrderByDescending(o => o.Createtime).FirstOrDefault(o => o.Contact == contact && o.Code == captcha);
+            if (authcode == null)
             {
-                return Json(new { code = "20001", desc = "该手机号码已经注册" });
+                return Json(new { code = "201", desc = "查无此验证码和联系方式" });
             }
 
-            if ("12306" != captcha)
+            var span = DateTime.Now - authcode.Createtime.Value;
+
+            if (span.TotalSeconds > (30 * 60))
             {
-                return Json(new { code = "20001", desc = "验证码错误" });
+                return Json(new { code = "201", desc = "验证码已经过期" });
             }
 
             return Json(new { code = 200, desc = "验证成功", info = "" });
+        }
+
+        /// <summary>
+        /// 修改密码,直接修改为指定密码,不用验证旧密码
+        /// </summary>
+        /// <param name="username">邮箱或者用户名,默认邮箱</param>
+        /// <param name="password">目标密码</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ChangePassword(String username, String password)
+        {
+            NimUser user = entities.NimUser.Single(o => o.Username == username);
+            if (user == null)
+            {
+                return Json(new { code = 201, desc = "修改失败" });
+            }
+
+            if ((password + "").Length < 8)
+            {
+                return Json(new { code = 201, desc = "修改失败" });
+            }
+
+            user.Password = EncryptionUtil.Md5Encode(password);//密码MD5加密
+            entities.SaveChanges();
+
+            return Json(new { code = 200, desc = "修改成功", info = new { user.Id, user.Accid, user.Token, user.Username } });
+        }
+
+        /// <summary>
+        /// 修改密码,要求有用户名,旧密码,新密码
+        /// </summary>
+        /// <param name="username">邮箱或者用户名,默认邮箱</param>
+        /// <param name="old_password">目标密码</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ModifyPassword(String username, String old_password, String new_password)
+        {
+            if (String.IsNullOrEmpty(username) || String.IsNullOrEmpty(old_password) || String.IsNullOrEmpty(new_password))
+            {
+                return Json(new { code = 201, desc = "不能为空" });
+            }
+
+            if (old_password.Length < 8 || new_password.Length < 8)
+            {
+                return Json(new { code = 201, desc = "长度不足" });
+            }
+
+            if (old_password == new_password)
+            {
+                return Json(new { code = 201, desc = "密码相同" });
+            }
+
+
+            try
+            {
+                NimUser user = entities.NimUser.SingleOrDefault(o => o.Username == username);
+
+                if (user == null)
+                {
+                    return Json(new { code = 201, desc = "用户为空" });
+                }
+
+                if (user.Password != EncryptionUtil.Md5Encode(old_password))
+                {
+                    return Json(new { code = 201, desc = "验证失败" });
+                }
+
+
+                user.Password = EncryptionUtil.Md5Encode(new_password);//密码MD5加密
+                entities.SaveChanges();
+
+                return Json(new
+                {
+                    code = 200,
+                    desc = "修改成功",
+                    info = new
+                    {
+                        user.Id,
+                        user.Accid,
+                        user.Token,
+                        user.Username,
+                        Nickname = user.NimUserEx.Name
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
+
         }
 
         /// <summary>
@@ -89,10 +228,6 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 return Json(new { code = 20001, desc = "用户名被注册" });
             }
-
-
-
-
 
             NimUser user = new NimUser();
             user.Accid = Guid.NewGuid().ToString().Replace("-", "");
@@ -128,7 +263,7 @@ namespace StudyOnline.Areas.Api.Controllers
         /// <param name="info">用户信息</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Update(int id, String Name, HttpPostedFileBase icon, String Email, DateTime? Birth, String Mobile, Int32? Gender, String Country, String Language, String Job, HttpPostedFileBase Voice, String About)
+        public ActionResult Update(int id, String Name, HttpPostedFileBase icon, String Email, DateTime? Birth, String Mobile, Int32? Gender, String Country, String Language, String Job, HttpPostedFileBase Voice, String About, String School)
         {
             NimUserEx info = entities.NimUserEx.Find(id);
             //  NimUserEx info = new NimUserEx() { Icon = "默认图片" };
@@ -140,55 +275,190 @@ namespace StudyOnline.Areas.Api.Controllers
             //处理图片文件
             if (icon != null)
             {
-                String fileName = "";
                 String filePath = String.Format("/{0}/{1}/{2}{3}", "File", DateTime.Now.ToString("yyyyMMdd"), Guid.NewGuid(), Path.GetExtension(icon.FileName));
                 FileInfo file = new FileInfo(Server.MapPath("~" + filePath));
                 if (!file.Directory.Exists)
                 {
                     file.Directory.Create();
                 }
-                fileName = icon.FileName;
                 icon.SaveAs(file.FullName);
-
-                //如果上传的图片,则修改头像,否则不修改
                 info.Icon = filePath;
             }
 
             //处理音频文件
             if (Voice != null)
             {
-                String fileName = "";
+
                 String filePath = String.Format("/{0}/{1}/{2}{3}", "File", DateTime.Now.ToString("yyyyMMdd"), Guid.NewGuid(), Path.GetExtension(Voice.FileName));
                 FileInfo file = new FileInfo(Server.MapPath("~" + filePath));
                 if (!file.Directory.Exists)
                 {
                     file.Directory.Create();
                 }
-                fileName = Voice.FileName;
+
                 Voice.SaveAs(file.FullName);
                 info.Voice = filePath;
             }
 
-            info.Name = Name;
-            info.Email = Email;
-            info.Birth = Birth;
-            info.Mobile = Mobile;
-            info.Gender = Gender;
-            info.Country = Country;
-            info.Language = Language;
-            info.Job = Job;
-            info.About = About;
+            if (Email != null)
+            {
+                info.Email = Email;
+            }
+            if (Name != null)
+            {
+                info.Name = Name;
+            }
+            if (Birth != null)
+            {
+                info.Birth = Birth;
+            }
+            if (Mobile != null)
+            {
+                info.Mobile = Mobile;
+            }
+            if (Gender != null)
+            {
+                info.Gender = Gender;
+            }
+            if (Country != null)
+            {
+                info.Country = Country;
+            }
+            if (Language != null)
+            {
+                info.Language = Language;
+            }
+            if (Job != null)
+            {
+                info.Job = Job;
+            }
+            if (About != null)
+            {
+                info.About = About;
+            }
+            if (School != null)
+            {
+                info.School = School;
+            }
+
 
             try
             {
                 entities.SaveChanges();
-                return Json(new { code = 200, desc = "修改成功", info = new { info.Id, info.Name, info.Icon, info.Email, Birth = (info.Birth == null ? "" : info.Birth.Value.ToString("yyyy-MM-dd")), info.Mobile, info.Gender } });
+                return Json(new
+                {
+                    code = 200,
+                    desc = "修改成功",
+                    info = new
+                    {
+                        info.Id,
+                        info.Name,
+                        info.Icon,
+                        Avatar = info.Icon,
+                        info.Email,
+                        Birth = (info.Birth == null ? "" : info.Birth.Value.ToString("yyyy-MM-dd")),
+                        info.Mobile,
+                        info.Gender,
+                        NickName = info.Name,
+                        Nickname = info.Name,
+                        info.Country,
+                        info.Language,
+                        info.Job,
+                        info.About,
+                        info.Coins,
+                        info.School,
+                        info.NimUser.Username,
+                        info.NimUser.Accid,
+                        info.NimUser.Token
+                    }
+                });
             }
             catch
             {
-                return Json(new { code = 201, desc = "修改失败", info = new { info.Id, info.Name, info.Icon, info.Email, Birth = (info.Birth == null ? "" : info.Birth.Value.ToString("yyyy-MM-dd")), info.Mobile, info.Gender } });
+                return Json(new
+                {
+                    code = 201,
+                    desc = "修改失败",
+                    info = new
+                    {
+                        info.Id,
+                        info.Name,
+                        info.Icon,
+                        info.Email,
+                        Birth = (info.Birth == null ? "" : info.Birth.Value.ToString("yyyy-MM-dd")),
+                        info.Mobile,
+                        info.Gender
+                    }
+                });
             }
         }
+
+        [HttpPost]
+        public ActionResult UpdatePhotos(String username, List<String> deletedPhotos, List<HttpPostedFileBase> newPhotos)
+        {
+            try
+            {
+                bool isUpdate = false;
+                if (!entities.NimUser.Any(o => o.Username == username))
+                {
+                    return Json(new { code = 201, desc = "指定用户不存在" });
+                }
+
+                NimUser user = entities.NimUser.Single(o => o.Username == username);
+
+                #region 旧照片处理
+                if (deletedPhotos != null && deletedPhotos.Any())
+                {
+                    List<UploadFile> origin = user.UploadFile.ToList();
+                    List<UploadFile> remove = new List<UploadFile>();
+
+                    //选择要删除的
+                    foreach (var item in origin)
+                    {
+                        if (deletedPhotos.Any(o => item.Path == o))
+                        {
+                            remove.Add(item);
+                        }
+                    }
+
+                    //删除要删除的
+                    foreach (var item in remove)
+                    {
+                        user.UploadFile.Remove(item);
+                    }
+                    isUpdate = true;
+                }
+                #endregion
+
+                #region 新照片处理
+                if (newPhotos != null && newPhotos.Any())
+                {
+                    foreach (var item in newPhotos)
+                    {
+                        user.UploadFile.Add(Helper.SaveUploadFile(Server, item));
+                    }
+                    isUpdate = true;
+                }
+                #endregion
+
+                //保存数据
+                if (isUpdate)
+                {
+                    entities.SaveChanges();
+                    return Json(new { code = 200, desc = "更新成功", info = new { user.Id, Photos = user.UploadFile.Select(o => o.Path) } });
+                }
+                else
+                {
+                    return Json(new { code = 201, desc = "没有更新" });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
+        }
+
 
         /// <summary>
         /// 登录
@@ -226,9 +496,10 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.Token,
                     user.Username,
                     user.NimUserEx.Icon,
-                    Avater = user.NimUserEx.Icon,
+                    Avatar = user.NimUserEx.Icon,
                     user.NimUserEx.Name,
                     NickName = user.NimUserEx.Name,
+                    Nickname = user.NimUserEx.Name,
                     user.NimUserEx.Gender,
                     user.NimUserEx.Email,
                     user.NimUserEx.Mobile,
@@ -237,7 +508,9 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.NimUserEx.Language,
                     user.NimUserEx.Job,
                     user.NimUserEx.Voice,
-                    user.NimUserEx.About
+                    user.NimUserEx.About,
+                    user.NimUserEx.Coins,
+                    user.NimUserEx.School,
                 }
             });
         }
@@ -258,7 +531,20 @@ namespace StudyOnline.Areas.Api.Controllers
                 predicate = o => o.Username.Contains(keyWord) || o.NimUserEx.Name.Contains(keyWord);
             }
             IQueryable<NimUser> users = entities.NimUser.Where(predicate).OrderBy(o => o.Username).Skip(skip).Take(take);
-            return Json(new { code = 200, desc = "查询成功", info = users.Select(o => new { o.Id, o.Accid, o.Username, NickName = o.NimUserEx.Name, o.Category }) });
+            return Json(new
+            {
+                code = 200,
+                desc = "查询成功",
+                info = users.Select(o => new
+                {
+                    o.Id,
+                    o.Accid,
+                    o.Username,
+                    NickName = o.NimUserEx.Name,
+                    Nickname = o.NimUserEx.Name,
+                    o.Category
+                })
+            });
         }
 
         /// <summary>
@@ -283,10 +569,12 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.Id,
                     user.Accid,
                     user.Username,
+                    user.Category,
                     user.NimUserEx.Icon,
-                    Avater = user.NimUserEx.Icon,
+                    Avatar = user.NimUserEx.Icon,
                     user.NimUserEx.Name,
                     NickName = user.NimUserEx.Name,
+                    Nickname = user.NimUserEx.Name,
                     user.NimUserEx.Gender,
                     user.NimUserEx.Email,
                     user.NimUserEx.Mobile,
@@ -295,7 +583,9 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.NimUserEx.Language,
                     user.NimUserEx.Job,
                     user.NimUserEx.Voice,
-                    user.NimUserEx.About
+                    user.NimUserEx.About,
+                    user.NimUserEx.Coins,
+                    user.NimUserEx.Score
                 }
             });
         }
@@ -322,10 +612,12 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.Id,
                     user.Accid,
                     user.Username,
+                    user.Category,
                     user.NimUserEx.Icon,
-                    Avater = user.NimUserEx.Icon,
+                    Avatar = user.NimUserEx.Icon,
                     user.NimUserEx.Name,
                     NickName = user.NimUserEx.Name,
+                    Nickname = user.NimUserEx.Name,
                     user.NimUserEx.Gender,
                     user.NimUserEx.Email,
                     user.NimUserEx.Mobile,
@@ -334,7 +626,9 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.NimUserEx.Language,
                     user.NimUserEx.Job,
                     user.NimUserEx.Voice,
-                    user.NimUserEx.About
+                    user.NimUserEx.About,
+                    user.NimUserEx.Coins,
+                    user.NimUserEx.Score
                 }
             });
         }
@@ -350,16 +644,18 @@ namespace StudyOnline.Areas.Api.Controllers
             return Json(new
             {
                 code = 200,
-                desc = "",
+                desc = "查询成功",
                 info = new
                 {
                     user.Id,
                     user.Accid,
                     user.Username,
+                    user.Category,
                     user.NimUserEx.Icon,
-                    Avater = user.NimUserEx.Icon,
+                    Avatar = user.NimUserEx.Icon,
                     user.NimUserEx.Name,
                     NickName = user.NimUserEx.Name,
+                    Nickname = user.NimUserEx.Name,
                     user.NimUserEx.Gender,
                     user.NimUserEx.Email,
                     user.NimUserEx.Mobile,
@@ -368,7 +664,11 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.NimUserEx.Language,
                     user.NimUserEx.Job,
                     user.NimUserEx.Voice,
-                    user.NimUserEx.About
+                    user.NimUserEx.About,
+                    user.NimUserEx.Coins,
+                    user.NimUserEx.Score,
+                    user.NimUserEx.School,
+                    Photos = user.UploadFile.Select(o => o.Path)
                 }
             });
         }
@@ -396,9 +696,9 @@ namespace StudyOnline.Areas.Api.Controllers
         /// <param name="id">要刷新的教师的Id</param>
         /// <returns>当前教师的排队名次和教师队列的前5名</returns>
         [HttpPost]
-        public ActionResult Refresh(Int32 id)
+        public ActionResult Refresh(Int32? id, String accid, String username)
         {
-            return Enqueue(id, true);
+            return Enqueue(id, accid, username, true);
         }
 
         public ActionResult TeacherRefreshByUserName(String username, int skip, int take)
@@ -412,7 +712,23 @@ namespace StudyOnline.Areas.Api.Controllers
             Expression<Func<NimUser, bool>> predicate = o => o.IsOnline == 1 && o.IsEnable == 1 && o.Category == 1 && o.Enqueue <= user.Enqueue && o.Refresh >= (user.Refresh - 3000000000L);
             var teachers = entities.NimUser.Where(predicate).OrderBy(o => o.Enqueue);
             var temp = teachers.Skip(skip).Take(take);
-            return Json(new { code = 200, desc = "刷新成功", info = new { Data = temp.Select(o => new { o.Id, o.Accid, o.NimUserEx.Name, o.Username, o.Category }), Rank = teachers.Count() } });
+            return Json(new
+            {
+                code = 200,
+                desc = "刷新成功",
+                info = new
+                {
+                    Data = temp.Select(o => new
+                    {
+                        o.Id,
+                        o.Accid,
+                        o.NimUserEx.Name,
+                        o.Username,
+                        o.Category
+                    }),
+                    Rank = teachers.Count()
+                }
+            });
 
         }
 
@@ -423,11 +739,32 @@ namespace StudyOnline.Areas.Api.Controllers
         /// <param name="refresh">是否刷新</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Enqueue(Int32 id, bool refresh = false)
+        public ActionResult Enqueue(Int32? id, String accid, String username, bool refresh = false)
         {
             Int64 now = DateTime.Now.Ticks;
 
             NimUser user = entities.NimUser.Find(id);
+
+            if (id != null)
+            {
+                user = entities.NimUser.Find(id);
+            }
+
+            if (user == null && !String.IsNullOrEmpty(accid))
+            {
+                user = entities.NimUser.Single(o => o.Accid == accid);
+            }
+
+            if (user == null && !String.IsNullOrEmpty(username))
+            {
+                user = entities.NimUser.Single(o => o.Username == username);
+            }
+
+            if (user == null)
+            {
+                return Json(new { code = 201, desc = (refresh ? "刷新" : "排队") + "失败", info = "用户不存在" });
+            }
+
             user.IsOnline = 1;
             user.Refresh = now;
 
@@ -447,7 +784,7 @@ namespace StudyOnline.Areas.Api.Controllers
             return Json(new
             {
                 code = 200,
-                desc = "排队成功",
+                desc = (refresh ? "刷新" : "排队") + "成功",
                 info = new
                 {
                     Data = temp.Select(o => new
@@ -499,9 +836,10 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.Accid,
                     user.Username,
                     user.NimUserEx.Icon,
-                    Avater = user.NimUserEx.Icon,
+                    Avatar = user.NimUserEx.Icon,
                     user.NimUserEx.Name,
                     NickName = user.NimUserEx.Name,
+                    Nickname = user.NimUserEx.Name,
                     user.NimUserEx.Gender,
                     user.NimUserEx.Email,
                     user.NimUserEx.Mobile,
@@ -542,9 +880,10 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.Accid,
                     user.Username,
                     user.NimUserEx.Icon,
-                    Avater = user.NimUserEx.Icon,
+                    Avatar = user.NimUserEx.Icon,
                     user.NimUserEx.Name,
                     NickName = user.NimUserEx.Name,
+                    Nickname = user.NimUserEx.Name,
                     user.NimUserEx.Gender,
                     user.NimUserEx.Email,
                     user.NimUserEx.Mobile,
@@ -586,9 +925,10 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.Accid,
                     user.Username,
                     user.NimUserEx.Icon,
-                    Avater = user.NimUserEx.Icon,
+                    Avatar = user.NimUserEx.Icon,
                     user.NimUserEx.Name,
                     NickName = user.NimUserEx.Name,
+                    Nickname = user.NimUserEx.Name,
                     user.NimUserEx.Gender,
                     user.NimUserEx.Email,
                     user.NimUserEx.Mobile,
@@ -641,20 +981,33 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult ChooseTeacher(Int32 id, Int32 target)
         {
-
+            //如果学生没有学币,那么将无法拨打电话
             Int64 now = DateTime.Now.Ticks - 3000000000L;
             NimUser student = entities.NimUser.Find(id);
-            if (student == null)
+            if (student == null || (student.Category != 0))
             {
                 return Json(new { code = 2001, desc = "没有这个学生" });
             }
+
+            if ((student.NimUserEx.Coins ?? 0) <= 0)
+            {
+                student.NimUserEx.Coins = 0;
+                entities.SaveChanges();
+                return Json(new { code = 2001, desc = "学币不足", info = new { student.NimUserEx.Id, student.NimUserEx.Name, student.NimUserEx.Coins } });
+            }
+
             student.IsOnline = 1;
             student.Refresh = DateTime.Now.Ticks;
 
             NimUser teacher = entities.NimUser.Find(target);
-            if (teacher == null)
+            if (teacher == null || (teacher.Category != 1))
             {
                 return Json(new { code = 2001, desc = "没有这个老师" });
+            }
+
+            if (teacher.IsEnable == 0)
+            {
+                return Json(new { code = 201, desc = "老师已经被取走" });
             }
 
             teacher.IsEnable = 0;
@@ -690,9 +1043,163 @@ namespace StudyOnline.Areas.Api.Controllers
                     o.Category,
                     o.NimUserEx.Icon,
                     o.NimUserEx.Voice,
-                    o.NimUserEx.Country
+                    o.NimUserEx.Country,
+                    o.NimUserEx.About
                 })
             });
+        }
+
+        /// <summary>
+        /// 取得老师,包括在线的,忙线的,掉线的
+        /// </summary>
+        /// <param name="skip">跳过几条</param>
+        /// <param name="take">获取几条</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult GetTeacher(int skip, int take)
+        {
+            try
+            {
+                List<NimUser> all = new List<NimUser>();
+
+                Int64 now = DateTime.Now.Ticks;
+                var teacher = entities.NimUser.Where(o => o.Category == 1).ToList();
+
+                //在线的,包括不忙和忙的
+                var online = teacher.Where(o => o.Refresh >= (now - 3000000000L)).OrderBy(o => o.Enqueue).ToList();
+                //掉线的
+                var offline = teacher.Where(o => o.Refresh < (now - 3000000000L)).OrderBy(o => o.Enqueue).ToList();
+
+                //不忙的
+                var free = online.Where(o => o.IsEnable == 1);
+                //忙的
+                var busy = online.Where(o => o.IsEnable == 0);
+
+
+                //分别添加 不忙的,忙的,掉线的
+                all.AddRange(free);
+                all.AddRange(busy);
+                all.AddRange(offline);
+                var temp = all.Skip(skip).Take(take);
+
+
+                return Json(new
+                {
+                    code = 200,
+                    desc = "查询成功",
+                    info = temp.Select(o => new
+                    {
+                        o.Id,
+                        o.Accid,
+                        Avatar = o.NimUserEx.Icon,
+                        o.NimUserEx.About,
+                        o.Username,
+                        Nickname = o.NimUserEx.Name,
+                        IsEnable = o.IsEnable == 1,
+                        IsOnline = (now - o.Refresh) < 3000000000,
+                        o.Enqueue
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// 新的教师入队接口
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="accid"></param>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult TeacherEnqueue(Int32? id, String accid, String username)
+        {
+            try
+            {
+                NimUser nimUser = null;
+                if (id != null)
+                {
+                    nimUser = entities.NimUser.Find(id);
+                }
+
+
+
+
+
+                if (nimUser == null)
+                {
+                    return Json(new { code = 201, desc = "入队失败" });
+                }
+
+                nimUser.IsEnable = 1;
+                nimUser.IsOnline = 1;
+                nimUser.Enqueue = DateTime.Now.Ticks;
+                nimUser.Refresh = DateTime.Now.Ticks;
+                entities.SaveChanges();
+                return Json(new { code = 200, desc = "入队成功" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// 新的教师刷新接口
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="accid"></param>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult TeacherRefresh(Int32? id, String accid, String username)
+        {
+            try
+            {
+                NimUser nimUser = null;
+                if (id != null)
+                {
+                    nimUser = entities.NimUser.Find(id);
+                }
+
+                nimUser.IsOnline = 1;
+                nimUser.Refresh = DateTime.Now.Ticks;
+                entities.SaveChanges();
+                return Json(new { code = 200, desc = "刷新成功" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult GetPhotosByUsername(String username)
+        {
+            try
+            {
+                NimUser user = entities.NimUser.Single(o => o.Username == username);
+                return Json(new
+                {
+                    code = 200,
+                    desc = "查询成功",
+                    info = new
+                    {
+                        user.Id,
+                        user.Accid,
+                        user.Username,
+                        Nickname = user.NimUserEx.Name,
+                        Photos = user.UploadFile.Select(o => o.Path)
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
         }
 
     }
