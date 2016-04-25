@@ -459,6 +459,164 @@ namespace StudyOnline.Areas.Api.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult UpdateStudent(String username, HttpPostedFileBase icon, String nickname, String about, String school, String spoken, String hobby, List<String> deletedPhotos, List<HttpPostedFileBase> newPhotos)
+        {
+            try
+            {
+                if (!entities.NimUser.Any(o => o.Username == username))
+                {
+                    return Json(new { code = 201, desc = "指定用户不存在" });
+                }
+
+                NimUser user = entities.NimUser.Single(o => o.Username == username);
+                NimUserEx ex = user.NimUserEx;
+
+                if (icon != null && icon.ContentLength > 0)
+                {
+                    ex.Icon = Helper.SaveUploadFile(this.Server, icon).Path;
+                }
+
+                ex.Name = nickname;
+                ex.About = about;
+                ex.School = school;
+
+
+                #region 旧照片处理
+                if (deletedPhotos != null && deletedPhotos.Any())
+                {
+                    List<UploadFile> origin = user.UploadFile.ToList();
+                    List<UploadFile> remove = new List<UploadFile>();
+
+                    //选择要删除的
+                    foreach (var item in origin)
+                    {
+                        if (deletedPhotos.Any(o => item.Path == o))
+                        {
+                            remove.Add(item);
+                        }
+                    }
+
+                    //删除要删除的
+                    foreach (var item in remove)
+                    {
+                        user.UploadFile.Remove(item);
+                    }
+                }
+                #endregion
+
+                #region 新照片处理
+                if (newPhotos != null && newPhotos.Any())
+                {
+                    foreach (var item in newPhotos)
+                    {
+                        user.UploadFile.Add(Helper.SaveUploadFile(Server, item));
+                    }
+
+                }
+                #endregion
+
+                entities.SaveChanges();
+                return Json(new { code = 200, desc = "更新成功", info = new { user.Id, Photos = user.UploadFile.Select(o => o.Path) } });
+
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult UpdateTeacher(String username, String nickname, Int32? gender, DateTime? birth, String about, String school, String spoken, String hobbies, List<String> deletedPhotos, HttpPostedFileBase icon)
+        {
+            try
+            {
+                if (!entities.NimUser.Any(o => o.Username == username))
+                {
+                    return Json(new { code = 201, desc = "指定用户不存在" });
+                }
+
+                NimUser user = entities.NimUser.Single(o => o.Username == username);
+                NimUserEx ex = user.NimUserEx;
+                ex.Gender = gender;
+                ex.Birth = birth;
+                ex.Name = nickname;
+                ex.About = about;
+                ex.School = school;
+                ex.Spoken = spoken;
+                ex.Hobbies = hobbies;
+
+
+                if (icon != null && icon.ContentLength > 0)
+                {
+                    ex.Icon = Helper.SaveUploadFile(this.Server, icon).Path;
+                }
+
+                #region 旧照片处理
+                if (deletedPhotos != null && deletedPhotos.Any())
+                {
+                    List<UploadFile> origin = user.UploadFile.ToList();
+                    List<UploadFile> remove = new List<UploadFile>();
+
+                    //选择要删除的
+                    foreach (var item in origin)
+                    {
+                        if (deletedPhotos.Any(o => item.Path == o))
+                        {
+                            remove.Add(item);
+                        }
+                    }
+
+                    //删除要删除的
+                    foreach (var item in remove)
+                    {
+                        user.UploadFile.Remove(item);
+                    }
+                }
+                #endregion
+
+                #region 新照片处理
+                var newPhoto = Request.Files.AllKeys.Where(o => o.Contains("newPhoto")).ToList();
+
+                List<HttpPostedFileBase> kkk = new List<HttpPostedFileBase>();
+                foreach (var item in newPhoto)
+                {
+                    kkk.Add(Request.Files[item]);
+                }
+
+                foreach (var item in kkk)
+                {
+                    user.UploadFile.Add(Helper.SaveUploadFile(Server, item));
+                }
+                #endregion
+
+                entities.SaveChanges();
+                return Json(new
+                {
+                    code = 200,
+                    desc = "更新成功",
+                    info = new
+                    {
+                        ex.Id,
+                        Avatar = ex.Icon,
+                        Nickname = ex.Name,
+                        ex.Gender,
+                        Birth = ex.Birth == null ? null : ex.Birth.Value.ToString("yyyy-MM-dd"),
+                        ex.School,
+                        ex.Hobbies,
+                        ex.Spoken,
+                        ex.About,
+                        Photos = user.UploadFile.Select(o => o.Path)
+                    }
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
+        }
 
         /// <summary>
         /// 登录
@@ -511,6 +669,9 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.NimUserEx.About,
                     user.NimUserEx.Coins,
                     user.NimUserEx.School,
+                    user.NimUserEx.Spoken,
+                    user.NimUserEx.Hobbies,
+                    Photos = user.UploadFile.Select(o => o.Path).ToList()
                 }
             });
         }

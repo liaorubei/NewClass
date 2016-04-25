@@ -31,6 +31,8 @@ namespace StudyOnline.Models
         public Nullable<int> Coins { get; set; }
         public Nullable<double> Score { get; set; }
         public string School { get; set; }
+        public string Spoken { get; set; }
+        public string Hobbies { get; set; }
     
         public virtual NimUser NimUser { get; set; }
     }

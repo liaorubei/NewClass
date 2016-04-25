@@ -46,6 +46,13 @@ GO
 --alter table [NimUserEx] add [Voice] nvarchar(1024);
 --alter table [NimUserEx] add [Coins] int
 --alter table [NimUserEx] add [Score] float
+
+--alter table [NimUserEx] add [School] nvarchar(1024);
+--alter table [NimUserEx] add [Spoken] nvarchar(512);
+--alter table [NimUserEx] add [Hobbies] nvarchar(512);
+
+
+
 select * from [orders] order by createtime
 
 

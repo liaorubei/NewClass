@@ -170,6 +170,8 @@
           <Property Name="Coins" Type="int" />
           <Property Name="Score" Type="float" />
           <Property Name="School" Type="nvarchar" MaxLength="256" />
+          <Property Name="Spoken" Type="nvarchar" MaxLength="512" />
+          <Property Name="Hobbies" Type="nvarchar" MaxLength="512" />
         </EntityType>
         <EntityType Name="Orders">
           <Key>
@@ -808,6 +810,8 @@
           <Property Name="Score" Type="Double" />
           <Property Name="School" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="NimUser" Relationship="StudyOnline.FK_NimUserEx_NimUser" FromRole="NimUserEx" ToRole="NimUser" />
+          <Property Name="Spoken" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
+          <Property Name="Hobbies" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Orders">
           <Key>
@@ -1207,6 +1211,8 @@
           <EntitySetMapping Name="NimUserEx">
             <EntityTypeMapping TypeName="StudyOnline.NimUserEx">
               <MappingFragment StoreEntitySet="NimUserEx">
+                <ScalarProperty Name="Hobbies" ColumnName="Hobbies" />
+                <ScalarProperty Name="Spoken" ColumnName="Spoken" />
                 <ScalarProperty Name="School" ColumnName="School" />
                 <ScalarProperty Name="Score" ColumnName="Score" />
                 <ScalarProperty Name="Coins" ColumnName="Coins" />
