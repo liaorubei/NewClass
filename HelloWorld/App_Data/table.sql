@@ -168,6 +168,7 @@ constraint [PK_Feedback] primary key ([Id])
 )
 
 --alter table [dbo].[Orders]
+ALTER table [Orders] add  IsBalance int
 --alter column [Quantity] decimal(10,2)
 --alter column [Price] decimal(10,2)
 --alter column [Amount] decimal(10,2)

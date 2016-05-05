@@ -10,7 +10,6 @@ namespace StudyOnline.Areas.Api.Controllers
 {
     public class CallLogController : Controller
     {
-        readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         StudyOnlineEntities entities = new StudyOnlineEntities();
 
         /// <summary>
@@ -46,7 +45,6 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult Finish(Int64 chatId)
         {
-            logger.Debug(String.Format("{0}对话结束-{1}", chatId, DateTime.Now.ToString("yyyy-MM-dd HH.mm.sss")));
             CallLog chat = entities.CallLog.FirstOrDefault(o => o.ChatId == chatId);
             if (chat == null)
             {

@@ -78,9 +78,10 @@ namespace StudyOnline.Areas.Api.Controllers
             //如果异步通知成功,直接返回
             if (order.TradeStatus == "TRADE_SUCCESS" || order.TradeStatus == "TRADE_FINISHED")
             {
-                //添加学币
+                //平衡学币
                 NimUser nimuser = entities.NimUser.Single(o => o.Username == order.UserName);
-                nimuser.NimUserEx.Coins = order.Coin + (nimuser.NimUserEx.Coins ?? 0);
+                nimuser.NimUserEx.Coins = (order.Coin ?? 0) + (nimuser.NimUserEx.Coins ?? 0);
+                order.IsBalance = 1;
                 entities.SaveChanges();
 
                 return Json(new { code = 200, desc = "支付成功", info = order });
@@ -181,9 +182,10 @@ namespace StudyOnline.Areas.Api.Controllers
             order.TradeNo = paymentId;
             order.TradeStatus = "completed";
 
+            //平衡学币
             NimUser user = entities.NimUser.Single(o => o.Username == order.UserName);
-            user.NimUserEx.Coins = order.Coin + (user.NimUserEx.Coins ?? 0);
-
+            user.NimUserEx.Coins = (order.Coin ?? 0) + (user.NimUserEx.Coins ?? 0);
+            order.IsBalance = 1;
             entities.SaveChanges();
 
             return Json(new { code = 200, desc = "支付成功", info = order });
@@ -210,7 +212,6 @@ namespace StudyOnline.Areas.Api.Controllers
             });
         }
 
-
         /// <summary>
         /// 手动通过Paypal订单Id查询订单记录
         /// </summary>
@@ -224,22 +225,28 @@ namespace StudyOnline.Areas.Api.Controllers
             return Json(payment);
         }
 
+        public ActionResult AlipayManual(String d)
+        {
+
+            return Json(null);
+        }
 
         /// <summary>
         /// 支付宝异步通知
+        /// 详细情况请看 https://doc.open.alipay.com/doc2/detail.htm?spm=a219a.7629140.0.0.viFEzs&treeId=59&articleId=103666&docType=1
         /// </summary>
         /// <param name="form"></param>
         /// <returns></returns>
-        public ActionResult AlipayNotify(FormCollection form)
+        [HttpPost]
+        public ActionResult AlipayNotify()
         {
             SortedDictionary<string, string> sPara = new SortedDictionary<string, string>();
-            foreach (var key in form.AllKeys)
+
+            var form = Request.Form;
+            var keys = Request.Form.AllKeys;
+            foreach (var key in keys)
             {
                 sPara.Add(key, form[key]);
-            }
-            if (form.AllKeys != null)
-            {
-                logger.Debug(String.Join("/", form.AllKeys.Select(o => String.Format("key={0} value={1}", o, form[0]))));
             }
 
             if (sPara.Count > 0)//判断是否有带返回参数
@@ -247,33 +254,43 @@ namespace StudyOnline.Areas.Api.Controllers
                 Notify aliNotify = new Notify();
                 bool verifyResult = aliNotify.Verify(sPara, form["notify_id"], form["sign"]);
 
+                //打印日志
+                logger.Debug(String.Format("VerifyResult:{0}  sPara:{1}", verifyResult, String.Join(",", sPara.Select(o => String.Format("[{0},{1}]", o.Key, o.Value)))));
+
                 if (verifyResult)//验证成功
                 {
-                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    //请在这里加上商户的业务逻辑程序代码
-
-
-                    //——请根据您的业务逻辑来编写程序（以下代码仅作参考）——
-                    //获取支付宝的通知返回参数，可参考技术文档中服务器异步通知参数列表
-
                     //商户订单号                
                     string out_trade_no = form["out_trade_no"];
+                    //支付宝交易号                
+                    string trade_no = form["trade_no"];
+                    //交易状态
+                    string trade_status = form["trade_status"];
+
+
                     Orders order = entities.Orders.Find(out_trade_no);
                     if (order == null)
                     {
-                        return Content("fail");//如果没有查询到订单,则返回失败
+                        String msg = String.Format("{0} Order does not exist", out_trade_no);
+                        logger.Debug(msg);
+                        return Content(msg);//如果没有查询到订单,则返回失败
                     }
 
-                    //支付宝交易号                
-                    string trade_no = form["trade_no"];
-                    order.TradeNo = trade_no;//保存支付宝交易号
+                    //业务数据处理注意事项
+                    //商户需要验证该通知数据中的out_trade_no是否为商户系统中创建的订单号，并判断total_fee是否确实为该订单的实际金额（即商户订单创建时的金额），
+                    //同时需要校验通知中的seller_id（或者seller_email) 是否为out_trade_no这笔单据的对应的操作方（有的时候，一个商户可能有多个seller_id / seller_email），
+                    //上述有任何一个验证不通过，则表明本次通知是异常通知，务必忽略。在上述验证通过后商户必须根据支付宝不同类型的业务通知，正确的进行不同的业务处理，并且过滤重复的通知结果数据。
+                    //在支付宝的业务通知中，只有交易通知状态为TRADE_SUCCESS或TRADE_FINISHED时，支付宝才会认定为买家付款成功。 
+                    //如果商户需要对同步返回的数据做验签，必须通过服务端的签名验签代码逻辑来实现。如果商户未正确处理业务通知，存在潜在的风险，商户自行承担因此而产生的所有损失。
 
-                    //交易状态
-                    string trade_status = form["trade_status"];
-                    order.TradeStatus = trade_status;
-                    entities.SaveChanges();
-
-                    if (form["trade_status"] == "TRADE_FINISHED")
+                    //返回状态
+                    //程序执行完后必须打印输出“success”（不包含引号）。如果商户反馈给支付宝的字符不是success这7个字符，支付宝服务器会不断重发通知，直到超过24小时22分钟。
+                    //一般情况下，25小时以内完成8次通知（通知的间隔频率一般是：4m,10m,10m,1h,2h,6h,15h）；
+                    //支付宝异步通知的三种状态是分别通知的,
+                    //如当WAIT_BUYER_PAY时会发送异步通知,没有收到返回success
+                    //这时TRADE_SUCCESS异步通知来了,我们正确返回了success
+                    //4分钟之后,支付宝会把WAIT_BUYER_PAY异步通知再发送一次,但是TRADE_SUCCESS由于上一次的TRADE_SUCCESS我们正确返回了数据,所以不会再来通知我们了
+                    //同时,如果在第4分钟时,我们收到了WAIT_BUYER_PAY异步通知,但是我们没有正确返回success,那么再过10分钟,关于这个状态的异步通知还是会推送过来,直到我们正确返回success或者时间到期为止
+                    if (trade_status == "TRADE_FINISHED")
                     {
                         //判断该笔订单是否在商户网站中已经做过处理
                         //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
@@ -282,8 +299,14 @@ namespace StudyOnline.Areas.Api.Controllers
                         //注意：
                         //退款日期超过可退款期限后（如三个月可退款），支付宝系统发送该交易状态通知
                         //请务必判断请求时的total_fee、seller_id与通知时获取的total_fee、seller_id为一致的
+
+                        order.TradeNo = trade_no;
+                        order.TradeStatus = trade_status;
+                        entities.SaveChanges();
+                        logger.Debug("success");
+                        return Content("success");
                     }
-                    else if (form["trade_status"] == "TRADE_SUCCESS")
+                    else if (trade_status == "TRADE_SUCCESS")
                     {
                         //判断该笔订单是否在商户网站中已经做过处理
                         //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
@@ -292,27 +315,49 @@ namespace StudyOnline.Areas.Api.Controllers
                         //注意：
                         //付款完成后，支付宝系统发送该交易状态通知
                         //请务必判断请求时的total_fee、seller_id与通知时获取的total_fee、seller_id为一致的
+
+                        if (order.TradeStatus == "TRADE_FINISHED")
+                        {
+                            logger.Debug("success");
+                            return Content("success");
+                        }
+
+                        order.TradeNo = trade_no;
+                        order.TradeStatus = trade_status;
+                        entities.SaveChanges();
+                        logger.Debug("success");
+                        return Content("success");
                     }
-                    else
+                    else if (trade_status == "WAIT_BUYER_PAY")
                     {
+                        if (order.TradeStatus == "TRADE_FINISHED" || order.TradeStatus == "TRADE_SUCCESS")
+                        {
+                            logger.Debug("success");
+                            return Content("success");
+                        }
+
+                        order.IsBalance = 0;//不平衡学币
+                        order.TradeNo = trade_no;
+                        order.TradeStatus = trade_status;
+                        entities.SaveChanges();
+                        logger.Debug("success");
+                        return Content("success");
                     }
 
-                    //——请根据您的业务逻辑来编写程序（以上代码仅作参考）——
-
-                    // Response.Write("success");  //请不要修改或删除
-                    return Content("success");
-                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    logger.Debug("failure");
+                    return Content("failure");
                 }
                 else//验证失败
                 {
-                    // Response.Write("fail");
-                    return Content("fail");
+                    logger.Debug("verification failed");
+                    return Content("verification failed");
                 }
             }
             else
             {
                 // Response.Write("无通知参数");
-                return Content("无通知参数");
+                logger.Debug("Parameters is null");
+                return Content("Parameters is null");
             }
         }
     }

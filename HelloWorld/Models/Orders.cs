@@ -26,5 +26,6 @@ namespace StudyOnline.Models
         public string TradeStatus { get; set; }
         public Nullable<System.DateTime> CreateTime { get; set; }
         public Nullable<int> Coin { get; set; }
+        public Nullable<int> IsBalance { get; set; }
     }
 }

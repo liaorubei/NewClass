@@ -39,7 +39,7 @@
                 <th width="100">VersionName</th>
                 <th>UpgradeInfo</th>
                 <th>PackageSize</th>
-                <th>CreateDate</th>
+                <th width="125">CreateDate</th>
             </tr>
         </thead>
 
@@ -49,11 +49,11 @@
             {
                 <tr target="id" rel="@item.Id">
                     <td>@(++i)</td>
-                    <td>@item.VersionType</td>
+                    <td>@(item.VersionType==0?"学生端":"教师端")</td>
                     <td>@item.VersionName</td>
                     <td>@item.UpgradeInfo</td>
                     <td>@item.PackageSize</td>
-                    <td>@(item.CreateDate==null?"":item.CreateDate.Value.ToString("yyyy-MM-dd HH:mm:ss"))</td>
+                    <td align="center">@(item.CreateDate==null?"":item.CreateDate.Value.ToString("yyyy-MM-dd HH:mm:ss"))</td>
                 </tr>
             }
         </tbody>

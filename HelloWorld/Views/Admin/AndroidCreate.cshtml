@@ -41,8 +41,8 @@
                             @if (!String.IsNullOrEmpty(Model.PackagePath))
                             {
                                 <span class="fileList">
-                                    <input type="hidden" name="Path" value="@Model.PackagePath" />
-                                    <input type='hidden' name='Size' value='@Model.PackageSize' />
+                                    <input type="hidden" name="PackagePath" value="@Model.PackagePath" />
+                                    <input type='hidden' name='PackageSize' value='@Model.PackageSize' />
                                     <span>@Model.PackagePath</span>
                                     <a href="javascript:;" class="close" title="移除" onclick='$(this).parent().remove();'></a>
                                 </span>

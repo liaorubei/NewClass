@@ -27,6 +27,7 @@ namespace StudyOnline.Utils
         //create the order info. 创建订单信息
         public static String getOrderInfo(Orders order)
         {
+            String notify_url = "http://voc2015.azurewebsites.net/Api/Payment/AlipayNotify";//http://voc2015.azurewebsites.net/notify_url.aspx
 
             // 签约合作者身份ID,即商户PID
             String orderInfo = "partner=" + "\"" + Config.Partner + "\"";
@@ -47,7 +48,7 @@ namespace StudyOnline.Utils
             orderInfo += "&total_fee=" + "\"" + order.Amount + "\"";
 
             // 服务器异步通知页面路径
-            orderInfo += "&notify_url=" + "\"" + "http://voc2015.azurewebsites.net/api/Payment/AlipayNotify" + "\"";//http://voc2015.azurewebsites.net/api/Payment/AlipayNotify
+            orderInfo += "&notify_url=" + "\"" + notify_url + "\"";
 
             // 服务接口名称， 固定值
             orderInfo += "&service=\"mobile.securitypay.pay\"";

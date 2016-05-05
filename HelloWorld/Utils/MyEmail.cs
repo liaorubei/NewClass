@@ -23,8 +23,8 @@ namespace StudyOnline.Utils
         /// 构造函数
         ///</summary>
         ///<param name="server">发件箱的邮件服务器地址</param>
-        ///<param name="toMail">收件人地址（可以是多个收件人，程序中是以“;"进行区分的）</param>
-        ///<param name="fromMail">发件人地址</param>
+        ///<param name="addresseeMail">收件人地址（可以是多个收件人，程序中是以“;"进行区分的）</param>
+        ///<param name="addressorMail">发件人地址</param>
         ///<param name="subject">邮件标题</param>
         ///<param name="emailBody">邮件内容（可以以html格式进行设计）</param>
         ///<param name="username">发件箱的用户名（即@符号前面的字符串，例如：hello@163.com，用户名为：hello）</param>
@@ -32,13 +32,15 @@ namespace StudyOnline.Utils
         ///<param name="port">发送邮件所用的端口号（htmp协议默认为25）</param>
         ///<param name="sslEnable">true表示对邮件内容进行socket层加密传输，false表示不加密</param>
         ///<param name="pwdCheckEnable">true表示对发件人邮箱进行密码验证，false表示不对发件人邮箱进行密码验证</param>
-        public MyEmail(string server, string toMail, string fromMail, string subject, string emailBody, string username, string password, string port, bool sslEnable, bool pwdCheckEnable)
+        public MyEmail(string server, string addresseeMail, string addressorMail, string subject, string emailBody, string username, string password, string port, bool sslEnable, bool pwdCheckEnable)
         {
+            //addressee n.收件人；收信人 
+            //addressor n.发件人；
             try
             {
                 mMailMessage = new MailMessage();
-                mMailMessage.To.Add(toMail);
-                mMailMessage.From = new MailAddress(fromMail);
+                mMailMessage.To.Add(new MailAddress(addresseeMail, "ChineseChat", System.Text.Encoding.UTF8));
+                mMailMessage.From = new MailAddress(addressorMail, "ChineseChat", System.Text.Encoding.UTF8);
                 mMailMessage.Subject = subject;
                 mMailMessage.Body = emailBody;
                 mMailMessage.IsBodyHtml = true;

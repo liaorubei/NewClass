@@ -146,7 +146,6 @@
             </div>
             <div id="sidebar">
                 <div class="toggleCollapse"><h2>常用菜单</h2><div>收缩</div></div>
-
                 <div class="accordion" fillspace="sidebar">
                     <div class="accordionHeader">
                         <h2><span>Folder</span>内容管理</h2>
@@ -168,8 +167,7 @@
                     </div>
                     <div class="accordionContent">
                         <ul class="tree treeFolder">
-                            <li><a href='@Url.Action("ApkIndex")' target="navTab" rel="AdminApkIndex">版本管理</a></li>
-                            <li><a href='@Url.Action("AndroidIndex")' target="navTab" rel="AdminAndroidIndex">更新管理</a></li>
+                            <li><a href='@Url.Action("AndroidIndex")' target="navTab" rel="AdminAndroidIndex">版本管理</a></li>
                         </ul>
                     </div>
                     <div class="accordionHeader">
@@ -230,38 +228,25 @@
                                 <p><span>DWZ富客户端框架</span></p>
                                 <p>DWZ官方微博:<a href="http://weibo.com/dwzui" target="_blank">http://weibo.com/dwzui</a></p>*@
                         </div>
-                        <div class="pageFormContent" layouth="80" style="margin-right:230px">
+                        <div class="pageFormContent" layouth="80">
 
 
-                            @*<h2>DWZ系列开源项目:</h2>
-                                                            <div class="unit"><a href="https://code.csdn.net/dwzteam/dwz_jui" target="_blank">dwz富客户端框架 - jUI</a></div>
-                                                            <div class="unit"><a href="https://code.csdn.net/dwzteam/dwz_ssh2" target="_blank">dwz4j企业级Java Web快速开发框架(Hibernate+Spring+Struts2) + jUI整合应用</a></div>
-                                                            <div class="unit"><a href="https://code.csdn.net/dwzteam/dwz_springmvc" target="_blank">dwz4j企业级Java Web快速开发框架(Mybatis + SpringMVC) + jUI整合应用</a></div>
-                                                            <div class="unit"><a href="https://code.csdn.net/dwzteam/dwz_thinkphp" target="_blank">ThinkPHP + jUI整合应用</a></div>
-                                                            <div class="unit"><a href="https://code.csdn.net/dwzteam/dwz_zendframework" target="_blank">Zend Framework + jUI整合应用</a></div>
-                                                            <div class="unit"><a href="http://www.yiiframework.com/extension/dwzinterface/" target="_blank">YII + jUI整合应用</a></div>
-
-                                                            <div class="divider"></div>
-                                                            <h2>常见问题及解决:</h2>
-                                <pre style="margin:5px;line-height:1.4em">
-                                Error loading XML document: dwz.frag.xml
-                                直接用IE打开index.html弹出一个对话框：Error loading XML document: dwz.frag.xml
-                                原因：没有加载成功dwz.frag.xml。IE ajax laod本地文件有限制, 是ie安全级别的问题, 不是框架的问题。
-                                解决方法：部署到apache 等 Web容器下。
-                                </pre>
-
-                                                            <div class="divider"></div>
-                                                            <h2>有偿服务(<span style="color:red;">公司培训，技术支持，解决使用jUI过程中出现的全部疑难问题</span>):</h2><br />
-                                <pre style="margin:5px;line-height:1.4em;">
-                                合作电话(杜权)：010-52897073 18600055221
-                                邮箱：support@j-ui.com
-                                来往：pinglive01(吴平)
-                                </pre>*@
+                            <div style="width:150px;">
+                                <div style="position:absolute;top:25px;right:25px;">
+                                    <h5 style="text-align:center;">学生端</h5>
+                                    <img src="@Url.Content("~/images/app-student-release.png")" style="width:150px; height:150px;" />
+                                    <div style="height:50px;"></div>
+                                    <h5 style="text-align:center;">教师端</h5>
+                                    <img src="@Url.Content("~/images/app-teacher-release.png")" style="width:150px; height:150px;" />
+                                </div>
+                            </div>
                         </div>
 
-                        @*<div style="width:230px;position: absolute;top:60px;right:0" layouth="80">
+                        @*
+                          <div style="width:230px;position: absolute;top:60px;right:0" layouth="80">
                                 <iframe width="100%" height="430" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?width=0&height=430&fansRow=2&ptype=1&skin=1&isTitle=0&noborder=1&isWeibo=1&isFans=0&uid=1739071261&verifier=c683dfe7"></iframe>
-                            </div>*@
+                          </div>
+                        *@
                     </div>
 
                 </div>

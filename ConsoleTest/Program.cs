@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,8 +11,10 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
-            TimeSpan span = new TimeSpan(0, 5, 29);
-            Console.WriteLine("TotalMinutes=" + Convert.ToInt32(span.TotalMinutes));
+            Int32? i = null;
+            Int32? k = null;
+            i = (i ?? 4) + (k ?? 5);
+            Console.WriteLine("");
             Console.ReadLine();
         }
     }

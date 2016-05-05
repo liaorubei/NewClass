@@ -189,6 +189,7 @@
           <Property Name="TradeStatus" Type="nvarchar" MaxLength="128" />
           <Property Name="CreateTime" Type="datetime" />
           <Property Name="Coin" Type="int" />
+          <Property Name="IsBalance" Type="int" />
         </EntityType>
         <EntityType Name="Photo">
           <Key>
@@ -829,6 +830,7 @@
           <Property Name="TradeStatus" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="CreateTime" Type="DateTime" Precision="3" />
           <Property Name="Coin" Type="Int32" />
+          <Property Name="IsBalance" Type="Int32" />
         </EntityType>
         <EntityType Name="Product">
           <Key>
@@ -1236,6 +1238,7 @@
           <EntitySetMapping Name="Orders">
             <EntityTypeMapping TypeName="StudyOnline.Orders">
               <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="IsBalance" ColumnName="IsBalance" />
                 <ScalarProperty Name="Coin" ColumnName="Coin" />
                 <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
                 <ScalarProperty Name="TradeStatus" ColumnName="TradeStatus" />

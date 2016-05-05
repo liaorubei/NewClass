@@ -61,7 +61,7 @@ namespace StudyOnline.Areas.Api.Controllers
                 string toMailAddress = email;
                 string fromMailAddress = "Service@chinesechat.cn";//公司服务邮箱
                 string subjectInfo = "ChineseChat验证码邮件,请及时查看";
-                string bodyInfo = "你好,验证码为:" + code + ",有效时间是10分钟,请注意!<br/>使用汉问客户端";
+                string bodyInfo = "你好,验证码为:" + code + ",有效时间是10分钟,请注意!<br/>欢迎使用汉问客户端";
                 string mailUsername = "Service@chinesechat.cn";
                 string mailPassword = "60190466hwdfKF"; //发送邮箱的密码（）
 
@@ -460,7 +460,7 @@ namespace StudyOnline.Areas.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdateStudent(String username, HttpPostedFileBase icon, String nickname, String about, String school, String spoken, String hobby, List<String> deletedPhotos, List<HttpPostedFileBase> newPhotos)
+        public ActionResult UpdateStudent(String username, String nickname, String mobile, Int32? gender, DateTime? birth, String country, String language, String job, HttpPostedFileBase icon)
         {
             try
             {
@@ -478,48 +478,32 @@ namespace StudyOnline.Areas.Api.Controllers
                 }
 
                 ex.Name = nickname;
-                ex.About = about;
-                ex.School = school;
-
-
-                #region 旧照片处理
-                if (deletedPhotos != null && deletedPhotos.Any())
-                {
-                    List<UploadFile> origin = user.UploadFile.ToList();
-                    List<UploadFile> remove = new List<UploadFile>();
-
-                    //选择要删除的
-                    foreach (var item in origin)
-                    {
-                        if (deletedPhotos.Any(o => item.Path == o))
-                        {
-                            remove.Add(item);
-                        }
-                    }
-
-                    //删除要删除的
-                    foreach (var item in remove)
-                    {
-                        user.UploadFile.Remove(item);
-                    }
-                }
-                #endregion
-
-                #region 新照片处理
-                if (newPhotos != null && newPhotos.Any())
-                {
-                    foreach (var item in newPhotos)
-                    {
-                        user.UploadFile.Add(Helper.SaveUploadFile(Server, item));
-                    }
-
-                }
-                #endregion
+                ex.Mobile = mobile;
+                ex.Gender = gender;
+                ex.Birth = birth;
+                ex.Country = country;
+                ex.Language = language;
+                ex.Job = job;
 
                 entities.SaveChanges();
-                return Json(new { code = 200, desc = "更新成功", info = new { user.Id, Photos = user.UploadFile.Select(o => o.Path) } });
-
-
+                return Json(new
+                {
+                    code = 200,
+                    desc = "更新成功",
+                    info = new
+                    {
+                        ex.Id,
+                        Avatar = ex.Icon,
+                        Nickname = ex.Name,
+                        ex.Mobile,
+                        ex.Gender,
+                        Birth = ex.Birth == null ? null : ex.Birth.Value.ToString("yyyy-MM-dd"),
+                        ex.Country,
+                        ex.Language,
+                        ex.Job,
+                        Photos = user.UploadFile.Select(o => o.Path)
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -528,7 +512,7 @@ namespace StudyOnline.Areas.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdateTeacher(String username, String nickname, Int32? gender, DateTime? birth, String about, String school, String spoken, String hobbies, List<String> deletedPhotos, HttpPostedFileBase icon)
+        public ActionResult UpdateTeacher(String username, String nickname, String mobile, Int32? gender, DateTime? birth, String about, String school, String spoken, String hobbies, String country, List<String> deletedPhotos, HttpPostedFileBase icon)
         {
             try
             {
@@ -539,13 +523,15 @@ namespace StudyOnline.Areas.Api.Controllers
 
                 NimUser user = entities.NimUser.Single(o => o.Username == username);
                 NimUserEx ex = user.NimUserEx;
+                ex.Name = nickname;
+                ex.Mobile = mobile;
                 ex.Gender = gender;
                 ex.Birth = birth;
-                ex.Name = nickname;
                 ex.About = about;
                 ex.School = school;
                 ex.Spoken = spoken;
                 ex.Hobbies = hobbies;
+                ex.Country = country;
 
 
                 if (icon != null && icon.ContentLength > 0)
@@ -601,12 +587,14 @@ namespace StudyOnline.Areas.Api.Controllers
                         ex.Id,
                         Avatar = ex.Icon,
                         Nickname = ex.Name,
+                        ex.Mobile,
                         ex.Gender,
                         Birth = ex.Birth == null ? null : ex.Birth.Value.ToString("yyyy-MM-dd"),
                         ex.School,
                         ex.Hobbies,
                         ex.Spoken,
                         ex.About,
+                        ex.Country,
                         Photos = user.UploadFile.Select(o => o.Path)
                     }
                 });
@@ -1221,6 +1209,32 @@ namespace StudyOnline.Areas.Api.Controllers
         {
             try
             {
+                var teacher = entities.NimUser.Where(o => o.Category == 1).OrderByDescending(o => o.IsOnline).ThenByDescending(o => o.IsEnable).ThenBy(o => o.Enqueue).Skip(skip).Take(take).ToList();
+                return Json(new
+                {
+                    code = 200,
+                    desc = "查询成功",
+                    info = teacher.Select(o => new
+                    {
+                        o.Id,
+                        o.Accid,
+                        Avatar = o.NimUserEx.Icon,
+                        o.NimUserEx.About,
+                        o.Username,
+                        Nickname = o.NimUserEx.Name,
+                        IsEnable = 1 == o.IsEnable,
+                        IsOnline = 1 == o.IsOnline,
+                        o.Enqueue,
+                        o.NimUserEx.Spoken,
+                        o.NimUserEx.Country,
+                        Photos = o.UploadFile.Select(p => p.Path).ToList()
+                    })
+                });
+
+
+
+                #region 注释代码,使用新的排队方式
+                /*               
                 List<NimUser> all = new List<NimUser>();
 
                 Int64 now = DateTime.Now.Ticks;
@@ -1261,6 +1275,9 @@ namespace StudyOnline.Areas.Api.Controllers
                         o.Enqueue
                     })
                 });
+
+               */
+                #endregion
             }
             catch (Exception ex)
             {
@@ -1286,9 +1303,15 @@ namespace StudyOnline.Areas.Api.Controllers
                     nimUser = entities.NimUser.Find(id);
                 }
 
+                if (!String.IsNullOrEmpty(accid))
+                {
+                    nimUser = entities.NimUser.Single(o => o.Accid == accid);
+                }
 
-
-
+                if (!String.IsNullOrEmpty(username))
+                {
+                    nimUser = entities.NimUser.Single(o => o.Username == username);
+                }
 
                 if (nimUser == null)
                 {
@@ -1301,6 +1324,51 @@ namespace StudyOnline.Areas.Api.Controllers
                 nimUser.Refresh = DateTime.Now.Ticks;
                 entities.SaveChanges();
                 return Json(new { code = 200, desc = "入队成功" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// 新的教师出队接口
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="accid"></param>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult TeacherDequeue(Int32? id, String accid, String username)
+        {
+            try
+            {
+                NimUser nimUser = null;
+                if (id != null)
+                {
+                    nimUser = entities.NimUser.Find(id);
+                }
+
+                if (!String.IsNullOrEmpty(accid))
+                {
+                    nimUser = entities.NimUser.Single(o => o.Accid == accid);
+                }
+
+                if (!String.IsNullOrEmpty(username))
+                {
+                    nimUser = entities.NimUser.Single(o => o.Username == username);
+                }
+
+                if (nimUser == null)
+                {
+                    return Json(new { code = 201, desc = "出队失败" });
+                }
+
+                nimUser.IsEnable = 0;
+                nimUser.IsOnline = 0;
+                nimUser.Refresh = DateTime.Now.Ticks;
+                entities.SaveChanges();
+                return Json(new { code = 200, desc = "出队成功" });
             }
             catch (Exception ex)
             {
@@ -1343,6 +1411,7 @@ namespace StudyOnline.Areas.Api.Controllers
             try
             {
                 NimUser user = entities.NimUser.Single(o => o.Username == username);
+                NimUserEx ex = user.NimUserEx;
                 return Json(new
                 {
                     code = 200,
@@ -1353,6 +1422,11 @@ namespace StudyOnline.Areas.Api.Controllers
                         user.Accid,
                         user.Username,
                         Nickname = user.NimUserEx.Name,
+                        user.NimUserEx.Country,
+                        ex.About,
+                        ex.School,
+                        ex.Spoken,
+                        ex.Hobbies,
                         Photos = user.UploadFile.Select(o => o.Path)
                     }
                 });
