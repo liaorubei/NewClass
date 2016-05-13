@@ -1082,6 +1082,7 @@
     <Content Include="Views\Admin\OrderIndex.cshtml" />
     <Content Include="Views\Home\UserServiceAgreement.cshtml" />
     <Content Include="Views\Home\UserHelp.cshtml" />
+    <Content Include="Views\Home\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Api\Views\CallLog\" />

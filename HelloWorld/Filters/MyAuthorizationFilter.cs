@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudyOnline.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,7 +11,11 @@ namespace StudyOnline.Filters
     {
         public void OnAuthorization(AuthorizationContext filterContext)
         {
-            int count = filterContext.HttpContext.Session.Count;
+            var CurrentUser = filterContext.HttpContext.Session["CurrentUser"] as User;
+            if (CurrentUser == null)
+            {
+                filterContext.Result = new RedirectResult("/Home/Login");
+            }
         }
     }
 }

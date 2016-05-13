@@ -249,6 +249,46 @@ namespace StudyOnline.Areas.Api.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult GetTeacherByUsername(String username, Int32 skip, Int32 take)
+        {
+            try
+            {
+                NimUser nimuser = entities.NimUser.Single(o => o.Username == username);
+                var temp = entities.CallLog.Where(o => o.Target == nimuser.Id && o.Start != null && o.Finish != null).OrderByDescending(o => o.Start).Skip(skip).Take(take).ToList();
+                return Json(new
+                {
+                    code = 200,
+                    desc = "查询成功",
+                    info = temp.Select(o => new
+                    {
+                        Start = o.Start.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                        Finish = o.Finish.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                        (o.Finish - o.Start).Value.TotalSeconds,
+                        Teacher = new
+                        {
+                            o.Teacher.Id,
+                            Nickname = o.Teacher.NimUserEx.Name,
+                            o.Teacher.Username
+                        },
+                        Student = new
+                        {
+                            o.Student.Id,
+                            Nickname = o.Student.NimUserEx.Name,
+                            o.Student.Username
+                        },
+                        Themes = entities.LogTheme.Where(i => i.ChatId == o.ChatId).Select(i => new { i.Theme.Name }),
+                        o.Score,
+                        o.Coins
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
+        }
+
         /// <summary>
         /// 给指定目标的通话ID添加对话主题
         /// </summary>

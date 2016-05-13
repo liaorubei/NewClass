@@ -30,7 +30,7 @@ namespace StudyOnline.Areas.Api.Controllers
             Regex regex = new Regex("^\\s*([A-Za-z0-9_-]+(\\.\\w+)*@(\\w+\\.)+\\w{2,5})\\s*$");
             if (!regex.IsMatch(email))
             {
-                return Json(new { code = 20001, desc = "邮箱格式不对" });
+                return Json(new { code = 20001, desc = "E-mail address invalid" });
             }
 
             if (!entities.NimUser.Any(o => o.Username == email))
@@ -60,8 +60,8 @@ namespace StudyOnline.Areas.Api.Controllers
                 string mailPort = "25";
                 string toMailAddress = email;
                 string fromMailAddress = "Service@chinesechat.cn";//公司服务邮箱
-                string subjectInfo = "ChineseChat验证码邮件,请及时查看";
-                string bodyInfo = "你好,验证码为:" + code + ",有效时间是10分钟,请注意!<br/>欢迎使用汉问客户端";
+                string subjectInfo = "Your ChineseChat verification code";
+                string bodyInfo = "Your verification code is:" + code + ".Please enter it in the corresponding blank on Reset Password page within ten minutes.";
                 string mailUsername = "Service@chinesechat.cn";
                 string mailPassword = "60190466hwdfKF"; //发送邮箱的密码（）
 
@@ -71,7 +71,7 @@ namespace StudyOnline.Areas.Api.Controllers
             catch (Exception ex)
             {
                 //返回信息
-                return Json(new { code = 201, desc = "验证码生成失败", info = ex.Message });
+                return Json(new { code = 201, desc = "generate verification code failure", info = ex.Message });
             }
 
             //返回信息
@@ -89,23 +89,25 @@ namespace StudyOnline.Areas.Api.Controllers
         {
             if (String.IsNullOrEmpty(contact) || String.IsNullOrEmpty(captcha))
             {
-                return Json(new { code = "20001", desc = "不能为空" });
+                return Json(new { code = 203, desc = "e-mail or verification code cannot be empty!" });
             }
 
             AuthCode authcode = entities.AuthCode.OrderByDescending(o => o.Createtime).FirstOrDefault(o => o.Contact == contact && o.Code == captcha);
             if (authcode == null)
             {
-                return Json(new { code = "201", desc = "查无此验证码和联系方式" });
+                return Json(new { code = 202, desc = "e-mail or verification code not found" });
             }
 
             var span = DateTime.Now - authcode.Createtime.Value;
 
             if (span.TotalSeconds > (30 * 60))
             {
-                return Json(new { code = "201", desc = "验证码已经过期" });
+                return Json(new { code = 201, desc = "verification code expired" });
             }
 
-            return Json(new { code = 200, desc = "验证成功", info = "" });
+            {
+                return Json(new { code = 200, desc = "Verify success" });
+            }
         }
 
         /// <summary>
@@ -120,12 +122,12 @@ namespace StudyOnline.Areas.Api.Controllers
             NimUser user = entities.NimUser.Single(o => o.Username == username);
             if (user == null)
             {
-                return Json(new { code = 201, desc = "修改失败" });
+                return Json(new { code = 201, desc = "username not found" });
             }
 
             if ((password + "").Length < 8)
             {
-                return Json(new { code = 201, desc = "修改失败" });
+                return Json(new { code = 201, desc = "password can not be less than 8 character" });
             }
 
             user.Password = EncryptionUtil.Md5Encode(password);//密码MD5加密
@@ -145,17 +147,17 @@ namespace StudyOnline.Areas.Api.Controllers
         {
             if (String.IsNullOrEmpty(username) || String.IsNullOrEmpty(old_password) || String.IsNullOrEmpty(new_password))
             {
-                return Json(new { code = 201, desc = "不能为空" });
+                return Json(new { code = 201, desc = "username or password cannot be empty" });
             }
 
             if (old_password.Length < 8 || new_password.Length < 8)
             {
-                return Json(new { code = 201, desc = "长度不足" });
+                return Json(new { code = 201, desc = "password cannot be less than 8 characters" });
             }
 
             if (old_password == new_password)
             {
-                return Json(new { code = 201, desc = "密码相同" });
+                return Json(new { code = 201, desc = "the old password and the new password are the same" });
             }
 
 
@@ -165,12 +167,12 @@ namespace StudyOnline.Areas.Api.Controllers
 
                 if (user == null)
                 {
-                    return Json(new { code = 201, desc = "用户为空" });
+                    return Json(new { code = 201, desc = "username not found" });
                 }
 
                 if (user.Password != EncryptionUtil.Md5Encode(old_password))
                 {
-                    return Json(new { code = 201, desc = "验证失败" });
+                    return Json(new { code = 201, desc = "incorrect password" });
                 }
 
 
@@ -210,23 +212,23 @@ namespace StudyOnline.Areas.Api.Controllers
         {
             if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(password))
             {
-                return Json(new { code = 20001, desc = "参数不能为空" });
+                return Json(new { code = 20001, desc = "email or password cannot be empty" });
             }
 
             Regex regex = new Regex("^\\s*([A-Za-z0-9_-]+(\\.\\w+)*@(\\w+\\.)+\\w{2,5})\\s*$");
             if (!regex.IsMatch(email))
             {
-                return Json(new { code = 20001, desc = "邮箱格式不对" });
+                return Json(new { code = 20001, desc = "E-mail address invalid" });
             }
 
             if (password.Length < 8)
             {
-                return Json(new { code = 20001, desc = "密码长度不够" });
+                return Json(new { code = 20001, desc = "password cannot be less than 8 characters" });
             }
 
             if (entities.NimUser.Any(o => o.Username == email || o.NimUserEx.Email == email))
             {
-                return Json(new { code = 20001, desc = "用户名被注册" });
+                return Json(new { code = 20001, desc = "username already exists" });
             }
 
             NimUser user = new NimUser();
@@ -249,11 +251,11 @@ namespace StudyOnline.Areas.Api.Controllers
                 user.NimUserEx = new NimUserEx() { Email = email, Name = email };
                 entities.NimUser.Add(user);
                 entities.SaveChanges();
-                return Json(new { code = 200, desc = "添加成功", info = new { user.Id, user.Accid, user.Token } });
+                return Json(new { code = 200, desc = "创建成功", info = new { user.Id, user.Accid, user.Token } });
             }
             catch (Exception ex)
             {
-                return Json(new { code = 20002, desc = "添加失败", info = ex });
+                return Json(new { code = 20002, desc = "创建失败" + ex.Message });
             }
         }
 

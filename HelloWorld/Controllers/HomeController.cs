@@ -15,6 +15,7 @@ namespace StudyOnline.Controllers
     {
         private StudyOnlineEntities db = new StudyOnlineEntities();
         private int pageSize = 15;
+
         public ActionResult Index(int? index, int? level)
         {
 
@@ -143,6 +144,34 @@ namespace StudyOnline.Controllers
         public ActionResult UserHelp()
         {
             return View();
+        }
+
+        public ActionResult Login()
+        {
+            ViewData.Model = new LoginModel() { };
+            return View();
+        }
+
+        public ActionResult Logout()
+        {
+            ViewData.Model = new LoginModel() { };
+            Session.Remove("CurrentUser");
+            return View("Login");
+        }
+
+        [HttpPost]
+        public ActionResult Login(LoginModel model)
+        {
+            if (model.UserName == "admin" && model.Password == "13579246810")
+            {
+                Session["CurrentUser"] = new User() { UserName = model.UserName };
+                return Redirect("/Admin/Index");
+            }
+            else
+            {
+                return View(model);
+            }
+
         }
 
     }
