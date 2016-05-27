@@ -22,20 +22,20 @@ namespace StudyOnline.Controllers
             bool b = folder ?? false;
             List<Level> levels = db.Level.ToList();
             Level l = levels.OrderBy(o => o.Sort).FirstOrDefault();
-            var temp = new { code = 200, desc = "", info = levels.Select(o => new { o.Id,o.Name, o.Sort, o.Show, Folders = ((b && o.Id == l.Id) ? o.Folder.Select(f => new { f.Id, f.Name, f.Document.Count }) : null) }) };
+            var temp = new { code = 200, desc = "", info = levels.Select(o => new { o.Id, o.Name, o.Sort, o.Show, Folders = ((b && o.Id == l.Id) ? o.Folder.Select(f => new { f.Id, f.Name, f.Document.Count }) : null) }) };
             return Json(temp);
         }
 
         public ActionResult DocsByLevel(int levelId)
         {
-            var temp = db.Document.Where(t => t.LevelId == levelId).OrderByDescending(t => t.AddDate).ToList();
+            var temp = db.Document.Where(t => t.LevelId == levelId && t.AuditCase == AuditCase.审核).OrderByDescending(t => t.AddDate).ToList();
             var data = temp.Select(t => new { t.Id, t.Title, t.TitleTwo, t.SoundPath, t.Duration, t.Length, t.LengthString });
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult DocsByLevelId(int id, int? skip, int? take)
         {
-            var temp = db.Document.Where(t => t.LevelId == id).OrderByDescending(t => t.AddDate).Skip(skip ?? 0).Take(take ?? 20).ToList();
+            var temp = db.Document.Where(t => t.LevelId == id && t.AuditCase == AuditCase.审核).OrderByDescending(t => t.AddDate).Skip(skip ?? 0).Take(take ?? 20).ToList();
             var data = temp.Select(t => new { t.Id, t.Title, t.TitleTwo, t.SoundPath, t.Duration, t.Length, t.LengthString, DateString = (t.AddDate == null ? "" : t.AddDate.Value.ToString("yyyy-MM-dd")) });
             return Json(data, JsonRequestBehavior.AllowGet);
         }

@@ -148,6 +148,7 @@ create table CallLog(
 )
 CREATE UNIQUE NONCLUSTERED INDEX [Index_CallLog_ChatId] ON [CallLog]([ChatId] ASC);
 alter table  callLog add  Refresh datetime,Coins int
+  alter table [dbo].[CallLog] add [IsBalance] int
 
 --学习记录的主题表
 create table LogTheme(

@@ -1137,14 +1137,14 @@ namespace StudyOnline.Areas.Api.Controllers
             NimUser student = entities.NimUser.Find(id);
             if (student == null || (student.Category != 0))
             {
-                return Json(new { code = 2001, desc = "没有这个学生" });
+                return Json(new { code = 204, desc = "没有这个学生" });
             }
 
             if ((student.NimUserEx.Coins ?? 0) <= 0)
             {
                 student.NimUserEx.Coins = 0;
                 entities.SaveChanges();
-                return Json(new { code = 2001, desc = "学币不足", info = new { student.NimUserEx.Id, student.NimUserEx.Name, student.NimUserEx.Coins } });
+                return Json(new { code = 203, desc = "学币不足", info = new { student.NimUserEx.Id, student.NimUserEx.Name, student.NimUserEx.Coins } });
             }
 
             student.IsOnline = 1;
@@ -1153,7 +1153,7 @@ namespace StudyOnline.Areas.Api.Controllers
             NimUser teacher = entities.NimUser.Find(target);
             if (teacher == null || (teacher.Category != 1))
             {
-                return Json(new { code = 2001, desc = "没有这个老师" });
+                return Json(new { code = 202, desc = "没有这个老师" });
             }
 
             if (teacher.IsEnable == 0)
@@ -1210,8 +1210,8 @@ namespace StudyOnline.Areas.Api.Controllers
         public ActionResult GetTeacher(int skip, int take)
         {
             try
-            {
-                var teacher = entities.NimUser.Where(o => o.Category == 1).OrderByDescending(o => o.IsOnline).ThenByDescending(o => o.IsEnable).ThenBy(o => o.Enqueue).Skip(skip).Take(take).ToList();
+            {//.OrderByDescending(o => o.IsOnline) //20160527 不在线的老师不用显示,即不在排队状态的老师不显示
+                var teacher = entities.NimUser.Where(o => o.Category == 1 && o.IsOnline == 1).OrderByDescending(o => o.IsEnable).ThenBy(o => o.Enqueue).Skip(skip).Take(take).ToList();
                 return Json(new
                 {
                     code = 200,

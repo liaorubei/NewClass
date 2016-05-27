@@ -14,7 +14,14 @@ namespace StudyOnline.Filters
             var CurrentUser = filterContext.HttpContext.Session["CurrentUser"] as User;
             if (CurrentUser == null)
             {
-                filterContext.Result = new RedirectResult("/Home/Login");
+                if (filterContext.HttpContext.Request.IsAjaxRequest())
+                {
+                    filterContext.Result = new JsonResult() { Data = new { statusCode = "301", message = "会话超时", navTabId = "", callbackType = "", forwardUrl = "" }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+                }
+                else
+                {
+                    filterContext.Result = new RedirectResult("/Home/Login");
+                }
             }
         }
     }

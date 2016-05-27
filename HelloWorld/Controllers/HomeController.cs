@@ -174,5 +174,25 @@ namespace StudyOnline.Controllers
 
         }
 
+        public ActionResult LoginDialog()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult LoginDialog(LoginModel model)
+        {
+            if (model.UserName == "admin" && model.Password == "13579246810")
+            {
+                Session["CurrentUser"] = new User() { UserName = model.UserName };
+                return Json(new { statusCode = 200, message = "登录成功", callbackType = "closeCurrent" });
+            }
+            else
+            {
+                return Json(new { statusCode = 300, message = "登录失败", callbackType = "" });
+            }
+
+        }
+
     }
 }

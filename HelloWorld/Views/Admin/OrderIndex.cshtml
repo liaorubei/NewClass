@@ -55,8 +55,9 @@
                 <th>订单项目</th>
                 <th>订单总额</th>
                 <th width="100">订单状态</th>
-                <th width="150">订单时间</th>
                 <th width="80" align="center">订单用户</th>
+                <th width="150">订单时间</th>
+                <th width="55" align="center">是否平衡</th>
             </tr>
         </thead>
         <tbody>
@@ -68,8 +69,9 @@
                     <td>@item.Main</td>
                     <td>@item.Amount</td>
                     <td>@item.TradeStatus</td>
-                    <td>@item.CreateTime</td>
                     <td>@item.UserName</td>
+                    <td>@item.CreateTime</td>
+                    <td align="center">@item.IsBalance</td>
                 </tr>
             }
 

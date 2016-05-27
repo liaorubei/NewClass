@@ -458,6 +458,34 @@ namespace StudyOnline.Controllers
 
         #endregion
 
+        #region 教师管理
+        public ActionResult TeacherIndex()
+        {
+            Expression<Func<NimUser, bool>> predicate = o => true;
+            int pageIndex = 0;
+            int pageSize = 25;
+            var model = entities.NimUser.Where(o => o.Category == 1).OrderByDescending(o => o.CreateDate).Where(predicate).ToPagedList(pageIndex, pageSize);
+
+            ViewData.Model = model;
+            return View();
+        }
+
+        public ActionResult TeacherUpdate(Int32 id)
+        {
+            NimUserEx user = entities.NimUserEx.Find(id);
+            ViewData.Model = user;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult TeacherUpdate(NimUserEx ex)
+        {
+            NimUserEx model = entities.NimUserEx.Find(ex.Id);
+            return View();
+        }
+
+        #endregion
+
         #region 汉语水平
 
         public ActionResult HsLevelIndex()
@@ -972,10 +1000,6 @@ namespace StudyOnline.Controllers
             var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminApkIndex", rel = "", callbackType = "", forwardUrl = "" };
             return Json(data);
         }
-
-
-
-
 
         public ActionResult Login()
         {

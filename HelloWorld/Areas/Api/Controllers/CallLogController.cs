@@ -10,6 +10,7 @@ namespace StudyOnline.Areas.Api.Controllers
 {
     public class CallLogController : Controller
     {
+        readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         StudyOnlineEntities entities = new StudyOnlineEntities();
 
         /// <summary>
@@ -23,18 +24,34 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult Start(Int64 chatId, Int32 chatType, Int32 source, Int32 target)
         {
-            CallLog log = new CallLog();
-            log.Id = Guid.NewGuid().ToString().Replace("-", "");
-            log.ChatId = chatId;
-            log.ChatType = chatType;
-            log.Source = source;
-            log.Target = target;
-            log.Start = DateTime.Now;
-            log.Coins = 0;//必须写上,不然为空不好计算
+            CallLog k = entities.CallLog.SingleOrDefault(o => o.ChatId == chatId);
 
-            entities.CallLog.Add(log);
-            entities.SaveChanges();
-            return Json(new { code = 200, desc = "", info = new { log.Id, log.Source, log.Target } });
+            if (k == null)
+            {
+                try
+                {
+                    k = new CallLog();
+                    k.Id = Guid.NewGuid().ToString().Replace("-", "");
+                    k.ChatId = chatId;
+                    k.ChatType = chatType;
+                    k.Source = source;
+                    k.Target = target;
+
+                    k.Start = DateTime.Now;
+                    k.Refresh = k.Start;
+                    k.Coins = 0;
+                    k.IsBalance = 0;
+                    entities.CallLog.Add(k);
+                    entities.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    logger.Debug("chat history create failure with:\r\n" + ex.Message + " \r\n" + ex.StackTrace);
+                    return Json(new { code = 201, desc = "创建失败", info = new { k.Id, k.Source, k.Target } });
+                }
+            }
+
+            return Json(new { code = 200, desc = "创建成功", info = new { k.Id, k.Source, k.Target } });
         }
 
         /// <summary>
@@ -43,12 +60,23 @@ namespace StudyOnline.Areas.Api.Controllers
         /// <param name="chatId">云信的通话ID</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Finish(Int64 chatId)
+        public ActionResult Finish(String callId, Int64? chatId)
         {
-            CallLog chat = entities.CallLog.FirstOrDefault(o => o.ChatId == chatId);
+            CallLog chat = null;
+
+            if (!string.IsNullOrEmpty(callId))
+            {
+                chat = entities.CallLog.Find(callId);
+            }
+
             if (chat == null)
             {
-                return Json(new { code = 2001, desc = "挂断失败" });
+                chat = entities.CallLog.SingleOrDefault(o => o.ChatId == chatId);
+            }
+
+            if (chat == null)
+            {
+                return Json(new { code = 2001, desc = "记录为空" });
             }
 
             if (chat.Finish == null)
@@ -56,45 +84,62 @@ namespace StudyOnline.Areas.Api.Controllers
                 chat.Finish = DateTime.Now;
             }
 
-            //扣费情况,一分钟一个币
+            //扣费情况,一分钟一个币,如果大于等于30秒,算一分钟
+            //TimeSpan s = new TimeSpan(0, 0, 0, 29,999);
+            //(Int32)(s.TotalMinutes + 0.5)=0;
+            //TimeSpan s = new TimeSpan(0, 0, 0, 29,1000);
+            //(Int32)(s.TotalMinutes + 0.5)=1;
             var span = chat.Finish - chat.Start;
-            int coin = Convert.ToInt32(span.Value.TotalMinutes);//29秒不算,但是如果满30秒,当一秒算,如:5:30,按6MIN算
+            int coin = (Int32)(span.Value.TotalMinutes + 0.5);//29秒不算,但是如果满30秒,当一分钟算,如:5:30,按6MIN算
 
-            //如果大于30秒,算一分钟
-
-            //如果不够,则补够
-            NimUserEx user = entities.NimUserEx.Find(chat.Source);
+            //学生和老师
+            NimUser student = entities.NimUser.Find(chat.Source);
+            NimUser teacher = entities.NimUser.Find(chat.Target);
 
             //老师重新入队
-            NimUser teacher = entities.NimUser.Find(chat.Target);
             teacher.IsEnable = 1;
             teacher.IsOnline = 1;
             teacher.Enqueue = DateTime.Now.Ticks;
             teacher.Refresh = DateTime.Now.Ticks;
 
-            user.Coins -= coin;//从学生的帐号中去掉学币数
-            chat.Coins = coin;//把这次的浑身说写入聊天
-
-            entities.SaveChanges();
-            return Json(new
+            //学生扣除学币
+            if (chat.IsBalance != 1)
             {
-                code = 200,
-                desc = "挂断成功",
-                info = new
+                student.NimUserEx.Coins -= coin;//从学生的帐号中去掉学币数
+                chat.Coins = coin;//把这次的学币说写入聊天记录
+                chat.IsBalance = 1;//平衡学币
+            }
+            try
+            {
+                entities.SaveChanges();
+                return Json(new
                 {
-                    chat.Id,
-                    Student = new
+                    code = 200,
+                    desc = "记录成功",
+                    info = new
                     {
-                        chat.Student.NimUserEx.Id,
-                        Nickname = chat.Student.NimUserEx.Name,
-                        chat.Student.NimUserEx.Coins
-                    },
-                    chat.Source,
-                    chat.Target,
-                    chat.Coins,
-                    span.Value.TotalSeconds
-                }
-            });
+                        chat.Id,
+                        Student = new
+                        {
+                            student.Username,
+                            Nickname = student.NimUserEx.Name,
+                            student.NimUserEx.Coins
+                        },
+                        chat.Source,
+                        chat.Target,
+                        chat.Coins,
+                        span.Value.TotalSeconds,
+                        teacher.IsEnable,
+                        teacher.IsOnline,
+                        teacher.NimUserEx.Name
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.Debug(ex.StackTrace);
+                return Json(new { code = 201, desc = ex.StackTrace });
+            }
         }
 
         /// <summary>
@@ -225,6 +270,7 @@ namespace StudyOnline.Areas.Api.Controllers
                         Start = o.Start.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                         Finish = o.Finish.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                         (o.Finish - o.Start).Value.TotalSeconds,
+                        Duration = (o.Finish - o.Start).Value.ToString(@"mm\:ss"),
                         Teacher = new
                         {
                             o.Teacher.Id,
@@ -290,6 +336,50 @@ namespace StudyOnline.Areas.Api.Controllers
         }
 
         /// <summary>
+        /// 获取学习记录接口
+        /// </summary>
+        /// <param name="username">用户名</param>
+        /// <param name="type">0为学生,1为老师</param>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult GetByUsername(String username, Int32 type, Int32 skip, Int32 take)
+        {
+            NimUser user = entities.NimUser.Single(o => o.Username == username);
+            Expression<Func<CallLog, bool>> predicate = o => (type == 0 ? o.Source == user.Id : o.Target == user.Id);
+            var temp = entities.CallLog.Where(o => o.Start != null && o.Finish != null).Where(predicate).OrderByDescending(o => o.Start).Skip(skip).Take(take).ToList();
+
+            return Json(new
+            {
+                code = 200,
+                desc = "查询成功",
+                info = temp.Select(o => new
+                {
+                    Start = o.Start.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Finish = o.Finish.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                    (o.Finish - o.Start).Value.TotalSeconds,
+                    Duration = (o.Finish - o.Start).Value.ToString(@"mm\:ss"),
+                    Teacher = new
+                    {
+                        o.Teacher.Id,
+                        Nickname = o.Teacher.NimUserEx.Name,
+                        o.Teacher.Username
+                    },
+                    Student = new
+                    {
+                        o.Student.Id,
+                        Nickname = o.Student.NimUserEx.Name,
+                        o.Student.Username
+                    },
+                    Themes = entities.LogTheme.Where(i => i.ChatId == o.ChatId).Select(i => new { i.Theme.Name }),
+                    o.Score,
+                    o.Coins
+                })
+            });
+        }
+
+        /// <summary>
         /// 给指定目标的通话ID添加对话主题
         /// </summary>
         /// <param name="chatId">通话ID</param>
@@ -310,43 +400,6 @@ namespace StudyOnline.Areas.Api.Controllers
             catch (Exception ex)
             {
                 return Json(new { code = 201, desc = ex.Message });
-            }
-        }
-
-        /// <summary>
-        /// 给指定通话Id评分
-        /// </summary>
-        /// <param name="chatId">通话ID</param>
-        /// <param name="score">评分值,共5分</param>
-        /// <returns></returns>
-        [HttpPost]
-        public ActionResult Rating(Int64 chatId, int score)
-        {
-            CallLog log = entities.CallLog.FirstOrDefault(o => o.ChatId == chatId);
-            if (log == null)
-            {
-                return Json(new { code = 2001, desc = "目标聊天记录不存在", info = new { log.ChatId, log.ChatType, log.Score } });
-            }
-
-            log.Score = score;
-            entities.SaveChanges();
-
-            return Json(new { code = 200, desc = "评分成功", info = new { log.ChatId, log.ChatType, log.Score } });
-        }
-
-        // POST: Api/CallLog/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
             }
         }
     }

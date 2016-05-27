@@ -48,6 +48,7 @@
           <Property Name="Score" Type="int" />
           <Property Name="Refresh" Type="datetime" />
           <Property Name="Coins" Type="int" />
+          <Property Name="IsBalance" Type="int" />
         </EntityType>
         <EntityType Name="Comment">
           <Key>
@@ -670,6 +671,7 @@
           <Property Name="Coins" Type="Int32" />
           <NavigationProperty Name="Student" Relationship="StudyOnline.FK_CallLog_NimUser_Source" FromRole="CallLog" ToRole="NimUser" />
           <NavigationProperty Name="Teacher" Relationship="StudyOnline.FK_CallLog_NimUser_Target" FromRole="CallLog" ToRole="NimUser" />
+          <Property Name="IsBalance" Type="Int32" />
         </EntityType>
         <EntityType Name="Comment">
           <Key>
@@ -1089,6 +1091,7 @@
           <EntitySetMapping Name="CallLog">
             <EntityTypeMapping TypeName="StudyOnline.CallLog">
               <MappingFragment StoreEntitySet="CallLog">
+                <ScalarProperty Name="IsBalance" ColumnName="IsBalance" />
                 <ScalarProperty Name="Coins" ColumnName="Coins" />
                 <ScalarProperty Name="Refresh" ColumnName="Refresh" />
                 <ScalarProperty Name="Score" ColumnName="Score" />

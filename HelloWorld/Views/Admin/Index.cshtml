@@ -84,8 +84,8 @@
     <script type="text/javascript">
         $(function () {
             DWZ.init('@Url.Content("~/Content/dwz/dwz.frag.xml")', {
-                loginUrl: "login_dialog.html", loginTitle: "登录",	// 弹出登录对话框
-                //		loginUrl:"login.html",	// 跳到登录页面
+                loginUrl: '@Url.Action("LoginDialog","Home")', loginTitle: "登录",	// 弹出登录对话框
+                //loginUrl: '@Url.Action("Login","Home")',	// 跳到登录页面
                 statusCode: { ok: 200, error: 300, timeout: 301 }, //【可选】
                 pageInfo: { pageNum: "pageNum", numPerPage: "numPerPage", orderField: "orderField", orderDirection: "orderDirection" }, //【可选】
                 keys: { statusCode: "statusCode", message: "message" }, //【可选】
@@ -137,7 +137,6 @@
             <!-- navMenu -->
 
         </div>
-
         <div id="leftside">
             <div id="sidebar_s">
                 <div class="collapse">
@@ -156,6 +155,7 @@
                             <li><a href='@Url.Action("FolderIndex")' target="navTab" rel="AdminFolderIndex">文件夹</a></li>
                             <li><a href='@Url.Action("DocsList")' target="navTab" rel="AdminDocsList">文章列表</a></li>
                             <li><a href='@Url.Action("NimUserIndex")' target="navTab" rel="AdminNimUserIndex">客户管理</a></li>
+                            @*<li><a href='@Url.Action("TeacherIndex")' target="navTab" rel="AdminTeacherIndex">教师管理</a></li>*@
                             <li><a href='@Url.Action("HsLevelIndex")' target="navTab" rel="AdminHsLevelIndex">汉语水平</a></li>
                             <li><a href='@Url.Action("ThemeIndex")' target="navTab" rel="AdminThemeIndex">主题管理</a></li>
                             <li><a href='@Url.Action("OrderIndex")' target="navTab" rel="AdminOrderIndex">订单管理</a></li>
@@ -170,6 +170,7 @@
                             <li><a href='@Url.Action("AndroidIndex")' target="navTab" rel="AdminAndroidIndex">版本管理</a></li>
                         </ul>
                     </div>
+
                     <div class="accordionHeader">
                         <h2><span>Folder</span>系统管理</h2>
                     </div>
@@ -181,19 +182,19 @@
                         </ul>
                     </div>
                     @*@foreach (var item in menus.OrderBy(o=>o.Order).Where(o=>o.ParentId==null))
-                    {
-                        <div class="accordionHeader">
-                            <h2><span>Folder</span>@item.Name</h2>
-                        </div>
-                        <div class="accordionContent">
-                            <ul class="tree treeFolder">
-                                @foreach (var c in item.Children.OrderBy(o=>o.Order))
-                                {
-                                    <li><a href="newPage1.html" target="navTab" rel="dlg_page">@c.Name</a></li>
-                                }
-                            </ul>
-                        </div>
-                    }*@
+                        {
+                            <div class="accordionHeader">
+                                <h2><span>Folder</span>@item.Name</h2>
+                            </div>
+                            <div class="accordionContent">
+                                <ul class="tree treeFolder">
+                                    @foreach (var c in item.Children.OrderBy(o=>o.Order))
+                                    {
+                                        <li><a href="newPage1.html" target="navTab" rel="dlg_page">@c.Name</a></li>
+                                    }
+                                </ul>
+                            </div>
+                        }*@
                 </div>
             </div>
         </div>
@@ -243,16 +244,15 @@
                         </div>
 
                         @*
-                          <div style="width:230px;position: absolute;top:60px;right:0" layouth="80">
-                                <iframe width="100%" height="430" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?width=0&height=430&fansRow=2&ptype=1&skin=1&isTitle=0&noborder=1&isWeibo=1&isFans=0&uid=1739071261&verifier=c683dfe7"></iframe>
-                          </div>
+                            <div style="width:230px;position: absolute;top:60px;right:0" layouth="80">
+                                  <iframe width="100%" height="430" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?width=0&height=430&fansRow=2&ptype=1&skin=1&isTitle=0&noborder=1&isWeibo=1&isFans=0&uid=1739071261&verifier=c683dfe7"></iframe>
+                            </div>
                         *@
                     </div>
 
                 </div>
             </div>
         </div>
-
     </div>
 
     <div id="footer">Copyright &copy; @DateTime.Now.Year <a href="@Url.Action("Index")" target="_blank">北京汉问东方教育科技有限公司</a></div>

@@ -67,24 +67,25 @@ namespace StudyOnline.Areas.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult VerifyAliPay(String result, String orderId)
+        public ActionResult VerifyAliPay(String orderId, String result)
         {
             Orders order = entities.Orders.Find(orderId);
             if (order == null)
             {
-                return Json(new { code = 201, desc = "指定订单不存在", info = order });
+                return Json(new { code = 201, desc = "指定订单不存在" });
             }
+
+            NimUser user = entities.NimUser.Single(o => o.Username == order.UserName);
 
             //如果异步通知成功,直接返回
             if (order.TradeStatus == "TRADE_SUCCESS" || order.TradeStatus == "TRADE_FINISHED")
             {
                 //平衡学币
-                NimUser nimuser = entities.NimUser.Single(o => o.Username == order.UserName);
-                nimuser.NimUserEx.Coins = (order.Coin ?? 0) + (nimuser.NimUserEx.Coins ?? 0);
+                user.NimUserEx.Coins = order.Coin + (user.NimUserEx.Coins ?? 0);
                 order.IsBalance = 1;
                 entities.SaveChanges();
 
-                return Json(new { code = 200, desc = "支付成功", info = order });
+                return Json(new { code = 200, desc = "支付成功", info = new { user.Username, Nickname = user.NimUserEx.Name, user.NimUserEx.Coins } });
             }
 
             //如果服务端没有收到异步通知的时候,则要验证客户端发过来的同步通知(https://doc.open.alipay.com/doc2/detail.htm?spm=0.0.0.0.bsvyrx&treeId=59&articleId=103665&docType=1)
@@ -114,14 +115,30 @@ namespace StudyOnline.Areas.Api.Controllers
 
             order.TradeNo = "";
             order.TradeStatus = "COMPLETED";//只说明是同步验证成功,应该尽量依靠服务器异步验证
-            entities.SaveChanges();
 
-            return Json(new { code = 200, desc = "支付成功", info = order });
+            if (order.IsBalance != 1)
+            {
+                user.NimUserEx.Coins = order.Coin + (user.NimUserEx.Coins ?? 0);
+                order.IsBalance = 1;
+            }
+
+            entities.SaveChanges();
+            return Json(new { code = 200, desc = "支付成功", info = new { user.Username, Nickname = user.NimUserEx.Name, user.NimUserEx.Coins } });
         }
 
         [HttpPost]
-        public ActionResult VerifyPayPal(String paymentId, String orderId)
+        public ActionResult VerifyPayPal(String orderId, String paymentId)
         {
+            Orders order = entities.Orders.Find(orderId);
+            if (order == null)
+            {
+                return Json(new { code = 201, desc = "指定订单不存在" });
+            }
+
+            NimUser user = entities.NimUser.SingleOrDefault(o => o.Username == order.UserName);
+
+
+
             //OAuthTokenCredential tokenCredential = new OAuthTokenCredential("<CLIENT_ID>", "<CLIENT_SECRET>");
             //string accessToken = tokenCredential.GetAccessToken();
 
@@ -142,10 +159,8 @@ namespace StudyOnline.Areas.Api.Controllers
 
             if (payment.state != "approved")
             {
-                return Json(new { code = 201, desc = "交易记录验证不成功", info = orderId });
+                return Json(new { code = 201, desc = "交易记录验证不成功" });
             }
-
-            Orders order = entities.Orders.Find(orderId);
 
             //由手机端传过来的信息,如支付总额,货币
             String clientAmount = order.Amount + "";
@@ -163,32 +178,31 @@ namespace StudyOnline.Areas.Api.Controllers
             //验证交易总额
             if (clientAmount != serverAmount)
             {
-                return Json(new { code = 201, desc = "交易总额验证不成功", info = order });
+                return Json(new { code = 201, desc = "交易总额验证不成功" });
             }
 
             //验证货币类型
             if (clientCurrency != serverCurrentcy)
             {
-                return Json(new { code = 201, desc = "货币类型验证不成功", info = order });
+                return Json(new { code = 201, desc = "货币类型验证不成功" });
             }
 
             //验证交易状态
             if (saleState != "completed")
             {
-                return Json(new { code = 201, desc = "交易状态验证不成功", info = order });
+                return Json(new { code = 201, desc = "交易状态验证不成功" });
             }
 
             //保存数据
             order.TradeNo = paymentId;
             order.TradeStatus = "completed";
 
-            //平衡学币
-            NimUser user = entities.NimUser.Single(o => o.Username == order.UserName);
-            user.NimUserEx.Coins = (order.Coin ?? 0) + (user.NimUserEx.Coins ?? 0);
+            //平衡学币  
+            user.NimUserEx.Coins = order.Coin + (user.NimUserEx.Coins ?? 0);
             order.IsBalance = 1;
             entities.SaveChanges();
 
-            return Json(new { code = 200, desc = "支付成功", info = order });
+            return Json(new { code = 200, desc = "支付成功", info = new { user.Username, user.NimUserEx.Name, user.NimUserEx.Coins } });
         }
 
         [HttpPost]
@@ -206,8 +220,9 @@ namespace StudyOnline.Areas.Api.Controllers
                     o.Amount,
                     o.Main,
                     o.Body,
+                    o.Coin,
                     CreateTime = (o.CreateTime == null ? "" : o.CreateTime.Value.ToString("yyyy-MM-dd HH:mm:ss")),
-                    TradeStatus = (o.TradeStatus == "TRADE_SUCCESS" || o.TradeStatus == "TRADE_FINISHED" || o.TradeStatus == "completed") ? "SUCCESS" : "FAILURE"
+                    TradeStatus = (o.TradeStatus == "TRADE_SUCCESS" || o.TradeStatus == "TRADE_FINISHED" || o.TradeStatus == "completed" || o.TradeStatus == "COMPLETED") ? "SUCCESS" : "FAILURE"
                 })
             });
         }

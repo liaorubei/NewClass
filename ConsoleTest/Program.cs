@@ -11,11 +11,14 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
-            Int32? i = null;
-            Int32? k = null;
-            i = (i ?? 4) + (k ?? 5);
-            Console.WriteLine("");
-            Console.ReadLine();
+            var t = DateTime.Now;
+            Console.WriteLine(t.ToString("yyyyMMdd HH:mm:ss.fffff"));
+
+            TimeSpan s = new TimeSpan(0, 0, 59, 29,1000);
+            Console.WriteLine(s.ToString(@"mm\:ss"));
+            Console.WriteLine((Int32)(s.TotalMinutes+0.5));
+
+            Console.Read();
         }
     }
 }

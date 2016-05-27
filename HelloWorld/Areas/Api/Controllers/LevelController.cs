@@ -31,7 +31,7 @@ namespace StudyOnline.Areas.Api.Controllers
                     o.Id,
                     o.Name,
                     o.Sort,
-                    Folders = o.Folder.OrderByDescending(f => f.Id).Take(25).Select(f => new { f.Id, f.Name, DocsCount = f.Document.Count })
+                    Folders = o.Folder.OrderByDescending(f => f.Id).Take(25).Select(f => new { f.Id, f.Name, DocsCount = f.Document.Count(d => d.AuditCase == AuditCase.审核) })
                 })
             });
         }
