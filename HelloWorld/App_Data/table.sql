@@ -150,6 +150,9 @@ CREATE UNIQUE NONCLUSTERED INDEX [Index_CallLog_ChatId] ON [CallLog]([ChatId] AS
 alter table  callLog add  Refresh datetime,Coins int
   alter table [dbo].[CallLog] add [IsBalance] int
 
+  --添加时长,单价,学生平衡,教师平衡
+  ALTER table [dbo].[CallLog] add Duration int,Price int,BalanceS int,BalanceT int
+
 --学习记录的主题表
 create table LogTheme(
 [ChatId]     bigint ,

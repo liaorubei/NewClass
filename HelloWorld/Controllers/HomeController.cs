@@ -159,6 +159,12 @@ namespace StudyOnline.Controllers
             return View("Login");
         }
 
+        public ActionResult AndroidClient()
+        {
+
+            return View();
+        }
+
         [HttpPost]
         public ActionResult Login(LoginModel model)
         {

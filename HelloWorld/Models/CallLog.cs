@@ -25,6 +25,10 @@ namespace StudyOnline.Models
         public Nullable<System.DateTime> Refresh { get; set; }
         public Nullable<int> Coins { get; set; }
         public Nullable<int> IsBalance { get; set; }
+        public Nullable<int> Duration { get; set; }
+        public Nullable<int> Price { get; set; }
+        public Nullable<int> BalanceS { get; set; }
+        public Nullable<int> BalanceT { get; set; }
     
         public virtual NimUser Student { get; set; }
         public virtual NimUser Teacher { get; set; }

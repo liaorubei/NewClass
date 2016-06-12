@@ -45,5 +45,7 @@ namespace StudyOnline.Models
         public virtual DbSet<Theme> Theme { get; set; }
         public virtual DbSet<UploadFile> UploadFile { get; set; }
         public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<X_Menu> X_Menu { get; set; }
+        public virtual DbSet<Device> Device { get; set; }
     }
 }

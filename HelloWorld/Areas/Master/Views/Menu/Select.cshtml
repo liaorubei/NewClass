@@ -1,4 +1,5 @@
-﻿@model List<X_Menu>
+﻿
+@model List<X_Menu>
 
 @{
     Layout = null;
@@ -33,9 +34,9 @@ if (m != null)
 <div class="pageContent">
     <div class="panelBar">
         <ul class="toolBar">
-            <li><a class="create" href='@Url.Action("MenuCreate","Admin", new { id="{id}" })' target="dialog" rel="AdminMenuCreate" title="添加菜单" width="800" height="600" mask="true"><span>添加</span></a></li>
-            <li><a class="update" href="@Url.Action("MenuUpdate","Admin", new { id="{id}" })" target="dialog" rel="AdminMenuCreate" title="修改菜单" width="800" height="600" mask="true" warn="请选择"><span>修改</span></a></li>
-            <li><a class="delete" href="@Url.Action("MenuDelete","Admin", new { id="{id}" })"><span>删除</span></a></li>
+            <li><a class="create" href='@Url.Action("Create", new {area="Master",controller="Menu", id="{id}" })' target="dialog" rel="MasterMenuCreate" title="添加菜单" width="800" height="600" mask="true"><span>添加</span></a></li>
+            <li><a class="update" href="@Url.Action("Update", new {area="Master",controller="Menu", id="{id}" })" target="dialog" rel="MasterMenuUpdate" title="修改菜单" width="800" height="600" mask="true" warn="请选择"><span>修改</span></a></li>
+            <li><a class="delete" href="@Url.Action("Delete", new {area="Master",controller="Menu", id="{id}" })"><span>删除</span></a></li>
         </ul>
     </div>
     <div layoutH="88">

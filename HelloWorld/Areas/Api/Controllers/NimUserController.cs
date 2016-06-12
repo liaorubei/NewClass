@@ -208,7 +208,7 @@ namespace StudyOnline.Areas.Api.Controllers
         /// <param name="category">用户类型,1是老师,0是学生</param>
         /// <returns>如果成功,返回code=200</returns>
         [HttpPost]
-        public ActionResult Create(String email, String password, Int32 category)
+        public ActionResult Create(String email, String password, Int32 category, String deviceId, String deviceType)
         {
             if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(password))
             {
@@ -231,6 +231,7 @@ namespace StudyOnline.Areas.Api.Controllers
                 return Json(new { code = 20001, desc = "username already exists" });
             }
 
+            //初始化设置,Accid为Guid,密码默认MD5加密
             NimUser user = new NimUser();
             user.Accid = Guid.NewGuid().ToString().Replace("-", "");
             user.Username = email;
@@ -238,6 +239,7 @@ namespace StudyOnline.Areas.Api.Controllers
             user.Category = category;
             user.CreateDate = DateTime.Now;
 
+            //同步云信帐号系统
             String json = NimUtil.UserCreate(user.Accid, null, null, HttpUtility.UrlEncode(email));
             Answer a = JsonConvert.DeserializeObject<Answer>(json);
             if (a.code != 200)
@@ -245,10 +247,35 @@ namespace StudyOnline.Areas.Api.Controllers
                 return Json(new { code = a.code, desc = a.desc });
             }
 
+            //初始注册时,送学币逻辑,在同设备上,第一次送300,第二次送200,第三次送100,大于第三次送0
+            int coins = 0;
+            if (!String.IsNullOrEmpty(deviceId))
+            {
+                Device d = entities.Device.Find(deviceId);
+                if (d == null)
+                {
+                    d = new Device() { Id = deviceId, Time = 0, Type = deviceType };
+                    entities.Device.Add(d);
+                }
+
+                coins = 300 - (d.Time * 100);
+                if (coins < 0)
+                {
+                    coins = 0;
+                }
+                d.Time++;
+            }
+
+            //如果是老师用户,不送学币
+            if (category == 1)
+            {
+                coins = 0;
+            }
+
             try
             {
                 user.Token = a.info.token;
-                user.NimUserEx = new NimUserEx() { Email = email, Name = email };
+                user.NimUserEx = new NimUserEx() { Email = email, Coins = coins };
                 entities.NimUser.Add(user);
                 entities.SaveChanges();
                 return Json(new { code = 200, desc = "创建成功", info = new { user.Id, user.Accid, user.Token } });
@@ -615,24 +642,32 @@ namespace StudyOnline.Areas.Api.Controllers
         /// <param name="password">密码</param>
         /// <returns>如果成功,返回code=200,并且返回云信帐号信息</returns>
         [HttpPost]
-        public ActionResult Signin(String username, String password)
+        public ActionResult Signin(String username, String password, Int32? category)
         {
+
             if (String.IsNullOrEmpty(username) || String.IsNullOrEmpty(password))
             {
                 return Json(new { code = 20001, desc = "参数不能为空" });
             }
 
-            NimUser user = entities.NimUser.FirstOrDefault(o => o.Username == username);
+            NimUser user = entities.NimUser.SingleOrDefault(o => o.Username == username);
 
-            if (user == null)
+            //由于SQL问题,username大小写会被数据库认为是一样的,所以在此再做一次判断
+            if (user == null || user.Username != username)
             {
                 return Json(new { code = 20001, desc = "用户名不存在" });
             }
 
             if (!EncryptionUtil.VerifyMd5(password, user.Password))
             {
-                return Json(new { code = 20001 });
+                return Json(new { code = 20001, desc = "用户名或密码错误" });
             }
+
+            if (user.Category != (category ?? 0))
+            {
+                return Json(new { code = 201, desc = "用户登录类型错误" });
+            }
+
             return Json(new
             {
                 code = 200,
@@ -651,7 +686,7 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.NimUserEx.Gender,
                     user.NimUserEx.Email,
                     user.NimUserEx.Mobile,
-                    Birth = (user.NimUserEx.Birth == null ? "" : user.NimUserEx.Birth.Value.ToString("yyyy-MM-dd")),
+                    Birth = (user.NimUserEx.Birth == null ? null : user.NimUserEx.Birth.Value.ToString("yyyy-MM-dd")),
                     user.NimUserEx.Country,
                     user.NimUserEx.Language,
                     user.NimUserEx.Job,
@@ -1069,7 +1104,7 @@ namespace StudyOnline.Areas.Api.Controllers
             return Json(new
             {
                 code = 200,
-                desc = "",
+                desc = "获取成功",
                 info = new
                 {
                     user.Id,
@@ -1211,7 +1246,7 @@ namespace StudyOnline.Areas.Api.Controllers
         {
             try
             {//.OrderByDescending(o => o.IsOnline) //20160527 不在线的老师不用显示,即不在排队状态的老师不显示
-                var teacher = entities.NimUser.Where(o => o.Category == 1 && o.IsOnline == 1).OrderByDescending(o => o.IsEnable).ThenBy(o => o.Enqueue).Skip(skip).Take(take).ToList();
+                var teacher = entities.NimUser.Where(o => o.Category == 1 && o.IsOnline == 1 & o.IsEnable == 1).OrderByDescending(o => o.IsEnable).ThenBy(o => o.Enqueue).Skip(skip).Take(take).ToList();
                 return Json(new
                 {
                     code = 200,
@@ -1286,6 +1321,20 @@ namespace StudyOnline.Areas.Api.Controllers
                 return Json(new { code = 201, desc = ex.Message });
             }
         }
+
+
+        //public ActionResult GetTeacherByTeacher(String username, Int32 skip, Int32 take)
+        //{
+
+        //    try
+        //    {
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { code = 201, desc = ex.Message });
+        //    }
+        //}
 
         /// <summary>
         /// 新的教师入队接口
@@ -1439,5 +1488,6 @@ namespace StudyOnline.Areas.Api.Controllers
             }
         }
 
+     
     }
 }

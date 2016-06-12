@@ -60,3 +60,14 @@ CREATE TABLE [Menu]
 	constraint [PK_Menu] primary key (Id),
 	constraint [FK_Menu_MenuId] FOREIGN KEY ([ParentId]) REFERENCES [Menu] ([Id])
 )
+
+  Create table [Defect](
+  [Id] int identity(1,1),
+  [Name] nvarchar(256),
+  [Desc] nvarchar(1024),
+  [State] int,
+  [Serious] int,
+
+  CreateTime Datetime,
+  Constraint PK_Defect primary key (Id)
+  )

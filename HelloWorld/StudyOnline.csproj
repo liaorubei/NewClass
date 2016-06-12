@@ -227,6 +227,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Areas\ApiV2\ApiV2AreaRegistration.cs" />
     <Compile Include="Areas\Api\ApiAreaRegistration.cs" />
     <Compile Include="Areas\Api\Controllers\CallLogController.cs" />
     <Compile Include="Areas\Api\Controllers\FeedbackController.cs" />
@@ -240,6 +241,9 @@
     <Compile Include="Areas\Api\Controllers\NimUserController.cs" />
     <Compile Include="Areas\Api\Controllers\ThemeController.cs" />
     <Compile Include="Areas\Api\Models\User.cs" />
+    <Compile Include="Areas\Master\Controllers\MenuController.cs" />
+    <Compile Include="Areas\Master\Controllers\DefectController.cs" />
+    <Compile Include="Areas\Master\MasterAreaRegistration.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NewClassController.cs" />
@@ -258,6 +262,9 @@
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Comment.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Device.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Document.cs">
@@ -323,6 +330,9 @@
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\X_Menu.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="notify_url.aspx.cs">
@@ -676,6 +686,9 @@
     <Content Include="Images\image045.jpg" />
     <Content Include="Images\image046.png" />
     <Content Include="Images\image047.png" />
+    <Content Include="Images\image048.gif" />
+    <Content Include="Images\image049.gif" />
+    <Content Include="Images\image050.gif" />
     <Content Include="Images\logo.png" />
     <Content Include="Models\StudyOnline.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -705,6 +718,14 @@
     <Content Include="Models\StudyOnline.edmx.diagram">
       <DependentUpon>StudyOnline.edmx</DependentUpon>
     </Content>
+    <Content Include="Areas\Master\Views\web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Areas\Master\Views\Menu\Select.cshtml" />
+    <Content Include="Areas\Master\Views\Menu\Update.cshtml" />
+    <Content Include="Areas\Master\Views\Menu\Create.cshtml" />
+    <Content Include="Areas\Master\Views\Defect\Select.cshtml" />
+    <Content Include="Areas\ApiV2\Views\web.config" />
     <None Include="Properties\PublishProfiles\voc2015 - Web Deploy.pubxml">
       <SubType>Designer</SubType>
     </None>
@@ -1133,8 +1154,12 @@
     <Content Include="Views\Admin\TeacherIndex.cshtml" />
     <Content Include="Views\Admin\TeacherUpdate.cshtml" />
     <Content Include="Views\Home\LoginDialog.cshtml" />
+    <Content Include="Views\Home\AndroidClient.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Areas\ApiV2\Controllers\" />
+    <Folder Include="Areas\ApiV2\Models\" />
+    <Folder Include="Areas\ApiV2\Views\Shared\" />
     <Folder Include="Areas\Api\Views\CallLog\" />
     <Folder Include="Areas\Api\Views\Feedback\" />
     <Folder Include="Areas\Api\Views\Folder\" />
@@ -1147,6 +1172,8 @@
     <Folder Include="Areas\Api\Views\Teacher\" />
     <Folder Include="Areas\Api\Views\Theme\" />
     <Folder Include="Areas\Api\Views\User\" />
+    <Folder Include="Areas\Master\Models\" />
+    <Folder Include="Areas\Master\Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

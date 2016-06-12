@@ -1,7 +1,8 @@
-﻿@using StudyOnline.Models;
+﻿
+@using StudyOnline.Models;
 @{
     Layout = null;
-    List<Menu> menus = ViewBag.Menus;
+    List<X_Menu> menus = ViewBag.Menus;
 }
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -181,20 +182,20 @@
                             <li><a href="newPage1.html" target="navTab" rel="dlg_page">权限管理</a></li>
                         </ul>
                     </div>
-                    @*@foreach (var item in menus.OrderBy(o=>o.Order).Where(o=>o.ParentId==null))
-                        {
-                            <div class="accordionHeader">
-                                <h2><span>Folder</span>@item.Name</h2>
-                            </div>
-                            <div class="accordionContent">
-                                <ul class="tree treeFolder">
-                                    @foreach (var c in item.Children.OrderBy(o=>o.Order))
-                                    {
-                                        <li><a href="newPage1.html" target="navTab" rel="dlg_page">@c.Name</a></li>
-                                    }
-                                </ul>
-                            </div>
-                        }*@
+                    @foreach (var item in menus.OrderBy(o => o.Order).Where(o => o.ParentId == null))
+                    {
+                        <div class="accordionHeader">
+                            <h2><span>Folder</span>@item.Name</h2>
+                        </div>
+                        <div class="accordionContent">
+                            <ul class="tree treeFolder">
+                                @foreach (var c in item.X_Menu1.OrderBy(o => o.Order))
+                                {
+                                    <li><a href='@Url.Action(c.Action, new { area = c.Area, controller = c.Ctrl })' target="navTab" rel='@String.Format("{0}{1}{2}",c.Area,c.Ctrl,c.Action)'>@c.Name</a></li>
+                                }
+                            </ul>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

@@ -5,7 +5,7 @@
 }
 
 <div class="pageContent">
-    <form method="post" action='@Url.Action("MenuCreate")' class="pageForm" onsubmit="return validateCallback(this, dialogAjaxDone)">
+    <form method="post" action='@Url.Action("Create", new { area="Master",ctrl="Menu"})' class="pageForm" onsubmit="return validateCallback(this, dialogAjaxDone)">
         <div class="pageFormContent" layoutH="58">
 
             <dl>

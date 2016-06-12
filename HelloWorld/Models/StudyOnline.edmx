@@ -49,6 +49,10 @@
           <Property Name="Refresh" Type="datetime" />
           <Property Name="Coins" Type="int" />
           <Property Name="IsBalance" Type="int" />
+          <Property Name="Duration" Type="int" />
+          <Property Name="Price" Type="int" />
+          <Property Name="BalanceS" Type="int" />
+          <Property Name="BalanceT" Type="int" />
         </EntityType>
         <EntityType Name="Comment">
           <Key>
@@ -58,6 +62,14 @@
           <Property Name="DocumentId" Type="int" />
           <Property Name="Score" Type="float" />
           <Property Name="MainBody" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Device">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="varchar" MaxLength="256" Nullable="false" />
+          <Property Name="Type" Type="varchar" MaxLength="256" Nullable="false" />
+          <Property Name="Time" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Document">
           <Key>
@@ -264,6 +276,18 @@
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
           <Property Name="NickName" Type="nvarchar" MaxLength="256" />
         </EntityType>
+        <EntityType Name="X_Menu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Order" Type="int" />
+          <Property Name="ParentId" Type="int" />
+          <Property Name="Area" Type="varchar" MaxLength="64" />
+          <Property Name="Ctrl" Type="varchar" MaxLength="64" />
+          <Property Name="Action" Type="varchar" MaxLength="64" />
+        </EntityType>
         <Association Name="FK_Avatar_File">
           <End Role="UploadFile" Type="Self.UploadFile" Multiplicity="1" />
           <End Role="Avatar" Type="Self.Avatar" Multiplicity="*" />
@@ -464,12 +488,25 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_X_Menu_MenuId">
+          <End Role="X_Menu" Type="Self.X_Menu" Multiplicity="0..1" />
+          <End Role="X_Menu1" Type="Self.X_Menu" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="X_Menu">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="X_Menu1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="StudyOnlineStoreContainer">
           <EntitySet Name="Android" EntityType="Self.Android" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AuthCode" EntityType="Self.AuthCode" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Avatar" EntityType="Self.Avatar" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CallLog" EntityType="Self.CallLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Comment" EntityType="Self.Comment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Device" EntityType="Self.Device" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Document" EntityType="Self.Document" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Feedback" EntityType="Self.Feedback" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Folder" EntityType="Self.Folder" Schema="dbo" store:Type="Tables" />
@@ -487,6 +524,7 @@
           <EntitySet Name="Theme" EntityType="Self.Theme" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UploadFile" EntityType="Self.UploadFile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="X_Menu" EntityType="Self.X_Menu" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Avatar_File" Association="Self.FK_Avatar_File">
             <End Role="UploadFile" EntitySet="UploadFile" />
             <End Role="Avatar" EntitySet="Avatar" />
@@ -550,6 +588,10 @@
           <AssociationSet Name="FK_Theme_HsLevel" Association="Self.FK_Theme_HsLevel">
             <End Role="HsLevel" EntitySet="HsLevel" />
             <End Role="Theme" EntitySet="Theme" />
+          </AssociationSet>
+          <AssociationSet Name="FK_X_Menu_MenuId" Association="Self.FK_X_Menu_MenuId">
+            <End Role="X_Menu" EntitySet="X_Menu" />
+            <End Role="X_Menu1" EntitySet="X_Menu" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -633,6 +675,12 @@
             <End Role="UploadFile" EntitySet="UploadFile" />
             <End Role="NimUser" EntitySet="NimUser" />
           </AssociationSet>
+          <EntitySet Name="X_Menu" EntityType="StudyOnline.X_Menu" />
+          <AssociationSet Name="FK_X_Menu_MenuId" Association="StudyOnline.FK_X_Menu_MenuId">
+            <End Role="X_Menu" EntitySet="X_Menu" />
+            <End Role="X_Menu1" EntitySet="X_Menu" />
+          </AssociationSet>
+          <EntitySet Name="Device" EntityType="StudyOnline.Device" />
         </EntityContainer>
         <EntityType Name="Android">
           <Key>
@@ -672,6 +720,10 @@
           <NavigationProperty Name="Student" Relationship="StudyOnline.FK_CallLog_NimUser_Source" FromRole="CallLog" ToRole="NimUser" />
           <NavigationProperty Name="Teacher" Relationship="StudyOnline.FK_CallLog_NimUser_Target" FromRole="CallLog" ToRole="NimUser" />
           <Property Name="IsBalance" Type="Int32" />
+          <Property Name="Duration" Type="Int32" />
+          <Property Name="Price" Type="Int32" />
+          <Property Name="BalanceS" Type="Int32" />
+          <Property Name="BalanceT" Type="Int32" />
         </EntityType>
         <EntityType Name="Comment">
           <Key>
@@ -1059,6 +1111,40 @@
           <End Type="StudyOnline.UploadFile" Role="UploadFile" Multiplicity="*" />
           <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="*" />
         </Association>
+        <EntityType Name="X_Menu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Order" Type="Int32" />
+          <Property Name="ParentId" Type="Int32" />
+          <NavigationProperty Name="X_Menu1" Relationship="StudyOnline.FK_X_Menu_MenuId" FromRole="X_Menu" ToRole="X_Menu1" />
+          <NavigationProperty Name="X_Menu2" Relationship="StudyOnline.FK_X_Menu_MenuId" FromRole="X_Menu1" ToRole="X_Menu" />
+          <Property Name="Area" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="Ctrl" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="Action" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_X_Menu_MenuId">
+          <End Type="StudyOnline.X_Menu" Role="X_Menu" Multiplicity="0..1" />
+          <End Type="StudyOnline.X_Menu" Role="X_Menu1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="X_Menu">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="X_Menu1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Device">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="Type" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="false" />
+          <Property Name="Time" Type="Int32" Nullable="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1091,6 +1177,10 @@
           <EntitySetMapping Name="CallLog">
             <EntityTypeMapping TypeName="StudyOnline.CallLog">
               <MappingFragment StoreEntitySet="CallLog">
+                <ScalarProperty Name="BalanceT" ColumnName="BalanceT" />
+                <ScalarProperty Name="BalanceS" ColumnName="BalanceS" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
                 <ScalarProperty Name="IsBalance" ColumnName="IsBalance" />
                 <ScalarProperty Name="Coins" ColumnName="Coins" />
                 <ScalarProperty Name="Refresh" ColumnName="Refresh" />
@@ -1343,6 +1433,28 @@
               <ScalarProperty Name="Id" ColumnName="FileId" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="X_Menu">
+            <EntityTypeMapping TypeName="StudyOnline.X_Menu">
+              <MappingFragment StoreEntitySet="X_Menu">
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="Ctrl" ColumnName="Ctrl" />
+                <ScalarProperty Name="Area" ColumnName="Area" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Device">
+            <EntityTypeMapping TypeName="StudyOnline.Device">
+              <MappingFragment StoreEntitySet="Device">
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

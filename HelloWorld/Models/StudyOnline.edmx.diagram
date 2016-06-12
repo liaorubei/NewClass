@@ -39,6 +39,9 @@
         <AssociationConnector Association="StudyOnline.FK_Question_Theme" />
         <AssociationConnector Association="StudyOnline.Photo" />
         <AssociationConnector Association="StudyOnline.Avatar" />
+        <EntityTypeShape EntityType="StudyOnline.X_Menu" Width="1.5" PointX="14.375" PointY="0.75" />
+        <AssociationConnector Association="StudyOnline.FK_X_Menu_MenuId" />
+        <EntityTypeShape EntityType="StudyOnline.Device" Width="1.5" PointX="14.375" PointY="14.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

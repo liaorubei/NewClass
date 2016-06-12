@@ -12,6 +12,7 @@ namespace StudyOnline.Areas.Api.Controllers
     {
         readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         StudyOnlineEntities entities = new StudyOnlineEntities();
+        private int CoinsPeerMin = 10;
 
         /// <summary>
         /// 开始添加一条聊天记录
@@ -90,7 +91,8 @@ namespace StudyOnline.Areas.Api.Controllers
             //TimeSpan s = new TimeSpan(0, 0, 0, 29,1000);
             //(Int32)(s.TotalMinutes + 0.5)=1;
             var span = chat.Finish - chat.Start;
-            int coin = (Int32)(span.Value.TotalMinutes + 0.5);//29秒不算,但是如果满30秒,当一分钟算,如:5:30,按6MIN算
+            int coin = ((Int32)(span.Value.TotalMinutes + 0.5)) * CoinsPeerMin;//29秒不算,但是如果满30秒,当一分钟算,如:5:30,按6MIN算
+            int coins = coin * CoinsPeerMin;
 
             //学生和老师
             NimUser student = entities.NimUser.Find(chat.Source);
@@ -105,9 +107,14 @@ namespace StudyOnline.Areas.Api.Controllers
             //学生扣除学币
             if (chat.IsBalance != 1)
             {
-                student.NimUserEx.Coins -= coin;//从学生的帐号中去掉学币数
-                chat.Coins = coin;//把这次的学币说写入聊天记录
+                student.NimUserEx.Coins -= coins;//从学生的帐号中去掉学币数
+
+                chat.Coins = coins;//把这次的学币说写入聊天记录
                 chat.IsBalance = 1;//平衡学币
+                chat.Duration = coin;//这个chat的时长(单位分钟,满30秒算1分钟)
+                chat.Price = CoinsPeerMin;//每分钟单价
+                chat.BalanceS = 1;//平衡学生学币
+                chat.BalanceT = 0;//统计老师课时
             }
             try
             {
@@ -156,7 +163,7 @@ namespace StudyOnline.Areas.Api.Controllers
             entities.SaveChanges();
 
             var span = call.Refresh - call.Start;
-            var coins = (user.Coins.Value - (Int32)span.Value.TotalMinutes);
+            var coins = (user.Coins.Value - (Int32)span.Value.TotalMinutes) * CoinsPeerMin;
 
             if (coins <= 0)
             {
@@ -270,7 +277,7 @@ namespace StudyOnline.Areas.Api.Controllers
                         Start = o.Start.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                         Finish = o.Finish.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                         (o.Finish - o.Start).Value.TotalSeconds,
-                        Duration = (o.Finish - o.Start).Value.ToString(@"mm\:ss"),
+                        Duration = (o.Finish - o.Start).Value.ToString(@"hh\:mm\:ss"),
                         Teacher = new
                         {
                             o.Teacher.Id,
@@ -349,6 +356,7 @@ namespace StudyOnline.Areas.Api.Controllers
             NimUser user = entities.NimUser.Single(o => o.Username == username);
             Expression<Func<CallLog, bool>> predicate = o => (type == 0 ? o.Source == user.Id : o.Target == user.Id);
             var temp = entities.CallLog.Where(o => o.Start != null && o.Finish != null).Where(predicate).OrderByDescending(o => o.Start).Skip(skip).Take(take).ToList();
+            temp.Select(o => o.Coins).Sum();
 
             return Json(new
             {
@@ -359,7 +367,7 @@ namespace StudyOnline.Areas.Api.Controllers
                     Start = o.Start.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                     Finish = o.Finish.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                     (o.Finish - o.Start).Value.TotalSeconds,
-                    Duration = (o.Finish - o.Start).Value.ToString(@"mm\:ss"),
+                    Duration = (Int32)((o.Finish - o.Start).Value.TotalMinutes + 0.5),
                     Teacher = new
                     {
                         o.Teacher.Id,

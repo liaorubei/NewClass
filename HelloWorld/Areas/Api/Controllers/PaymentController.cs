@@ -130,6 +130,7 @@ namespace StudyOnline.Areas.Api.Controllers
         public ActionResult VerifyPayPal(String orderId, String paymentId)
         {
             Orders order = entities.Orders.Find(orderId);
+
             if (order == null)
             {
                 return Json(new { code = 201, desc = "指定订单不存在" });
@@ -208,7 +209,7 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult OrderRecords(String username, Int32 skip, Int32 take)
         {
-            var temp = entities.Orders.Where(o => o.UserName == username).OrderByDescending(o => o.CreateTime).Skip(skip).Take(take).ToList();
+            var temp = entities.Orders.Where(o => o.UserName == username && o.TradeStatus != null && o.TradeNo != null).OrderByDescending(o => o.CreateTime).Skip(skip).Take(take).ToList();
             return Json(new
             {
                 code = 200,

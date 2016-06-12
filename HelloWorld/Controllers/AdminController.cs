@@ -22,7 +22,8 @@ namespace StudyOnline.Controllers
         private StudyOnlineEntities entities = new StudyOnlineEntities();
         public ActionResult Index()
         {
-            ViewBag.Menus = new List<Menu>();
+            List<X_Menu> menus = entities.X_Menu.Where(o => o.ParentId == null).ToList();
+            ViewBag.Menus = menus;
             return View();
         }
 
@@ -742,10 +743,11 @@ namespace StudyOnline.Controllers
 
         #endregion
 
-        #region 系统管理
+        #region 菜单管理
         public ActionResult MenuIndex()
         {
-            ViewBag.Menus = new List<Menu>();
+            var menus = entities.X_Menu.Where(o => o.ParentId == null).ToList();
+            ViewData.Model = menus;
             return View();
         }
 
@@ -759,24 +761,33 @@ namespace StudyOnline.Controllers
 
         }
 
-        public ActionResult MenuCreate(int? id)
+        public ActionResult MenuCreate(Int32 id)
         {
-            if (id == null)
+            Int32? parentId = null;
+            if (id > 0)
             {
-                ViewData.Model = new Menu() { Id = 0 };
+                parentId = id;
             }
-            else
-            {
-                ViewData.Model = new Menu() { };
-            }
+            ViewData.Model = new X_Menu() { ParentId = parentId };
             return View();
         }
+
         [HttpPost]
-        public ActionResult MenuCreate(Menu menu)
+        public ActionResult MenuCreate(X_Menu menu)
         {
+            entities.X_Menu.Add(menu);
+            entities.SaveChanges();
             var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminMenuIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
             return Json(data);
         }
+
+
+
+
+
+
+
+
         #endregion
 
         #region 用户管理
