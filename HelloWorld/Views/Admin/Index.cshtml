@@ -3,6 +3,17 @@
 @{
     Layout = null;
     List<X_Menu> menus = ViewBag.Menus;
+    X_User currentUser = (Session["CurrentUser"] as X_User) ?? new X_User();
+    List<int> currentMenu = new List<int>();
+    foreach (var r in currentUser.X_Role)
+    {
+        foreach (var m in r.X_Menu)
+        {
+            currentMenu.Add(m.Id);
+        }
+    }
+
+
 }
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -108,22 +119,24 @@
             <div class="headerNav">
                 <a class="logo" href="http://j-ui.com">标志</a>
                 <ul class="nav">
-                    <li id="switchEnvBox">
-                        @*<a href="javascript:">（<span>北京</span>）切换城市</a>
-                                <ul>
-                                    <li><a href="sidebar_1.html">北京</a></li>
-                                    <li><a href="sidebar_2.html">上海</a></li>
-                                    <li><a href="sidebar_2.html">南京</a></li>
-                                    <li><a href="sidebar_2.html">深圳</a></li>
-                                    <li><a href="sidebar_2.html">广州</a></li>
-                                    <li><a href="sidebar_2.html">天津</a></li>
-                                    <li><a href="sidebar_2.html">杭州</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="https://me.alipay.com/dwzteam" target="_blank">捐赠</a></li>
-                            <li><a href="changepwd.html" target="dialog" width="600">设置</a></li>
-                            <li><a href="http://www.cnblogs.com/dwzjs" target="_blank">博客</a></li>*@
+                    @*<li id="switchEnvBox">
+    <a href="javascript:">（<span>北京</span>）切换城市</a>
+            <ul>
+                <li><a href="sidebar_1.html">北京</a></li>
+                <li><a href="sidebar_2.html">上海</a></li>
+                <li><a href="sidebar_2.html">南京</a></li>
+                <li><a href="sidebar_2.html">深圳</a></li>
+                <li><a href="sidebar_2.html">广州</a></li>
+                <li><a href="sidebar_2.html">天津</a></li>
+                <li><a href="sidebar_2.html">杭州</a></li>
+            </ul>
+        </li>
+        <li><a href="https://me.alipay.com/dwzteam" target="_blank">捐赠</a></li>
+        <li><a href="changepwd.html" target="dialog" width="600">设置</a></li>
+        <li><a href="http://www.cnblogs.com/dwzjs" target="_blank">博客</a></li>*@
                     <li><a href="@Url.Action("Index","Home",null)" target="_blank">ChineseChat(前台)</a></li>
+                    <li><a href="#">欢迎你(@currentUser.Nickname)</a></li>
+                    <li><a href="@Url.Action("Account","Admin",null)" target="dialog">帐号</a></li>
                     <li><a href="@Url.Action("Logout","Home",null)">退出</a></li>
                 </ul>
                 <ul class="themeList" id="themeList">
@@ -147,54 +160,61 @@
             <div id="sidebar">
                 <div class="toggleCollapse"><h2>常用菜单</h2><div>收缩</div></div>
                 <div class="accordion" fillspace="sidebar">
-                    <div class="accordionHeader">
-                        <h2><span>Folder</span>内容管理</h2>
-                    </div>
-                    <div class="accordionContent">
-                        <ul class="tree treeFolder">
-                            <li><a href='@Url.Action("LevelList")' target="navTab" rel="AdminLevelList">分类级别</a></li>
-                            <li><a href='@Url.Action("FolderIndex")' target="navTab" rel="AdminFolderIndex">文件夹</a></li>
-                            <li><a href='@Url.Action("DocsList")' target="navTab" rel="AdminDocsList">文章列表</a></li>
-                            <li><a href='@Url.Action("NimUserIndex")' target="navTab" rel="AdminNimUserIndex">客户管理</a></li>
-                            @*<li><a href='@Url.Action("TeacherIndex")' target="navTab" rel="AdminTeacherIndex">教师管理</a></li>*@
-                            <li><a href='@Url.Action("HsLevelIndex")' target="navTab" rel="AdminHsLevelIndex">汉语水平</a></li>
-                            <li><a href='@Url.Action("ThemeIndex")' target="navTab" rel="AdminThemeIndex">主题管理</a></li>
-                            <li><a href='@Url.Action("OrderIndex")' target="navTab" rel="AdminOrderIndex">订单管理</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="accordionHeader">
-                        <h2><span>Folder</span>安卓管理</h2>
-                    </div>
-                    <div class="accordionContent">
-                        <ul class="tree treeFolder">
-                            <li><a href='@Url.Action("AndroidIndex")' target="navTab" rel="AdminAndroidIndex">版本管理</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="accordionHeader">
-                        <h2><span>Folder</span>系统管理</h2>
-                    </div>
-                    <div class="accordionContent">
-                        <ul class="tree treeFolder">
-                            <li><a href="@Url.Action("UserIndex")" target="navTab" rel="AdminUserIndex">用户管理</a></li>
-                            <li><a href='@Url.Action("MenuIndex")' target="navTab" rel="AdminMenuIndex">菜单管理</a></li>
-                            <li><a href="newPage1.html" target="navTab" rel="dlg_page">权限管理</a></li>
-                        </ul>
-                    </div>
-                    @foreach (var item in menus.OrderBy(o => o.Order).Where(o => o.ParentId == null))
+                    @if (false)
                     {
                         <div class="accordionHeader">
-                            <h2><span>Folder</span>@item.Name</h2>
+                            <h2><span>Folder</span>内容管理</h2>
                         </div>
                         <div class="accordionContent">
                             <ul class="tree treeFolder">
-                                @foreach (var c in item.X_Menu1.OrderBy(o => o.Order))
-                                {
-                                    <li><a href='@Url.Action(c.Action, new { area = c.Area, controller = c.Ctrl })' target="navTab" rel='@String.Format("{0}{1}{2}",c.Area,c.Ctrl,c.Action)'>@c.Name</a></li>
-                                }
+                                <li><a href='@Url.Action("LevelList")' target="navTab" rel="AdminLevelList">分类级别</a></li>
+                                <li><a href='@Url.Action("FolderIndex")' target="navTab" rel="AdminFolderIndex">文件夹</a></li>
+                                <li><a href='@Url.Action("DocsList")' target="navTab" rel="AdminDocsList">文章列表</a></li>
+                                <li><a href='@Url.Action("NimUserIndex")' target="navTab" rel="AdminNimUserIndex">客户管理</a></li>
+                                @*<li><a href='@Url.Action("TeacherIndex")' target="navTab" rel="AdminTeacherIndex">教师管理</a></li>*@
+                                <li><a href='@Url.Action("HsLevelIndex")' target="navTab" rel="AdminHsLevelIndex">汉语水平</a></li>
+                                <li><a href='@Url.Action("ThemeIndex")' target="navTab" rel="AdminThemeIndex">主题管理</a></li>
+                                <li><a href='@Url.Action("OrderIndex")' target="navTab" rel="AdminOrderIndex">订单管理</a></li>
                             </ul>
                         </div>
+                        <div class="accordionHeader">
+                            <h2><span>Folder</span>安卓管理</h2>
+                        </div>
+                        <div class="accordionContent">
+                            <ul class="tree treeFolder">
+                                <li><a href='@Url.Action("AndroidIndex")' target="navTab" rel="AdminAndroidIndex">版本管理</a></li>
+                            </ul>
+                        </div>
+                        <div class="accordionHeader">
+                            <h2><span>Folder</span>系统管理</h2>
+                        </div>
+                        <div class="accordionContent">
+                            <ul class="tree treeFolder">
+                                <li><a href="@Url.Action("UserIndex")" target="navTab" rel="AdminUserIndex">用户管理</a></li>
+                                <li><a href='@Url.Action("MenuIndex")' target="navTab" rel="AdminMenuIndex">菜单管理</a></li>
+                                <li><a href="newPage1.html" target="navTab" rel="dlg_page">权限管理</a></li>
+                            </ul>
+                        </div>
+                    }
+                    @foreach (var item in menus.OrderBy(o => o.Order).Where(o => o.ParentId == null))
+                    {
+                        if (currentMenu.Contains(item.Id))
+                        {
+                            <div class="accordionHeader">
+                                <h2><span>Folder</span>@item.Name</h2>
+                            </div>
+                            <div class="accordionContent">
+                                <ul class="tree treeFolder">
+                                    @foreach (var c in item.X_Menu1.OrderBy(o => o.Order))
+                                    {
+                                        if (currentMenu.Contains(c.Id))
+                                        {
+                                            <li><a href='@Url.Action(c.Action, new { area = c.Area, controller = c.Ctrl })' target="navTab" rel='@String.Format("{0}{1}{2}",c.Area,c.Ctrl,c.Action)'>@c.Name</a></li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        }
                     }
                 </div>
             </div>

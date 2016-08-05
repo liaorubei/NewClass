@@ -24,10 +24,7 @@
                 <tr>
                     <th>目标版本</th>
                     <td>
-                        <select name="VersionType" class="combox">
-                            <option value="0" @(Model.VersionType == 0 ? "selected='selected'" : "")>学生端</option>
-                            <option value="1" @(Model.VersionType == 1 ? "selected='selected'" : "")>教师端</option>
-                        </select>
+                        @Html.DropDownList("VersionType", (List<SelectListItem>)ViewBag.VersionTypes, new { @class = "combox" })
                     </td>
                 </tr>
                 <tr>

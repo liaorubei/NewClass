@@ -1,0 +1,32 @@
+﻿@model X_Role
+@{
+    Layout = null;
+}
+<div class="pageContent">
+    <form method="post" action='@Url.Action("RoleCreate")' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent " layoutH="58">
+            <dl>
+                <dt>角色名：</dt>
+                <dd>
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <input type="text" name="Name" maxlength="20" class="required" value="@Model.Name" />
+                </dd>
+            </dl>
+            @*<dl>
+                    <dt>必填+邮箱：</dt>
+                    <dd>
+                        <input type="text" name="email" class="required email" alt="请输入您的电子邮件" />
+                        <span class="info">class="required email"</span>
+                    </dd>
+                </dl>*@
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+
+</div>
+

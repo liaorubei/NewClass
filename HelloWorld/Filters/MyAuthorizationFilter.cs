@@ -11,7 +11,7 @@ namespace StudyOnline.Filters
     {
         public void OnAuthorization(AuthorizationContext filterContext)
         {
-            var CurrentUser = filterContext.HttpContext.Session["CurrentUser"] as User;
+            var CurrentUser = filterContext.HttpContext.Session["CurrentUser"] as X_User;
             if (CurrentUser == null)
             {
                 if (filterContext.HttpContext.Request.IsAjaxRequest())

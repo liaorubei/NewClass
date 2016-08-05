@@ -17,6 +17,7 @@ namespace StudyOnline.Areas.Api.Controllers
 {
     public class NimUserController : Controller
     {
+        private readonly log4net.ILog logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         StudyOnlineEntities entities = new StudyOnlineEntities();
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace StudyOnline.Areas.Api.Controllers
                 string subjectInfo = "Your ChineseChat verification code";
                 string bodyInfo = "Your verification code is:" + code + ".Please enter it in the corresponding blank on Reset Password page within ten minutes.";
                 string mailUsername = "Service@chinesechat.cn";
-                string mailPassword = "60190466hwdfKF"; //发送邮箱的密码（）
+                string mailPassword = "HanWen2016"; //发送邮箱的密码（）
 
                 MyEmail my = new MyEmail(senderServerIp, toMailAddress, fromMailAddress, subjectInfo, bodyInfo, mailUsername, mailPassword, mailPort, false, false);
                 my.Send();
@@ -251,19 +252,19 @@ namespace StudyOnline.Areas.Api.Controllers
             int coins = 0;
             if (!String.IsNullOrEmpty(deviceId))
             {
-                Device d = entities.Device.Find(deviceId);
-                if (d == null)
+                Device device = entities.Device.Find(deviceId);
+                if (device == null)
                 {
-                    d = new Device() { Id = deviceId, Time = 0, Type = deviceType };
-                    entities.Device.Add(d);
+                    device = new Device() { Id = deviceId, Time = 0, Type = deviceType ?? "" };
+                    entities.Device.Add(device);
                 }
 
-                coins = 300 - (d.Time * 100);
+                coins = 300 - (device.Time * 100);
                 if (coins < 0)
                 {
                     coins = 0;
                 }
-                d.Time++;
+                device.Time++;
             }
 
             //如果是老师用户,不送学币
@@ -614,6 +615,7 @@ namespace StudyOnline.Areas.Api.Controllers
                     info = new
                     {
                         ex.Id,
+                        user.Username,
                         Avatar = ex.Icon,
                         Nickname = ex.Name,
                         ex.Mobile,
@@ -640,14 +642,18 @@ namespace StudyOnline.Areas.Api.Controllers
         /// </summary>
         /// <param name="username">用户名,即手机号码</param>
         /// <param name="password">密码</param>
+        /// <param name="category">用户分类,0为学生,1为教师</param>
+        /// <param name="system">登录帐号的系统,目前0为其他系统,1为安卓系统,2为苹果手机系统</param>
+        /// <param name="device">登录帐号的设备型号</param>
         /// <returns>如果成功,返回code=200,并且返回云信帐号信息</returns>
         [HttpPost]
-        public ActionResult Signin(String username, String password, Int32? category)
+        public ActionResult Signin(String username, String password, Int32? category, Int32? system, String device)
         {
-
-            if (String.IsNullOrEmpty(username) || String.IsNullOrEmpty(password))
+            logger.Debug(String.Format("username={0},category={1}", username, category));
+            if (String.IsNullOrWhiteSpace(username) || String.IsNullOrWhiteSpace(password))
             {
-                return Json(new { code = 20001, desc = "参数不能为空" });
+                logger.Debug("The user name or password is empty");
+                return Json(new { code = 201, desc = "The username or password is empty" });
             }
 
             NimUser user = entities.NimUser.SingleOrDefault(o => o.Username == username);
@@ -655,19 +661,62 @@ namespace StudyOnline.Areas.Api.Controllers
             //由于SQL问题,username大小写会被数据库认为是一样的,所以在此再做一次判断
             if (user == null || user.Username != username)
             {
-                return Json(new { code = 20001, desc = "用户名不存在" });
+                logger.Debug("Incorrect username or password! Please try again.");
+                return Json(new { code = 202, desc = "Incorrect username or password! Please try again." });
             }
 
             if (!EncryptionUtil.VerifyMd5(password, user.Password))
             {
-                return Json(new { code = 20001, desc = "用户名或密码错误" });
+                logger.Debug("Incorrect username or password! Please try again.");
+                return Json(new { code = 203, desc = "Incorrect username or password! Please try again." });
             }
 
             if (user.Category != (category ?? 0))
             {
-                return Json(new { code = 201, desc = "用户登录类型错误" });
+                logger.Debug("The user categorys do not match");
+                return Json(new { code = 204, desc = "The user categorys do not match" });
             }
 
+            if (user.IsActive == 0)
+            {
+                logger.Debug("The user is not active");
+                return Json(new { code = 205, desc = "The user is not active" });
+            }
+
+
+            int month = DateTime.Now.Month;
+            int duration = 0;
+            int count = 0;
+
+            //取得教师课时汇总
+            if (category == 1)
+            {
+                //A 2016-02-01 00:00:00
+                //B 2016-03-01 00:00:00
+                var a = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                var b = a.AddMonths(1);
+                var s = entities.CallLog.Where(o => o.Start != null && o.Finish != null && o.Target == user.Id && a < o.Start && o.Start <= b);
+                count = s.Count();
+                duration = s.Sum(o => o.Duration) ?? 0;
+            }
+            //如果是学生,则汇总所有的学时
+            else if (category == 0)
+            {
+                month = -1;
+                var studentData = entities.CallLog.Where(o => o.BalanceS == 1 && o.Source == user.Id);
+                count = studentData.Count();
+                duration = studentData.Sum(o => o.Duration) ?? 0;
+            }
+
+            //user.IsOnline = 1;
+            //user.IsEnable = 1;
+            user.Refresh = DateTime.Now;
+            user.System = system;
+            user.Device = device;
+
+            entities.SaveChanges();
+
+            logger.Debug(String.Format("signin success with system = {0},device={1}", system, device));
             return Json(new
             {
                 code = 200,
@@ -696,9 +745,17 @@ namespace StudyOnline.Areas.Api.Controllers
                     user.NimUserEx.School,
                     user.NimUserEx.Spoken,
                     user.NimUserEx.Hobbies,
-                    Photos = user.UploadFile.Select(o => o.Path).ToList()
+                    Photos = user.UploadFile.Select(o => o.Path).ToList(),
+                    Summary = new { month, count, duration }
                 }
             });
+        }
+
+        [HttpPost]
+        public ActionResult SignInError(Int32? code, String domain, String loginInfo, String accid, String token)
+        {
+            logger.Debug(String.Format("code={0},domain={1},loginInfo={2},accid={3},token={4}", code, domain, loginInfo, accid, token));
+            return Json(new { code = 200, desc = "记录成功" });
         }
 
         /// <summary>
@@ -884,19 +941,19 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult Refresh(Int32? id, String accid, String username)
         {
+            logger.Info("id=" + id);
             return Enqueue(id, accid, username, true);
         }
 
         public ActionResult TeacherRefreshByUserName(String username, int skip, int take)
         {
-            Int64 now = DateTime.Now.Ticks;
             NimUser user = entities.NimUser.Single(o => o.Username == username);
             user.IsOnline = 1;
-            user.Refresh = now;
+            user.Refresh = DateTime.Now;
 
             //默认category=1为老师  //要求是老师,在线,可用
-            Expression<Func<NimUser, bool>> predicate = o => o.IsOnline == 1 && o.IsEnable == 1 && o.Category == 1 && o.Enqueue <= user.Enqueue && o.Refresh >= (user.Refresh - 3000000000L);
-            var teachers = entities.NimUser.Where(predicate).OrderBy(o => o.Enqueue);
+            Expression<Func<NimUser, bool>> predicate = o => o.IsOnline == 1 && o.IsEnable == 1 && o.Category == 1;
+            var teachers = entities.NimUser.Where(predicate).OrderByDescending(o => o.Enqueue);
             var temp = teachers.Skip(skip).Take(take);
             return Json(new
             {
@@ -927,8 +984,6 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult Enqueue(Int32? id, String accid, String username, bool refresh = false)
         {
-            Int64 now = DateTime.Now.Ticks;
-
             NimUser user = entities.NimUser.Find(id);
 
             if (id != null)
@@ -952,20 +1007,20 @@ namespace StudyOnline.Areas.Api.Controllers
             }
 
             user.IsOnline = 1;
-            user.Refresh = now;
+            user.Refresh = DateTime.Now;
 
             //教师的刷新和入队区别是是否可用和重置入队时间
             if (!refresh)
             {
                 user.IsEnable = 1;
-                user.Enqueue = now;
+                user.Enqueue = DateTime.Now;
             }
             entities.SaveChanges();
 
             //默认category=1为老师  //要求是老师,在线,可用
-            Expression<Func<NimUser, bool>> predicate = o => o.IsOnline == 1 && o.IsEnable == 1 && o.Category == 1 && o.Enqueue <= user.Enqueue && o.Refresh >= (user.Refresh - 3000000000L);
+            Expression<Func<NimUser, bool>> predicate = o => o.IsOnline == 1 && o.IsEnable == 1 && o.Category == 1;
 
-            var teachers = entities.NimUser.Where(predicate).OrderBy(o => o.Enqueue);
+            var teachers = entities.NimUser.Where(predicate).OrderByDescending(o => o.Enqueue);
             var temp = teachers.Skip(0).Take(5).ToList();
             return Json(new
             {
@@ -1003,13 +1058,11 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult EnqueueById(Int32 id)
         {
-            Int64 now = DateTime.Now.Ticks;
-
             NimUser user = entities.NimUser.Find(id);
             user.IsOnline = 1;
             user.IsEnable = 1;
-            user.Enqueue = now;
-            user.Refresh = now;
+            user.Refresh = DateTime.Now;
+            user.Enqueue = DateTime.Now;
 
             entities.SaveChanges();
             return Json(new
@@ -1053,10 +1106,11 @@ namespace StudyOnline.Areas.Api.Controllers
             NimUser user = entities.NimUser.Single(o => o.Accid == accid);
             user.IsOnline = 1;
             user.IsEnable = 1;
-            user.Enqueue = now;
-            user.Refresh = now;
+            user.Refresh = DateTime.Now;
+            user.Enqueue = DateTime.Now;
 
-            entities.SaveChanges(); return Json(new
+            entities.SaveChanges();
+            return Json(new
             {
                 code = 200,
                 desc = "",
@@ -1097,8 +1151,8 @@ namespace StudyOnline.Areas.Api.Controllers
             NimUser user = entities.NimUser.Single(o => o.Username == username);
             user.IsOnline = 1;
             user.IsEnable = 1;
-            user.Enqueue = now;
-            user.Refresh = now;
+            user.Refresh = DateTime.Now;
+            user.Enqueue = DateTime.Now;
 
             entities.SaveChanges();
             return Json(new
@@ -1145,7 +1199,7 @@ namespace StudyOnline.Areas.Api.Controllers
                 return Json(new { code = 2001, desc = "没有这个学生" });
             }
             student.IsOnline = 1;
-            student.Refresh = DateTime.Now.Ticks;
+            student.Refresh = DateTime.Now;
 
             //要求是老师,在线,可用
             NimUser teacher = entities.NimUser.Where(o => o.Category == 1 && o.IsOnline == 1 && o.IsEnable == 1).OrderBy(o => o.Enqueue).FirstOrDefault();// && o.LastRefresh > now);
@@ -1168,7 +1222,6 @@ namespace StudyOnline.Areas.Api.Controllers
         public ActionResult ChooseTeacher(Int32 id, Int32 target)
         {
             //如果学生没有学币,那么将无法拨打电话
-            Int64 now = DateTime.Now.Ticks - 3000000000L;
             NimUser student = entities.NimUser.Find(id);
             if (student == null || (student.Category != 0))
             {
@@ -1179,11 +1232,10 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 student.NimUserEx.Coins = 0;
                 entities.SaveChanges();
-                return Json(new { code = 203, desc = "学币不足", info = new { student.NimUserEx.Id, student.NimUserEx.Name, student.NimUserEx.Coins } });
+                return Json(new { code = 203, desc = "学生学币不足", info = new { student.NimUserEx.Id, student.NimUserEx.Name, student.NimUserEx.Coins } });
             }
 
             student.IsOnline = 1;
-            student.Refresh = DateTime.Now.Ticks;
 
             NimUser teacher = entities.NimUser.Find(target);
             if (teacher == null || (teacher.Category != 1))
@@ -1193,12 +1245,174 @@ namespace StudyOnline.Areas.Api.Controllers
 
             if (teacher.IsEnable == 0)
             {
-                return Json(new { code = 201, desc = "老师已经被取走" });
+                return Json(new { code = 201, desc = "老师已被取走" });
             }
 
-            teacher.IsEnable = 0;
+            //20160630更改状态,取教师时不再设置状态,改为创建成功再设置状态
+            //teacher.IsEnable = 0;
             entities.SaveChanges();
             return Json(new { code = 200, desc = "选择成功", info = new { teacher.Id, teacher.Accid, teacher.NimUserEx.Name, teacher.Username, teacher.NimUserEx.Icon, teacher.NimUserEx.Voice } });
+        }
+
+        /// <summary>
+        /// 学生选择教师1版本,由于要求拨打时显示对方的国籍,学习/教育情况而添加的
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ChooseTeacherV1(Int32 id, Int32 target)
+        {
+            //200通过
+            //201教师目前在忙
+            //202教师帐号异常
+            //203学生余额不足
+            //204学生帐号异常
+
+            try
+            {
+                View_User student = entities.View_User.Find(id);
+                if (student == null)
+                {
+                    return Json(new { code = 204, desc = "没有这个学生" });
+                }
+                if (student.Category != 0)
+                {
+                    return Json(new { code = 204, desc = "帐号类型出错" });
+                }
+                if (student.Coins <= 0)
+                {
+                    return Json(new { code = 203, desc = "学生余额不足" });
+                }
+
+                View_User teacher = entities.View_User.Find(target);
+                if (teacher == null)
+                {
+                    return Json(new { code = 202, desc = "没有这个教师" });
+                }
+                if (teacher.Category != 1)
+                {
+                    return Json(new { code = 202, desc = "帐号类型出错" });
+                }
+                if (!(teacher.IsOnline == 1 && teacher.IsEnable == 1))
+                {
+                    return Json(new { code = 201, desc = "教师目前在忙" });
+                }
+
+                var d = entities.CallLog.Where(o => o.BalanceS == 1 && o.Source == student.Id);
+                var studentSummary = new { month = -1, count = d.Count(), duration = d.Sum(o => o.Duration) };
+
+                var begin = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                var end = begin.AddMonths(1);
+
+                var e = entities.CallLog.Where(o => o.BalanceS == 1 && o.Target == teacher.Id).Where(o => begin < o.Start && o.Start < end);
+                var teacherSummary = new { month = begin.Month, count = e.Count(), duration = e.Sum(o => o.Duration) };
+
+                //因为用视图保存数据有可能会保存失败,所以在这里直接用SQL语句来更新数据
+                //teacher.IsOnline = 1;
+                //teacher.IsEnable = 0;
+                //entities.SaveChanges();
+
+                //拨打时候不让教师成为取走状态
+                //entities.Database.ExecuteSqlCommand("update nimuser set IsEnable=0 where Id=@Id", new SqlParameter("@Id", target));
+
+                return Json(new
+                {
+                    code = 200,
+                    desc = "选择成功",
+                    info = new
+                    {
+                        Student = new
+                        {
+                            student.Id,
+                            student.Accid,
+                            student.Coins,
+                            student.Avatar,
+                            student.Country,
+                            student.Category,
+                            student.Username,
+                            student.Nickname,
+                            //student.IsOnline,
+                            //student.IsEnable,
+                            Summary = studentSummary
+
+                        },
+                        Teacher = new
+                        {
+                            teacher.Id,
+                            teacher.Accid,
+                            teacher.Coins,
+                            teacher.Avatar,
+                            teacher.Country,
+                            teacher.Category,
+                            teacher.Username,
+                            teacher.Nickname,
+                            //teacher.IsOnline,
+                            //teacher.IsEnable,
+                            Summary = teacherSummary
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
+
+        }
+
+        public ActionResult GetUserChatDataByAccid(String accid)
+        {
+            try
+            {
+                NimUser nimuser = entities.NimUser.Single(o => o.Accid == accid);
+                Int32 m = 0;
+                Int32 c = 0;
+                Int32 d = 0;
+                if (nimuser.Category == 0)
+                {
+                    //学生
+                    var sc = nimuser.CallLog.Where(o => o.BalanceS == 1);
+                    m = -1;
+                    c = sc.Count();
+                    d = sc.Sum(o => o.Duration) ?? 0;
+                }
+                else if (nimuser.Category == 1)
+                {
+                    DateTime begin = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                    DateTime end = begin.AddMonths(1);
+                    var tc = nimuser.CallLog1.Where(o => o.BalanceS == 1).Where(o => begin < o.Start && o.Start < end);
+                    m = begin.Month;
+                    c = tc.Count();
+                    d = tc.Sum(o => o.Duration) ?? 0;
+                }
+                else
+                {
+                    return Json(new { code = 201, desc = "查询异常" });
+                }
+
+                NimUserEx ex = nimuser.NimUserEx;
+
+                return Json(new
+                {
+                    code = 200,
+                    desc = "",
+                    info = new
+                    {
+                        ex.Id,
+                        Nickname = ex.Name,
+                        Avatar = ex.Icon,
+                        ex.Country,
+                        ex.School,
+                        Summary = new { month = m, count = c, duration = d }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
+
         }
 
         /// <summary>
@@ -1210,11 +1424,8 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult TeacherInqueue(int skip, int take)
         {
-            Int64 now = DateTime.Now.Ticks;
-            long refresh = now - 3000000000L;//5分钟轮循时间
-
-            Expression<Func<NimUser, bool>> predicate = o => o.IsOnline == 1 && o.IsEnable == 1 && o.Category == 1 && (o.Enqueue < now) && (o.Refresh > refresh);//默认category=1为老师  //要求是老师,在线,可用
-            Expression<Func<NimUser, long?>> keySelector = o => o.Enqueue;
+            Expression<Func<NimUser, bool>> predicate = o => o.IsOnline == 1 && o.IsEnable == 1 && o.Category == 1;//默认category=1为老师  //要求是老师,在线,可用
+            Expression<Func<NimUser, DateTime?>> keySelector = o => o.Enqueue;
             List<NimUser> teachers = entities.NimUser.Where(predicate).OrderBy(keySelector).Skip(skip).Take(take).ToList();
             return Json(new
             {
@@ -1261,7 +1472,7 @@ namespace StudyOnline.Areas.Api.Controllers
                         Nickname = o.NimUserEx.Name,
                         IsEnable = 1 == o.IsEnable,
                         IsOnline = 1 == o.IsOnline,
-                        o.Enqueue,
+                        // o.Enqueue,
                         o.NimUserEx.Spoken,
                         o.NimUserEx.Country,
                         Photos = o.UploadFile.Select(p => p.Path).ToList()
@@ -1322,6 +1533,45 @@ namespace StudyOnline.Areas.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// 兼容接口
+        /// </summary>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult GetTeacherA(int skip, int take)
+        {
+            try
+            {
+                var teacher = entities.NimUser.Where(o => o.Category == 1 && o.IsOnline == 1).OrderByDescending(o => o.IsEnable).ThenBy(o => o.Enqueue).Skip(skip).Take(take).ToList();
+                return Json(new
+                {
+                    code = 200,
+                    desc = "查询成功",
+                    info = teacher.Select(o => new
+                    {
+                        o.Id,
+                        o.Accid,
+                        Avatar = o.NimUserEx.Icon,
+                        o.NimUserEx.About,
+                        o.Username,
+                        Nickname = o.NimUserEx.Name,
+                        IsEnable = 1 == o.IsEnable,
+                        IsOnline = 1 == o.IsOnline,
+                        //  o.Enqueue,
+                        o.NimUserEx.Spoken,
+                        o.NimUserEx.Country,
+                        Photos = o.UploadFile.Select(p => p.Path).ToList()
+                    })
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 201, desc = ex.Message });
+            }
+        }
 
         //public ActionResult GetTeacherByTeacher(String username, Int32 skip, Int32 take)
         //{
@@ -1369,10 +1619,15 @@ namespace StudyOnline.Areas.Api.Controllers
                     return Json(new { code = 201, desc = "入队失败" });
                 }
 
+                if (nimUser.IsActive == 0)
+                {
+                    return Json(new { code = 202, desc = "帐号已经冻结" });
+                }
+
                 nimUser.IsEnable = 1;
                 nimUser.IsOnline = 1;
-                nimUser.Enqueue = DateTime.Now.Ticks;
-                nimUser.Refresh = DateTime.Now.Ticks;
+                nimUser.Refresh = DateTime.Now;
+                nimUser.Enqueue = DateTime.Now;
                 entities.SaveChanges();
                 return Json(new { code = 200, desc = "入队成功" });
             }
@@ -1417,7 +1672,7 @@ namespace StudyOnline.Areas.Api.Controllers
 
                 nimUser.IsEnable = 0;
                 nimUser.IsOnline = 0;
-                nimUser.Refresh = DateTime.Now.Ticks;
+                nimUser.Refresh = DateTime.Now;
                 entities.SaveChanges();
                 return Json(new { code = 200, desc = "出队成功" });
             }
@@ -1430,12 +1685,12 @@ namespace StudyOnline.Areas.Api.Controllers
         /// <summary>
         /// 新的教师刷新接口
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="accid"></param>
-        /// <param name="username"></param>
+        /// <param name="id">用户的Id,在这里只能是教师的Id</param>
+        /// <param name="system">手机系统,安卓为1,苹果为2,其它为0</param>
+        /// <param name="device">手机型号,如:OnePlus 2</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult TeacherRefresh(Int32? id, String accid, String username)
+        public ActionResult TeacherRefresh(Int32? id, Int32? system, String device)
         {
             try
             {
@@ -1445,9 +1700,13 @@ namespace StudyOnline.Areas.Api.Controllers
                     nimUser = entities.NimUser.Find(id);
                 }
 
-                nimUser.IsOnline = 1;
-                nimUser.Refresh = DateTime.Now.Ticks;
+                //暂时不设置在线状态
+                //nimUser.IsOnline = 1;
+                nimUser.Refresh = DateTime.Now;
+                nimUser.System = system;
+                nimUser.Device = device;
                 entities.SaveChanges();
+
                 return Json(new { code = 200, desc = "刷新成功" });
             }
             catch (Exception ex)
@@ -1488,6 +1747,51 @@ namespace StudyOnline.Areas.Api.Controllers
             }
         }
 
-     
+        [HttpPost]
+        public ActionResult GetTeacherOnline(Int32? id, int? skip, int? take)
+        {
+            try
+            {
+                NimUser user = entities.NimUser.Find(id);
+                var a = entities.NimUser.Where(o => o.Category == 1 && o.IsOnline == 1).OrderByDescending(o => o.IsEnable).ThenBy(o => o.Enqueue).Skip(skip ?? 0);
+                List<NimUser> teachers = take == null ? a.ToList() : a.Take(take.Value).ToList();
+                return Json(new
+                {
+                    code = 200,
+                    desc = "查询成功",
+                    info = new
+                    {
+                        Teacher = teachers.Select(o => new
+                        {
+                            o.Id,
+                            o.Accid,
+                            Avatar = o.NimUserEx.Icon,
+                            o.Username,
+                            IsEnable = o.IsEnable == 1,
+                            IsOnline = o.IsOnline == 1,
+                            Nickname = o.NimUserEx.Name,
+                            o.NimUserEx.Spoken,
+                            Photos = o.UploadFile.Select(p => p.Path).ToList()
+                        }),
+                        Current = user == null ? null : new
+                        {
+                            user.Id,
+                            user.Username,
+                            user.IsOnline,
+                            user.IsEnable,
+                            user.IsActive
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    code = 200,
+                    desc = ex.Message
+                });
+            }
+        }
     }
 }

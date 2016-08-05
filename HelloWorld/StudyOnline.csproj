@@ -54,6 +54,14 @@
       <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Common.Logging, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.3.0.0\lib\net40\Common.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Common.Logging.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.Core.3.0.0\lib\net40\Common.Logging.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -91,6 +99,10 @@
     </Reference>
     <Reference Include="PayPal, Version=1.7.2.0, Culture=neutral, PublicKeyToken=5b4afc1ccaef40fb, processorArchitecture=MSIL">
       <HintPath>..\packages\PayPal.1.7.2\lib\net45\PayPal.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Quartz, Version=2.3.3.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Quartz.2.3.3\lib\net40\Quartz.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System">
@@ -241,8 +253,12 @@
     <Compile Include="Areas\Api\Controllers\NimUserController.cs" />
     <Compile Include="Areas\Api\Controllers\ThemeController.cs" />
     <Compile Include="Areas\Api\Models\User.cs" />
-    <Compile Include="Areas\Master\Controllers\MenuController.cs" />
+    <Compile Include="Areas\Master\Controllers\AuditController.cs" />
+    <Compile Include="Areas\Master\Controllers\SystemController.cs" />
     <Compile Include="Areas\Master\Controllers\DefectController.cs" />
+    <Compile Include="Areas\Master\Controllers\NimUserController.cs" />
+    <Compile Include="Areas\Master\Controllers\PaymentController.cs" />
+    <Compile Include="Areas\Master\Controllers\ThemeController.cs" />
     <Compile Include="Areas\Master\MasterAreaRegistration.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -264,6 +280,7 @@
     <Compile Include="Models\Comment.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Constant.cs" />
     <Compile Include="Models\Device.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
@@ -289,7 +306,6 @@
     <Compile Include="Models\LogTheme.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\NimUser.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
@@ -305,6 +321,7 @@
     <Compile Include="Models\Question.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ResponseModel.cs" />
     <Compile Include="Models\StudyOnline.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -320,7 +337,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>StudyOnline.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Models\Teacher.cs">
+    <Compile Include="Models\Teacherreginfo.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Theme.cs">
@@ -332,7 +349,16 @@
     <Compile Include="Models\User.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\View_User.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\X_Menu.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\X_Role.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\X_User.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="notify_url.aspx.cs">
@@ -340,10 +366,14 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Quartz\ChatJob.cs" />
+    <Compile Include="Quartz\TeacherAuditJob.cs" />
+    <Compile Include="Quartz\TeacherRefreshJob.cs" />
     <Compile Include="Utils\AlipayConfig.cs" />
     <Compile Include="Utils\AlipayCore.cs" />
     <Compile Include="Utils\AlipayNotify.cs" />
     <Compile Include="Utils\Configuration.cs" />
+    <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\ConvertUtil.cs" />
     <Compile Include="Utils\Helper.cs" />
     <Compile Include="Utils\LyricParser.cs" />
@@ -721,14 +751,28 @@
     <Content Include="Areas\Master\Views\web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Areas\Master\Views\Menu\Select.cshtml" />
-    <Content Include="Areas\Master\Views\Menu\Update.cshtml" />
-    <Content Include="Areas\Master\Views\Menu\Create.cshtml" />
+    <Content Include="Areas\Master\Views\System\MenuSelect.cshtml" />
+    <Content Include="Areas\Master\Views\System\Update.cshtml" />
+    <Content Include="Areas\Master\Views\System\Create.cshtml" />
     <Content Include="Areas\Master\Views\Defect\Select.cshtml" />
     <Content Include="Areas\ApiV2\Views\web.config" />
-    <None Include="Properties\PublishProfiles\voc2015 - Web Deploy.pubxml">
+    <Content Include="Areas\Master\Views\Audit\Select.cshtml" />
+    <Content Include="Areas\Master\Views\Payment\Select.cshtml" />
+    <Content Include="Areas\Master\Views\NimUser\Select.cshtml" />
+    <Content Include="Areas\Master\Views\Theme\Select.cshtml" />
+    <Content Include="Areas\Master\Views\System\UserSelect.cshtml" />
+    <Content Include="Areas\Master\Views\System\RoleSelect.cshtml" />
+    <Content Include="Areas\Master\Views\System\RoleCreate.cshtml" />
+    <Content Include="Areas\Master\Views\System\UserRoleAssign.cshtml" />
+    <Content Include="Areas\Master\Views\System\RoleMenuAssign.cshtml" />
+    <Content Include="Areas\Master\Views\System\UserCreate.cshtml" />
+    <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Properties\PublishProfiles\生产环境.pubxml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\PublishProfiles\测试环境.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Images\background.png" />
     <Content Include="App_Data\readme1.txt" />
@@ -1155,6 +1199,8 @@
     <Content Include="Views\Admin\TeacherUpdate.cshtml" />
     <Content Include="Views\Home\LoginDialog.cshtml" />
     <Content Include="Views\Home\AndroidClient.cshtml" />
+    <Content Include="Views\Admin\Recharge.cshtml" />
+    <Content Include="Views\Admin\Account.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\ApiV2\Controllers\" />

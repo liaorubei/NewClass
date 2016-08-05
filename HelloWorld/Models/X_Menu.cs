@@ -18,6 +18,7 @@ namespace StudyOnline.Models
         public X_Menu()
         {
             this.X_Menu1 = new HashSet<X_Menu>();
+            this.X_Role = new HashSet<X_Role>();
         }
     
         public int Id { get; set; }
@@ -31,5 +32,7 @@ namespace StudyOnline.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<X_Menu> X_Menu1 { get; set; }
         public virtual X_Menu X_Menu2 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<X_Role> X_Role { get; set; }
     }
 }

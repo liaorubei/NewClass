@@ -27,6 +27,36 @@ namespace StudyOnline.Controllers
             return View();
         }
 
+        public ActionResult Account()
+        {
+            ViewData.Model = Session["CurrentUser"];
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Account(X_User user)
+        {
+            try
+            {
+                if (!String.IsNullOrEmpty(user.Id))
+                {
+                    X_User x = entities.X_User.Find(user.Id);
+                    x.Username = user.Username;
+                    x.Password = user.Password;
+                    x.Nickname = user.Nickname;
+                    x.Truename = user.Truename;
+
+                    Session["CurrentUser"] = x;
+                    entities.SaveChanges();
+                }
+                return Json(new ResponseModel() { statusCode = "200", message = "操作成功", callbackType = "closeCurrent" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new ResponseModel() { statusCode = "300", message = ex.Message });
+            }
+        }
+
         public ActionResult Player() { return View(); }
 
         //文档相关
@@ -455,6 +485,27 @@ namespace StudyOnline.Controllers
             var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminNimUserIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
             return Json(data);
         }
+
+        public ActionResult Recharge(Int32 id)
+        {
+            NimUser user = entities.NimUser.Find(id);
+            ViewData.Model = user;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Recharge(Int32 id, Int32 coins)
+        {
+            NimUserEx ex = entities.NimUserEx.Find(id);
+            if (ex.NimUser.Category == 1)
+            {
+                return Json(new { statusCode = "300", message = "教师不能充值" });
+            }
+            ex.Coins = coins;
+            entities.SaveChanges();
+            return Json(new { statusCode = "200", message = "操作成功", navTabId = "AdminNimUserIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" });
+        }
+
 
 
         #endregion
@@ -911,23 +962,54 @@ namespace StudyOnline.Controllers
             int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
 
             //关键字处理
-            Expression<Func<Android, bool>> predicate = o => true;
+            Expression<Func<Android, bool>> predicateKeyword = o => true;
             if (!String.IsNullOrEmpty(form["keyword"]))
             {
                 String keyword = form["keyword"];
-                predicate = o => o.VersionName.Contains(keyword) || o.UpgradeInfo.Contains(keyword);
+                predicateKeyword = o => o.VersionName.Contains(keyword) || o.UpgradeInfo.Contains(keyword);
                 ViewBag.KeyWord = form["keyword"];
             }
 
-            ViewData.Model = entities.Android.Where(predicate).OrderByDescending(o => o.CreateDate).ToPagedList(pageIndex, pageSize);
+            Expression<Func<Android, bool>> predicate = o => true;
+            Int32 versionType = ConvertUtil.ToInt32(form["searchBarVersionType"], -1);
+            if (versionType > -1)
+            {
+                predicate = o => o.VersionType == versionType;
+            }
+
+
+            ViewData.Model = entities.Android.Where(predicateKeyword).Where(predicate).OrderByDescending(o => o.CreateDate).ToPagedList(pageIndex, pageSize);
+
+            List<SelectListItem> selectListItemVersionType = new List<SelectListItem>();
+            selectListItemVersionType.Add(new SelectListItem() { Text = "-请选择-", Value = "" });
+
+            var c = typeof(Client);
+            var names = Enum.GetValues(c);
+            foreach (Int32 item in names)
+            {
+                selectListItemVersionType.Add(new SelectListItem() { Text = Enum.GetName(c, item), Value = item.ToString(), Selected = item == versionType });
+            }
+            ViewBag.VersionTypes = selectListItemVersionType;
 
             return View();
         }
 
         public ActionResult AndroidCreate(Int32? id)
         {
-            Android android = entities.Android.Find(id);
-            ViewData.Model = android ?? new Android() { Id = 0, VersionType = 0, CreateDate = DateTime.Now };
+            Android android = entities.Android.Find(id) ?? new Android() { Id = 0, VersionType = -1, CreateDate = DateTime.Now };
+            ViewData.Model = android;
+
+            List<SelectListItem> selectListItemVersionType = new List<SelectListItem>();
+            selectListItemVersionType.Add(new SelectListItem() { Text = "-请选择-", Value = "" });
+
+            var c = typeof(Client);
+            var names = Enum.GetValues(c);
+            foreach (Int32 item in names)
+            {
+                selectListItemVersionType.Add(new SelectListItem() { Text = Enum.GetName(c, item), Value = item.ToString(), Selected = item == android.VersionType });
+            }
+            ViewBag.VersionTypes = selectListItemVersionType;
+
             return View();
         }
 

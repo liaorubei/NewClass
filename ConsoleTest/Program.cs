@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleTest
 {
@@ -11,15 +7,19 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
-            //NewMethod1();
-            List<String> s = new List<string> { "Teacher00", "Teacher00", "Teacher00", "Teacher00", "Teacher00", "Teacher00", "Teacher00" };
 
-            foreach (var item in s.Where(o => o== "Teacher00"))
-            {
-                Console.WriteLine(item);
-            }
+            List<int> a = new List<int>();
+            a.ForEach(o=>o.ToString());
 
             Console.Read();
+        }
+
+        private static void NewMethod2()
+        {
+            var a = new DateTime(DateTime.Now.Year, 2, 1);
+            var b = a.AddMonths(1);
+            Console.WriteLine(a.ToString("yyyy-MM-dd HH:mm:ss"));
+            Console.WriteLine(b.ToString("yyyy-MM-dd HH:mm:ss"));
         }
 
         private static void NewMethod1()

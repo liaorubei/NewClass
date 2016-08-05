@@ -30,7 +30,7 @@ namespace StudyOnline.Models
         public Nullable<int> BalanceS { get; set; }
         public Nullable<int> BalanceT { get; set; }
     
-        public virtual NimUser Student { get; set; }
-        public virtual NimUser Teacher { get; set; }
+        public virtual NimUser NimUser { get; set; }
+        public virtual NimUser NimUser1 { get; set; }
     }
 }

@@ -15,13 +15,14 @@ namespace StudyOnline.Areas.Api.Controllers
         {
             if (String.IsNullOrWhiteSpace(content))
             {
-                return Json(new { code=201,desc="反馈内容不能为空",info=""});
+                return Json(new { code = 201, desc = "反馈内容不能为空", info = "" });
             }
             try
             {
                 Feedback model = new Feedback();
                 model.Content = content;
                 model.Contact = contact;
+                model.Createtime = DateTime.Now;
                 entities.Feedback.Add(model);
                 entities.SaveChanges();
                 return Json(new { code = 200, desc = "添加成功", info = "" });

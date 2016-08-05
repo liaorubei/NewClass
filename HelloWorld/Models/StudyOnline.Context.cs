@@ -29,6 +29,7 @@ namespace StudyOnline.Models
         public virtual DbSet<AuthCode> AuthCode { get; set; }
         public virtual DbSet<CallLog> CallLog { get; set; }
         public virtual DbSet<Comment> Comment { get; set; }
+        public virtual DbSet<Device> Device { get; set; }
         public virtual DbSet<Document> Document { get; set; }
         public virtual DbSet<Feedback> Feedback { get; set; }
         public virtual DbSet<Folder> Folder { get; set; }
@@ -41,11 +42,13 @@ namespace StudyOnline.Models
         public virtual DbSet<Orders> Orders { get; set; }
         public virtual DbSet<Product> Product { get; set; }
         public virtual DbSet<Question> Question { get; set; }
-        public virtual DbSet<Teacher> Teacher { get; set; }
+        public virtual DbSet<Teacherreginfo> Teacherreginfo { get; set; }
         public virtual DbSet<Theme> Theme { get; set; }
         public virtual DbSet<UploadFile> UploadFile { get; set; }
         public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<View_User> View_User { get; set; }
         public virtual DbSet<X_Menu> X_Menu { get; set; }
-        public virtual DbSet<Device> Device { get; set; }
+        public virtual DbSet<X_Role> X_Role { get; set; }
+        public virtual DbSet<X_User> X_User { get; set; }
     }
 }

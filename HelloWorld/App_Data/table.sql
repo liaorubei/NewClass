@@ -248,3 +248,29 @@ select * from android order by createdate
 select * from theme
 
 UPDATE Theme SET HsLevelId=null where HsLevelId=2
+
+
+
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT * FROM [dbo].[NimUser] where category=1
+--update [dbo].[NimUser] set [IsOnline]=1,[IsEnable]=1,[Refresh]='2016-01-26',[Enqueue]='2016-01-26',[System]=1 where category=1
+
+
+--//20160726 重新添加刷新功能,这次加入了刷新的是哪种系统,哪个设备,并更改了数据库的刷新与入队字段的数据类型
+--update [dbo].[NimUser] set [Refresh]=null
+--alter table [dbo].[NimUser] alter column [Refresh] datetime
+
+--update [dbo].[NimUser] set [Enqueue]=null
+--alter table [dbo].[NimUser] alter column [Enqueue] datetime
+
+--alter table [dbo].[NimUser] add [System] int           --手机系统,安卓为1,苹果为2,其它为0
+--alter table [dbo].[NimUser] add [Device] nvarchar(64)
+
+--//创建视图
+--drop view View_User
+--CREATE VIEW View_User as 
+--select N.Id,N.Accid,N.Username,N.Category,N.IsOnline,N.IsEnable,N.IsActive,N.CreateDate,E.Email,E.Name as Nickname, E.Icon as Avatar,E.Country,E.Coins 
+--from [dbo].[NimUser] as N inner join [dbo].[NimUserEx] as E on N.Id=E.Id
+
+--//添加教师审核同步数据字段
+--alter table [dbo].[Teacherreginfo] add IsSync int 

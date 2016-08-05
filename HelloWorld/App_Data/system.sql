@@ -71,3 +71,47 @@ CREATE TABLE [Menu]
   CreateTime Datetime,
   Constraint PK_Defect primary key (Id)
   )
+
+
+  /****** 2016-08-01 按要求添加后台权限管理系统  ******/
+create table X_User(
+[Id] char(32) not null,
+[Username] varchar(128) not null UNIQUE,
+[Password] varchar(128) not null,
+[Nickname] nvarchar(128),
+[Truename] nvarchar(128),
+[IsActive] int not null,
+[CreateDate] datetime not null,
+constraint PK_X_User primary key (Id)
+)
+
+create table X_Role(
+[Id] char(32) not null,
+[Name] nvarchar(128),
+constraint PK_X_Role primary key (Id)
+)
+
+Create table X_Menu_X_Role(
+Id_Menu int,
+Id_Role char(32),
+constraint PK_X_Menu_X_Role primary key (Id_Menu,Id_Role),
+Constraint FK_X_Menu_X_Role_X_Menu FOREIGN KEY ([Id_Menu]) REFERENCES [X_Menu] ([Id]),
+constraint FK_X_Menu_X_Role_X_Role FOREIGN KEY ([Id_Role]) REFERENCES [X_Role] ([Id])
+)
+
+Create table X_Role_X_User(
+[Id_Role] char(32),
+[Id_User] char(32),
+CONSTRAINT PK_X_Role_X_User primary key ([Id_Role],[Id_User]),
+CONSTRAINT FK_X_Role_X_User_X_Role FOREIGN KEY ([Id_Role]) REFERENCES [X_Role] ([Id]),
+CONSTRAINT FK_X_Role_X_User_X_User FOREIGN KEY ([Id_User]) REFERENCES [X_User] ([Id])
+)
+
+select * from [dbo].[X_User]
+select * from [dbo].[X_Menu] order by parentId,[order]
+select * from [dbo].[X_Role]
+
+--修改主题和问题表,都添加一个序号的字段,用以排序,
+alter table [dbo].[Theme] add Sort int
+alter table [dbo].[Theme] add IsDelete int 
+alter table [dbo].[Question] add Sort int 

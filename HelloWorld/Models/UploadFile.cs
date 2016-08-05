@@ -18,7 +18,6 @@ namespace StudyOnline.Models
         public UploadFile()
         {
             this.NimUser = new HashSet<NimUser>();
-            this.NimUser1 = new HashSet<NimUser>();
         }
     
         public int Id { get; set; }
@@ -31,7 +30,5 @@ namespace StudyOnline.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<NimUser> NimUser { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<NimUser> NimUser1 { get; set; }
     }
 }

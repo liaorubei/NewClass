@@ -1,0 +1,40 @@
+﻿@model NimUser
+@{
+    Layout = null;
+}
+
+
+<div class="pageContent">
+
+    <form method="post" action='@Url.Action("Recharge", new { controller="Admin"})' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent " layoutH="58">
+            <dl>
+                <dt>帐号：</dt>
+                <dd>
+                    <input type="text" readonly="readonly" value="@Model.Username" />
+                </dd>
+            </dl>
+            <dl>
+                <dt>昵称：</dt>
+                <dd>
+                    <input type="text" readonly="readonly" value="@Model.NimUserEx.Name" />
+                </dd>
+            </dl>
+            <dl>
+                <dt>充值：</dt>
+                <dd>
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <input type="text" name="Coins" class="digits required" min="0" value="@Model.NimUserEx.Coins" />
+                </dd>
+            </dl>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+
+</div>
+

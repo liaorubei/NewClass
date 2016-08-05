@@ -17,7 +17,7 @@ if (m != null)
                 <td></td>
                 <td></td>
             </tr>
-            @show(item.X_Menu1.ToList())
+            @show(item.X_Menu1.OrderBy(o=>o.Order).ToList())
     }
 }
 }
@@ -34,9 +34,9 @@ if (m != null)
 <div class="pageContent">
     <div class="panelBar">
         <ul class="toolBar">
-            <li><a class="create" href='@Url.Action("Create", new {area="Master",controller="Menu", id="{id}" })' target="dialog" rel="MasterMenuCreate" title="添加菜单" width="800" height="600" mask="true"><span>添加</span></a></li>
-            <li><a class="update" href="@Url.Action("Update", new {area="Master",controller="Menu", id="{id}" })" target="dialog" rel="MasterMenuUpdate" title="修改菜单" width="800" height="600" mask="true" warn="请选择"><span>修改</span></a></li>
-            <li><a class="delete" href="@Url.Action("Delete", new {area="Master",controller="Menu", id="{id}" })"><span>删除</span></a></li>
+            <li><a class="create" href='@Url.Action("Create", new {area="Master",controller="System", id="{id}" })' target="dialog" rel="MasterMenuCreate" title="添加菜单" width="800" height="600" mask="true"><span>添加</span></a></li>
+            <li><a class="update" href="@Url.Action("Update", new {area="Master",controller="System", id="{id}" })" target="dialog" rel="MasterMenuUpdate" title="修改菜单" width="800" height="600" mask="true" warn="请选择"><span>修改</span></a></li>
+            <li><a class="delete" href="@Url.Action("Delete", new {area="Master",controller="System", id="{id}" })"><span>删除</span></a></li>
         </ul>
     </div>
     <div layoutH="88">
@@ -52,7 +52,7 @@ if (m != null)
             </thead>
             <tbody>
                 <tr> <td>顶级菜单</td><td></td><td></td><td></td><td></td></tr>
-                @show(Model)
+                @show(Model.OrderBy(o=>o.Order).ToList())
             </tbody>
         </table>
     </div>

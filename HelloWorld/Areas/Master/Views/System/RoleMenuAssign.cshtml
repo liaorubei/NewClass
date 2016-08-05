@@ -1,0 +1,46 @@
+﻿@model X_Role
+@{
+    Layout = null;
+    List<X_Menu> menus = ViewBag.Menus;
+    var kkk = Model.X_Menu.ToList();
+}
+
+
+<div class="pageContent">
+
+    <form method="post" action='@Url.Action("RoleMenuAssign")' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent " layoutH="58">
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <ul class="tree treeFolder treeCheck expand">
+                @foreach (var item in menus)
+                {
+                    <li>
+                        <a tname="menus" tvalue="@item.Id" @Html.Raw(Model.X_Menu.Contains(item) ? "checked='true'" : "")>@item.Name</a>
+                        @foreach (var c1 in item.X_Menu1.OrderBy(o => o.Order))
+                        {
+                            <ul>
+                                <li>
+                                    <a tname="menus" tvalue="@c1.Id" @Html.Raw(Model.X_Menu.Contains(c1) ? "checked='true'" : "")>@c1.Name</a>
+                                    @foreach (var c2 in c1.X_Menu1.OrderBy(o => o.Order))
+                                    {
+                                        <ul>
+                                            <li><a tname="menus" tvalue="@c2.Id" @Html.Raw(Model.X_Menu.Contains(c2) ? "checked='true'" : "")>@c2.Name</a></li>
+                                        </ul>
+                                    }
+                                </li>
+
+                            </ul>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+
+</div>

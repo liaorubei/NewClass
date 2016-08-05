@@ -9,11 +9,14 @@
         <div class="searchBar">
             <ul class="searchContent">
                 <li>
-                    <label>我的客户：</label>
+                    <label>关键字：</label>
                     <input type="text" name="keyword" value="@ViewBag.KeyWord" />
                 </li>
+                <li>
+                    <label>版本类型：</label>
+                    @Html.DropDownList("searchBarVersionType", (List<SelectListItem>)ViewBag.VersionTypes, new { @class = "combox" })
+                </li>
             </ul>
-
             <div class="subBar">
                 <ul>
                     <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
@@ -44,16 +47,17 @@
         </thead>
 
         <tbody>
-            @{ int i = 0;}
+            @{ int i = 0;
+                var c = typeof(Client);}
             @foreach (var item in Model)
             {
                 <tr target="id" rel="@item.Id">
                     <td>@(++i)</td>
-                    <td>@(item.VersionType==0?"学生端":"教师端")</td>
+                    <td>@(Enum.GetName(c, item.VersionType) )</td>
                     <td>@item.VersionName</td>
                     <td>@item.UpgradeInfo</td>
                     <td>@item.PackageSize</td>
-                    <td align="center">@(item.CreateDate==null?"":item.CreateDate.Value.ToString("yyyy-MM-dd HH:mm:ss"))</td>
+                    <td align="center">@(item.CreateDate == null ? "" : item.CreateDate.Value.ToString("yyyy-MM-dd HH:mm:ss"))</td>
                 </tr>
             }
         </tbody>

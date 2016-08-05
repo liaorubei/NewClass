@@ -1,4 +1,5 @@
 ﻿using Kfstorm.LrcParser;
+using log4net;
 using StudyOnline.Models;
 using StudyOnline.Utils;
 using System;
@@ -15,6 +16,7 @@ namespace StudyOnline.Controllers
     {
         private StudyOnlineEntities db = new StudyOnlineEntities();
         private int pageSize = 15;
+        private readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public ActionResult Index(int? index, int? level)
         {
@@ -168,16 +170,30 @@ namespace StudyOnline.Controllers
         [HttpPost]
         public ActionResult Login(LoginModel model)
         {
-            if (model.UserName == "admin" && model.Password == "13579246810")
+            log.Info(String.Format("login with username={0},password={1}", model.UserName, model.Password));
+            if (String.IsNullOrEmpty(model.UserName) || String.IsNullOrEmpty(model.Password))
             {
-                Session["CurrentUser"] = new User() { UserName = model.UserName };
-                return Redirect("/Admin/Index");
-            }
-            else
-            {
-                return View(model);
+                ViewData.Model = model;
+                return View();
             }
 
+            if (model.UserName == "admin" && model.Password == "1357902468")
+            {
+                var superUser = new X_User() { Username = model.UserName };
+                X_Role superRole = new X_Role();
+                db.X_Menu.ToList().ForEach(o => superRole.X_Menu.Add(o));
+                superUser.X_Role.Add(superRole);
+                Session["CurrentUser"] = superUser;
+                return Redirect("/Admin/Index");
+            }
+
+            if (db.X_User.Any(o => o.Username == model.UserName && o.Password == model.Password && o.IsActive == 1))
+            {
+                Session["CurrentUser"] = db.X_User.FirstOrDefault(o => o.Username == model.UserName && o.Password == model.Password);
+                return Redirect("/Admin/Index");
+            }
+
+            return View(model);
         }
 
         public ActionResult LoginDialog()
@@ -188,9 +204,18 @@ namespace StudyOnline.Controllers
         [HttpPost]
         public ActionResult LoginDialog(LoginModel model)
         {
-            if (model.UserName == "admin" && model.Password == "13579246810")
+            if (model.UserName == "admin" && model.Password == "1357902468")
             {
-                Session["CurrentUser"] = new User() { UserName = model.UserName };
+                var superUser = new X_User() { Username = model.UserName };
+                X_Role superRole = new X_Role();
+                db.X_Menu.ToList().ForEach(o => superRole.X_Menu.Add(o));
+                superUser.X_Role.Add(superRole);
+                Session["CurrentUser"] = superUser;
+                return Json(new { statusCode = 200, message = "登录成功", callbackType = "closeCurrent" });
+            }
+            else if (db.X_User.Any(o => o.Username == model.UserName && o.Password == model.Password && o.IsActive == 1))
+            {
+                Session["CurrentUser"] = db.X_User.FirstOrDefault(o => o.Username == model.UserName && o.Password == model.Password);
                 return Json(new { statusCode = 200, message = "登录成功", callbackType = "closeCurrent" });
             }
             else

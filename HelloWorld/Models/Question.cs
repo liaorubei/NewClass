@@ -17,6 +17,7 @@ namespace StudyOnline.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public Nullable<int> ThemeId { get; set; }
+        public Nullable<int> Sort { get; set; }
     
         public virtual Theme Theme { get; set; }
     }

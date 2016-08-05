@@ -147,5 +147,17 @@ namespace StudyOnline.Controllers
             return Json(new { android.PackagePath, android.PackageSize, android.UpgradeInfo, android.VersionName, android.VersionType });
         }
 
+        /// <summary>
+        /// 兼容苹果版本更新检查
+        /// </summary>
+        /// <param name="versionType"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult CheckUpdate(Int32 versionType)
+        {
+            Android android = db.Android.Where(o => o.VersionType == versionType).OrderByDescending(o => o.CreateDate).First();
+            return Json(new { android.PackagePath, android.PackageSize, android.UpgradeInfo, android.VersionName, android.VersionType });
+        }
+
     }
 }
