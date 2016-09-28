@@ -76,11 +76,12 @@
           <Property Name="AddDate" Type="datetime" />
           <Property Name="Duration" Type="float" />
           <Property Name="Length" Type="float" />
-          <Property Name="TitleTwo" Type="varchar" MaxLength="250" />
+          <Property Name="TitleTwo" Type="nvarchar" MaxLength="256" />
           <Property Name="LengthString" Type="varchar" MaxLength="250" />
           <Property Name="FolderId" Type="int" />
           <Property Name="AuditDate" Type="datetime" />
           <Property Name="AuditCase" Type="int" />
+          <Property Name="Sort" Type="float" />
         </EntityType>
         <EntityType Name="Feedback">
           <Key>
@@ -98,6 +99,9 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="LevelId" Type="int" />
+          <Property Name="Sort" Type="int" />
+          <Property Name="Cover" Type="nvarchar" MaxLength="256" />
+          <Property Name="ParentId" Type="int" />
         </EntityType>
         <EntityType Name="Group">
           <Key>
@@ -128,6 +132,7 @@
           <Property Name="Show" Type="int" />
           <Property Name="ShowBrowser" Type="int" />
           <Property Name="Name" Type="nvarchar" MaxLength="256" />
+          <Property Name="ShowCover" Type="int" />
         </EntityType>
         <EntityType Name="LogTheme">
           <Key>
@@ -136,6 +141,32 @@
           </Key>
           <Property Name="ChatId" Type="bigint" Nullable="false" />
           <Property Name="ThemeId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Member">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="varchar" MaxLength="32" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="32" />
+          <Property Name="Month" Type="int" />
+        </EntityType>
+        <EntityType Name="Member_Folder">
+          <Key>
+            <PropertyRef Name="MemberId" />
+            <PropertyRef Name="FolderId" />
+          </Key>
+          <Property Name="MemberId" Type="varchar" MaxLength="32" Nullable="false" />
+          <Property Name="FolderId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Member_User">
+          <Key>
+            <PropertyRef Name="MemberId" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="MemberId" Type="varchar" MaxLength="32" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="From" Type="datetime" />
+          <Property Name="To" Type="datetime" />
         </EntityType>
         <EntityType Name="NimUser">
           <Key>
@@ -154,7 +185,8 @@
           <Property Name="Refresh" Type="datetime" />
           <Property Name="Enqueue" Type="datetime" />
           <Property Name="System" Type="int" />
-          <Property Name="Device" Type="nvarchar" MaxLength="64" />
+          <Property Name="Device" Type="nvarchar" MaxLength="128" />
+          <Property Name="IsQueue" Type="int" />
         </EntityType>
         <EntityType Name="NimUserEx">
           <Key>
@@ -335,7 +367,81 @@
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
         </EntityType>
         <!--生成过程中发现错误:
-警告 6002: 表/视图“voc.dbo.View_User”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+警告 6002: 表/视图“voc_test20160823.dbo.View_Chat_user”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="View_Chat_user">
+          <Key>
+            <PropertyRef Name="Id" />
+            
+            
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="Source" Type="int" Nullable="false" />
+          <Property Name="Student" Type="nvarchar" MaxLength="64" />
+          <Property Name="Target" Type="int" Nullable="false" />
+          <Property Name="Teacher" Type="nvarchar" MaxLength="64" />
+          <Property Name="Start" Type="datetime" />
+          <Property Name="Finish" Type="datetime" />
+          <Property Name="ChatId" Type="bigint" />
+          <Property Name="ChatType" Type="int" />
+          <Property Name="Coins" Type="int" />
+          <Property Name="Duration" Type="int" />
+          <Property Name="BalanceS" Type="int" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“voc_test20160823.dbo.View_Document”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="View_Document">
+          <Key>
+            
+            
+            
+            <PropertyRef Name="DocumentId" />
+            
+          </Key>
+          <Property Name="LevelId" Type="int" Nullable="false" />
+          <Property Name="LevelName" Type="nvarchar" MaxLength="256" />
+          <Property Name="ShowBrowser" Type="int" />
+          <Property Name="FolderId" Type="int" Nullable="false" />
+          <Property Name="FolderName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DocumentId" Type="int" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="SoundPath" Type="nvarchar" MaxLength="250" />
+          <Property Name="AuditCase" Type="int" />
+          <Property Name="AuditDate" Type="datetime" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“voc_test20160823.dbo.View_Folder_Member_User”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="View_Folder_Member_User">
+          <Key>
+            <PropertyRef Name="MemberId" />
+            <PropertyRef Name="FolderId" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="MemberId" Type="varchar" MaxLength="32" Nullable="false" />
+          <Property Name="FolderId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="From" Type="datetime" />
+          <Property Name="To" Type="datetime" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“voc_test20160823.dbo.View_FolderWithLevel”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="View_FolderWithLevel">
+          <Key>
+            <PropertyRef Name="FolderId" />
+            
+          </Key>
+          <Property Name="FolderId" Type="int" Nullable="false" />
+          <Property Name="FolderName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="FolderSort" Type="int" />
+          <Property Name="FolderCover" Type="nvarchar" MaxLength="256" />
+          <Property Name="LevelId" Type="int" />
+          <Property Name="LevelName" Type="nvarchar" MaxLength="256" />
+          <Property Name="LevelSort" Type="int" />
+          <Property Name="LevelShow" Type="int" />
+          <Property Name="ShowBrowser" Type="int" />
+          <Property Name="ShowCover" Type="int" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“voc_test20160823.dbo.View_User”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
         <EntityType Name="View_User">
           <Key>
             <PropertyRef Name="Id" />
@@ -355,6 +461,28 @@
           <Property Name="Avatar" Type="nvarchar" MaxLength="256" />
           <Property Name="Country" Type="nvarchar" MaxLength="256" />
           <Property Name="Coins" Type="int" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“voc_test20160823.dbo.View_UserLeftJoinMember”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="View_UserLeftJoinMember">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Username" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="Category" Type="int" />
+          <Property Name="IsOnline" Type="int" />
+          <Property Name="IsActive" Type="int" />
+          <Property Name="IsEnable" Type="int" />
+          <Property Name="Nickname" Type="nvarchar" MaxLength="64" />
+          <Property Name="Email" Type="nvarchar" MaxLength="64" />
+          <Property Name="Birth" Type="datetime" />
+          <Property Name="Mobile" Type="nvarchar" MaxLength="32" />
+          <Property Name="MemberId" Type="varchar" MaxLength="32" />
+          <Property Name="From" Type="datetime" />
+          <Property Name="To" Type="datetime" />
         </EntityType>
         <Association Name="FK_CallLog_NimUser_Source">
           <End Role="NimUser" Type="Self.NimUser" Multiplicity="1" />
@@ -418,6 +546,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Folder_Folder">
+          <End Role="Folder" Type="Self.Folder" Multiplicity="0..1" />
+          <End Role="Folder1" Type="Self.Folder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Folder">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Folder1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Folder_Level">
           <End Role="Level" Type="Self.Level" Multiplicity="0..1" />
           <End Role="Folder" Type="Self.Folder" Multiplicity="*" />
@@ -454,6 +594,54 @@
             </Principal>
             <Dependent Role="LogTheme">
               <PropertyRef Name="ThemeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Member_Folder_Folder">
+          <End Role="Folder" Type="Self.Folder" Multiplicity="1" />
+          <End Role="Member_Folder" Type="Self.Member_Folder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Folder">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Member_Folder">
+              <PropertyRef Name="FolderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Member_Folder_Member">
+          <End Role="Member" Type="Self.Member" Multiplicity="1" />
+          <End Role="Member_Folder" Type="Self.Member_Folder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Member_Folder">
+              <PropertyRef Name="MemberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Member_User_Member">
+          <End Role="Member" Type="Self.Member" Multiplicity="1" />
+          <End Role="Member_User" Type="Self.Member_User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Member_User">
+              <PropertyRef Name="MemberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Member_User_User">
+          <End Role="NimUser" Type="Self.NimUser" Multiplicity="1" />
+          <End Role="Member_User" Type="Self.Member_User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Member_User">
+              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -593,6 +781,9 @@
           <EntitySet Name="HsLevel" EntityType="Self.HsLevel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Level" EntityType="Self.Level" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LogTheme" EntityType="Self.LogTheme" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Member" EntityType="Self.Member" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Member_Folder" EntityType="Self.Member_Folder" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Member_User" EntityType="Self.Member_User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NimUser" EntityType="Self.NimUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NimUserEx" EntityType="Self.NimUserEx" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
@@ -608,6 +799,59 @@
           <EntitySet Name="X_Role" EntityType="Self.X_Role" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="X_Role_X_User" EntityType="Self.X_Role_X_User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="X_User" EntityType="Self.X_User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="View_Chat_user" EntityType="Self.View_Chat_user" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_Chat_user].[Id] AS [Id], 
+    [View_Chat_user].[Source] AS [Source], 
+    [View_Chat_user].[Student] AS [Student], 
+    [View_Chat_user].[Target] AS [Target], 
+    [View_Chat_user].[Teacher] AS [Teacher], 
+    [View_Chat_user].[Start] AS [Start], 
+    [View_Chat_user].[Finish] AS [Finish], 
+    [View_Chat_user].[ChatId] AS [ChatId], 
+    [View_Chat_user].[ChatType] AS [ChatType], 
+    [View_Chat_user].[Coins] AS [Coins], 
+    [View_Chat_user].[Duration] AS [Duration], 
+    [View_Chat_user].[BalanceS] AS [BalanceS]
+    FROM [dbo].[View_Chat_user] AS [View_Chat_user]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="View_Document" EntityType="Self.View_Document" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_Document].[LevelId] AS [LevelId], 
+    [View_Document].[LevelName] AS [LevelName], 
+    [View_Document].[ShowBrowser] AS [ShowBrowser], 
+    [View_Document].[FolderId] AS [FolderId], 
+    [View_Document].[FolderName] AS [FolderName], 
+    [View_Document].[DocumentId] AS [DocumentId], 
+    [View_Document].[Title] AS [Title], 
+    [View_Document].[SoundPath] AS [SoundPath], 
+    [View_Document].[AuditCase] AS [AuditCase], 
+    [View_Document].[AuditDate] AS [AuditDate]
+    FROM [dbo].[View_Document] AS [View_Document]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="View_Folder_Member_User" EntityType="Self.View_Folder_Member_User" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_Folder_Member_User].[MemberId] AS [MemberId], 
+    [View_Folder_Member_User].[FolderId] AS [FolderId], 
+    [View_Folder_Member_User].[UserId] AS [UserId], 
+    [View_Folder_Member_User].[From] AS [From], 
+    [View_Folder_Member_User].[To] AS [To]
+    FROM [dbo].[View_Folder_Member_User] AS [View_Folder_Member_User]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="View_FolderWithLevel" EntityType="Self.View_FolderWithLevel" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_FolderWithLevel].[FolderId] AS [FolderId], 
+    [View_FolderWithLevel].[FolderName] AS [FolderName], 
+    [View_FolderWithLevel].[FolderSort] AS [FolderSort], 
+    [View_FolderWithLevel].[FolderCover] AS [FolderCover], 
+    [View_FolderWithLevel].[LevelId] AS [LevelId], 
+    [View_FolderWithLevel].[LevelName] AS [LevelName], 
+    [View_FolderWithLevel].[LevelSort] AS [LevelSort], 
+    [View_FolderWithLevel].[LevelShow] AS [LevelShow], 
+    [View_FolderWithLevel].[ShowBrowser] AS [ShowBrowser], 
+    [View_FolderWithLevel].[ShowCover] AS [ShowCover]
+    FROM [dbo].[View_FolderWithLevel] AS [View_FolderWithLevel]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="View_User" EntityType="Self.View_User" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [View_User].[Id] AS [Id], 
@@ -624,6 +868,24 @@
     [View_User].[Country] AS [Country], 
     [View_User].[Coins] AS [Coins]
     FROM [dbo].[View_User] AS [View_User]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="View_UserLeftJoinMember" EntityType="Self.View_UserLeftJoinMember" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_UserLeftJoinMember].[Id] AS [Id], 
+    [View_UserLeftJoinMember].[Username] AS [Username], 
+    [View_UserLeftJoinMember].[CreateDate] AS [CreateDate], 
+    [View_UserLeftJoinMember].[Category] AS [Category], 
+    [View_UserLeftJoinMember].[IsOnline] AS [IsOnline], 
+    [View_UserLeftJoinMember].[IsActive] AS [IsActive], 
+    [View_UserLeftJoinMember].[IsEnable] AS [IsEnable], 
+    [View_UserLeftJoinMember].[Nickname] AS [Nickname], 
+    [View_UserLeftJoinMember].[Email] AS [Email], 
+    [View_UserLeftJoinMember].[Birth] AS [Birth], 
+    [View_UserLeftJoinMember].[Mobile] AS [Mobile], 
+    [View_UserLeftJoinMember].[MemberId] AS [MemberId], 
+    [View_UserLeftJoinMember].[From] AS [From], 
+    [View_UserLeftJoinMember].[To] AS [To]
+    FROM [dbo].[View_UserLeftJoinMember] AS [View_UserLeftJoinMember]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK_CallLog_NimUser_Source" Association="Self.FK_CallLog_NimUser_Source">
             <End Role="NimUser" EntitySet="NimUser" />
@@ -645,6 +907,10 @@
             <End Role="Level" EntitySet="Level" />
             <End Role="Document" EntitySet="Document" />
           </AssociationSet>
+          <AssociationSet Name="FK_Folder_Folder" Association="Self.FK_Folder_Folder">
+            <End Role="Folder" EntitySet="Folder" />
+            <End Role="Folder1" EntitySet="Folder" />
+          </AssociationSet>
           <AssociationSet Name="FK_Folder_Level" Association="Self.FK_Folder_Level">
             <End Role="Level" EntitySet="Level" />
             <End Role="Folder" EntitySet="Folder" />
@@ -656,6 +922,22 @@
           <AssociationSet Name="FK_LogTheme_ThemeId" Association="Self.FK_LogTheme_ThemeId">
             <End Role="Theme" EntitySet="Theme" />
             <End Role="LogTheme" EntitySet="LogTheme" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Member_Folder_Folder" Association="Self.FK_Member_Folder_Folder">
+            <End Role="Folder" EntitySet="Folder" />
+            <End Role="Member_Folder" EntitySet="Member_Folder" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Member_Folder_Member" Association="Self.FK_Member_Folder_Member">
+            <End Role="Member" EntitySet="Member" />
+            <End Role="Member_Folder" EntitySet="Member_Folder" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Member_User_Member" Association="Self.FK_Member_User_Member">
+            <End Role="Member" EntitySet="Member" />
+            <End Role="Member_User" EntitySet="Member_User" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Member_User_User" Association="Self.FK_Member_User_User">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="Member_User" EntitySet="Member_User" />
           </AssociationSet>
           <AssociationSet Name="FK_NimUserEx_NimUser" Association="Self.FK_NimUserEx_NimUser">
             <End Role="NimUser" EntitySet="NimUser" />
@@ -715,6 +997,8 @@
           <EntitySet Name="HsLevel" EntityType="StudyOnline.HsLevel" />
           <EntitySet Name="Level" EntityType="StudyOnline.Level" />
           <EntitySet Name="LogTheme" EntityType="StudyOnline.LogTheme" />
+          <EntitySet Name="Member" EntityType="StudyOnline.Member" />
+          <EntitySet Name="Member_User" EntityType="StudyOnline.Member_User" />
           <EntitySet Name="NimUser" EntityType="StudyOnline.NimUser" />
           <EntitySet Name="NimUserEx" EntityType="StudyOnline.NimUserEx" />
           <EntitySet Name="Orders" EntityType="StudyOnline.Orders" />
@@ -724,6 +1008,10 @@
           <EntitySet Name="Theme" EntityType="StudyOnline.Theme" />
           <EntitySet Name="UploadFile" EntityType="StudyOnline.UploadFile" />
           <EntitySet Name="User" EntityType="StudyOnline.User" />
+          <EntitySet Name="X_Menu" EntityType="StudyOnline.X_Menu" />
+          <EntitySet Name="X_Role" EntityType="StudyOnline.X_Role" />
+          <EntitySet Name="X_User" EntityType="StudyOnline.X_User" />
+          <EntitySet Name="View_Document" EntityType="StudyOnline.View_Document" />
           <EntitySet Name="View_User" EntityType="StudyOnline.View_User" />
           <AssociationSet Name="FK_CallLog_NimUser_Source" Association="StudyOnline.FK_CallLog_NimUser_Source">
             <End Role="NimUser" EntitySet="NimUser" />
@@ -761,6 +1049,14 @@
             <End Role="Theme" EntitySet="Theme" />
             <End Role="LogTheme" EntitySet="LogTheme" />
           </AssociationSet>
+          <AssociationSet Name="FK_Member_User_Member" Association="StudyOnline.FK_Member_User_Member">
+            <End Role="Member" EntitySet="Member" />
+            <End Role="Member_User" EntitySet="Member_User" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Member_User_User" Association="StudyOnline.FK_Member_User_User">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="Member_User" EntitySet="Member_User" />
+          </AssociationSet>
           <AssociationSet Name="FK_NimUserEx_NimUser" Association="StudyOnline.FK_NimUserEx_NimUser">
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="NimUserEx" EntitySet="NimUserEx" />
@@ -769,16 +1065,17 @@
             <End Role="Theme" EntitySet="Theme" />
             <End Role="Question" EntitySet="Question" />
           </AssociationSet>
-          <AssociationSet Name="Photo" Association="StudyOnline.Photo">
-            <End Role="UploadFile" EntitySet="UploadFile" />
-            <End Role="NimUser" EntitySet="NimUser" />
-          </AssociationSet>
-          <EntitySet Name="X_Menu" EntityType="StudyOnline.X_Menu" />
-          <EntitySet Name="X_Role" EntityType="StudyOnline.X_Role" />
-          <EntitySet Name="X_User" EntityType="StudyOnline.X_User" />
           <AssociationSet Name="FK_X_Menu_MenuId" Association="StudyOnline.FK_X_Menu_MenuId">
             <End Role="X_Menu" EntitySet="X_Menu" />
             <End Role="X_Menu1" EntitySet="X_Menu" />
+          </AssociationSet>
+          <AssociationSet Name="Member_Folder" Association="StudyOnline.Member_Folder">
+            <End Role="Folder" EntitySet="Folder" />
+            <End Role="Member" EntitySet="Member" />
+          </AssociationSet>
+          <AssociationSet Name="Photo" Association="StudyOnline.Photo">
+            <End Role="UploadFile" EntitySet="UploadFile" />
+            <End Role="NimUser" EntitySet="NimUser" />
           </AssociationSet>
           <AssociationSet Name="X_Menu_X_Role" Association="StudyOnline.X_Menu_X_Role">
             <End Role="X_Menu" EntitySet="X_Menu" />
@@ -788,7 +1085,15 @@
             <End Role="X_Role" EntitySet="X_Role" />
             <End Role="X_User" EntitySet="X_User" />
           </AssociationSet>
-          </EntityContainer>
+          <EntitySet Name="View_FolderWithLevel" EntityType="StudyOnline.View_FolderWithLevel" />
+          <EntitySet Name="View_Folder_Member_User" EntityType="StudyOnline.View_Folder_Member_User" />
+          <EntitySet Name="View_Chat_user" EntityType="StudyOnline.View_Chat_user" />
+          <EntitySet Name="View_UserLeftJoinMember" EntityType="StudyOnline.View_UserLeftJoinMember" />
+          <AssociationSet Name="FK_Folder_Folder" Association="StudyOnline.FK_Folder_Folder">
+            <End Role="Folder" EntitySet="Folder" />
+            <End Role="Folder1" EntitySet="Folder" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="Android">
           <Key>
             <PropertyRef Name="Id" />
@@ -863,11 +1168,12 @@
           <Property Name="AddDate" Type="DateTime" Precision="3" />
           <Property Name="Duration" Type="Double" />
           <Property Name="Length" Type="Double" />
-          <Property Name="TitleTwo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="TitleTwo" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="LengthString" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="FolderId" Type="Int32" />
           <Property Name="AuditDate" Type="DateTime" Precision="3" />
           <Property Name="AuditCase" Type="Int32" />
+          <Property Name="Sort" Type="Double" />
           <NavigationProperty Name="Comment" Relationship="StudyOnline.FK_Comment_Document" FromRole="Document" ToRole="Comment" />
           <NavigationProperty Name="Folder" Relationship="StudyOnline.FK_Document_Folder" FromRole="Document" ToRole="Folder" />
           <NavigationProperty Name="Level" Relationship="StudyOnline.FK_Document_Level" FromRole="Document" ToRole="Level" />
@@ -888,8 +1194,14 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="LevelId" Type="Int32" />
+          <Property Name="Sort" Type="Int32" />
+          <Property Name="Cover" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Document" Relationship="StudyOnline.FK_Document_Folder" FromRole="Folder" ToRole="Document" />
           <NavigationProperty Name="Level" Relationship="StudyOnline.FK_Folder_Level" FromRole="Folder" ToRole="Level" />
+          <NavigationProperty Name="Member" Relationship="StudyOnline.Member_Folder" FromRole="Folder" ToRole="Member" />
+          <Property Name="ParentId" Type="Int32" />
+          <NavigationProperty Name="Folder1" Relationship="StudyOnline.FK_Folder_Folder" FromRole="Folder" ToRole="Folder1" />
+          <NavigationProperty Name="Folder2" Relationship="StudyOnline.FK_Folder_Folder" FromRole="Folder1" ToRole="Folder" />
         </EntityType>
         <EntityType Name="Group">
           <Key>
@@ -922,6 +1234,7 @@
           <Property Name="Show" Type="Int32" />
           <Property Name="ShowBrowser" Type="Int32" />
           <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ShowCover" Type="Int32" />
           <NavigationProperty Name="Document" Relationship="StudyOnline.FK_Document_Level" FromRole="Level" ToRole="Document" />
           <NavigationProperty Name="Folder" Relationship="StudyOnline.FK_Folder_Level" FromRole="Level" ToRole="Folder" />
         </EntityType>
@@ -933,6 +1246,28 @@
           <Property Name="ChatId" Type="Int64" Nullable="false" />
           <Property Name="ThemeId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_LogTheme_ThemeId" FromRole="LogTheme" ToRole="Theme" />
+        </EntityType>
+        <EntityType Name="Member">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Month" Type="Int32" />
+          <NavigationProperty Name="Member_User" Relationship="StudyOnline.FK_Member_User_Member" FromRole="Member" ToRole="Member_User" />
+          <NavigationProperty Name="Folder" Relationship="StudyOnline.Member_Folder" FromRole="Member" ToRole="Folder" />
+        </EntityType>
+        <EntityType Name="Member_User">
+          <Key>
+            <PropertyRef Name="MemberId" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="MemberId" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="From" Type="DateTime" Precision="3" />
+          <Property Name="To" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Member" Relationship="StudyOnline.FK_Member_User_Member" FromRole="Member_User" ToRole="Member" />
+          <NavigationProperty Name="NimUser" Relationship="StudyOnline.FK_Member_User_User" FromRole="Member_User" ToRole="NimUser" />
         </EntityType>
         <EntityType Name="NimUser">
           <Key>
@@ -951,10 +1286,12 @@
           <Property Name="Refresh" Type="DateTime" Precision="3" />
           <Property Name="Enqueue" Type="DateTime" Precision="3" />
           <Property Name="System" Type="Int32" />
-          <Property Name="Device" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="Device" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="IsQueue" Type="Int32" />
           <NavigationProperty Name="CallLog" Relationship="StudyOnline.FK_CallLog_NimUser_Source" FromRole="NimUser" ToRole="CallLog" />
           <NavigationProperty Name="CallLog1" Relationship="StudyOnline.FK_CallLog_NimUser_Target" FromRole="NimUser" ToRole="CallLog" />
           <NavigationProperty Name="Group" Relationship="StudyOnline.FK_Group_NimUser" FromRole="NimUser" ToRole="Group" />
+          <NavigationProperty Name="Member_User" Relationship="StudyOnline.FK_Member_User_User" FromRole="NimUser" ToRole="Member_User" />
           <NavigationProperty Name="NimUserEx" Relationship="StudyOnline.FK_NimUserEx_NimUser" FromRole="NimUser" ToRole="NimUserEx" />
           <NavigationProperty Name="UploadFile" Relationship="StudyOnline.Photo" FromRole="NimUser" ToRole="UploadFile" />
         </EntityType>
@@ -1020,8 +1357,8 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ThemeId" Type="Int32" />
-          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_Question_Theme" FromRole="Question" ToRole="Theme" />
           <Property Name="Sort" Type="Int32" />
+          <NavigationProperty Name="Theme" Relationship="StudyOnline.FK_Question_Theme" FromRole="Question" ToRole="Theme" />
         </EntityType>
         <EntityType Name="Teacherreginfo">
           <Key>
@@ -1055,11 +1392,11 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="HsLevelId" Type="Int32" />
+          <Property Name="Sort" Type="Int32" />
+          <Property Name="IsDelete" Type="Int32" />
           <NavigationProperty Name="HsLevel" Relationship="StudyOnline.FK_Theme_HsLevel" FromRole="Theme" ToRole="HsLevel" />
           <NavigationProperty Name="LogTheme" Relationship="StudyOnline.FK_LogTheme_ThemeId" FromRole="Theme" ToRole="LogTheme" />
           <NavigationProperty Name="Question" Relationship="StudyOnline.FK_Question_Theme" FromRole="Theme" ToRole="Question" />
-          <Property Name="Sort" Type="Int32" />
-          <Property Name="IsDelete" Type="Int32" />
         </EntityType>
         <EntityType Name="UploadFile">
           <Key>
@@ -1086,6 +1423,58 @@
           <Property Name="IsOnline" Type="Int32" Nullable="false" />
           <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="NickName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="X_Menu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Order" Type="Int32" />
+          <Property Name="ParentId" Type="Int32" />
+          <Property Name="Area" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="Ctrl" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="Action" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="X_Menu1" Relationship="StudyOnline.FK_X_Menu_MenuId" FromRole="X_Menu" ToRole="X_Menu1" />
+          <NavigationProperty Name="X_Menu2" Relationship="StudyOnline.FK_X_Menu_MenuId" FromRole="X_Menu1" ToRole="X_Menu" />
+          <NavigationProperty Name="X_Role" Relationship="StudyOnline.X_Menu_X_Role" FromRole="X_Menu" ToRole="X_Role" />
+        </EntityType>
+        <EntityType Name="X_Role">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="true" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="X_Menu" Relationship="StudyOnline.X_Menu_X_Role" FromRole="X_Role" ToRole="X_Menu" />
+          <NavigationProperty Name="X_User" Relationship="StudyOnline.X_Role_X_User" FromRole="X_Role" ToRole="X_User" />
+        </EntityType>
+        <EntityType Name="X_User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="true" Unicode="false" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="Nickname" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Truename" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Int32" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="X_Role" Relationship="StudyOnline.X_Role_X_User" FromRole="X_User" ToRole="X_Role" />
+        </EntityType>
+        <EntityType Name="View_Document">
+          <Key>
+            <PropertyRef Name="DocumentId" />
+          </Key>
+          <Property Name="LevelId" Type="Int32" Nullable="false" />
+          <Property Name="LevelName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ShowBrowser" Type="Int32" />
+          <Property Name="FolderId" Type="Int32" Nullable="false" />
+          <Property Name="FolderName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DocumentId" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="SoundPath" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="AuditCase" Type="Int32" />
+          <Property Name="AuditDate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="View_User">
           <Key>
@@ -1215,6 +1604,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Member_User_Member">
+          <End Type="StudyOnline.Member" Role="Member" Multiplicity="1" />
+          <End Type="StudyOnline.Member_User" Role="Member_User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Member_User">
+              <PropertyRef Name="MemberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Member_User_User">
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
+          <End Type="StudyOnline.Member_User" Role="Member_User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Member_User">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_NimUserEx_NimUser">
           <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
           <End Type="StudyOnline.NimUserEx" Role="NimUserEx" Multiplicity="0..1" />
@@ -1239,47 +1652,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="Photo">
-          <End Type="StudyOnline.UploadFile" Role="UploadFile" Multiplicity="*" />
-          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="*" />
-        </Association>
-        <EntityType Name="X_Menu">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="Order" Type="Int32" />
-          <Property Name="ParentId" Type="Int32" />
-          <Property Name="Area" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
-          <Property Name="Ctrl" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
-          <Property Name="Action" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="X_Menu1" Relationship="StudyOnline.FK_X_Menu_MenuId" FromRole="X_Menu" ToRole="X_Menu1" />
-          <NavigationProperty Name="X_Menu2" Relationship="StudyOnline.FK_X_Menu_MenuId" FromRole="X_Menu1" ToRole="X_Menu" />
-          <NavigationProperty Name="X_Role" Relationship="StudyOnline.X_Menu_X_Role" FromRole="X_Menu" ToRole="X_Role" />
-        </EntityType>
-        <EntityType Name="X_Role">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="true" Unicode="false" />
-          <Property Name="Name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="X_Menu" Relationship="StudyOnline.X_Menu_X_Role" FromRole="X_Role" ToRole="X_Menu" />
-          <NavigationProperty Name="X_User" Relationship="StudyOnline.X_Role_X_User" FromRole="X_Role" ToRole="X_User" />
-        </EntityType>
-        <EntityType Name="X_User">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="true" Unicode="false" />
-          <Property Name="Username" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
-          <Property Name="Nickname" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="Truename" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="IsActive" Type="Int32" Nullable="false" />
-          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="X_Role" Relationship="StudyOnline.X_Role_X_User" FromRole="X_User" ToRole="X_Role" />
-        </EntityType>
         <Association Name="FK_X_Menu_MenuId">
           <End Type="StudyOnline.X_Menu" Role="X_Menu" Multiplicity="0..1" />
           <End Type="StudyOnline.X_Menu" Role="X_Menu1" Multiplicity="*" />
@@ -1292,6 +1664,14 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="Member_Folder">
+          <End Type="StudyOnline.Folder" Role="Folder" Multiplicity="*" />
+          <End Type="StudyOnline.Member" Role="Member" Multiplicity="*" />
+        </Association>
+        <Association Name="Photo">
+          <End Type="StudyOnline.UploadFile" Role="UploadFile" Multiplicity="*" />
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="*" />
+        </Association>
         <Association Name="X_Menu_X_Role">
           <End Type="StudyOnline.X_Menu" Role="X_Menu" Multiplicity="*" />
           <End Type="StudyOnline.X_Role" Role="X_Role" Multiplicity="*" />
@@ -1299,6 +1679,82 @@
         <Association Name="X_Role_X_User">
           <End Type="StudyOnline.X_Role" Role="X_Role" Multiplicity="*" />
           <End Type="StudyOnline.X_User" Role="X_User" Multiplicity="*" />
+        </Association>
+        <EntityType Name="View_FolderWithLevel">
+          <Key>
+            <PropertyRef Name="FolderId" />
+          </Key>
+          <Property Name="FolderId" Type="Int32" Nullable="false" />
+          <Property Name="FolderName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FolderSort" Type="Int32" />
+          <Property Name="FolderCover" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="LevelId" Type="Int32" />
+          <Property Name="LevelName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="LevelSort" Type="Int32" />
+          <Property Name="LevelShow" Type="Int32" />
+          <Property Name="ShowBrowser" Type="Int32" />
+          <Property Name="ShowCover" Type="Int32" />
+        </EntityType>
+        <EntityType Name="View_Folder_Member_User">
+          <Key>
+            <PropertyRef Name="MemberId" />
+            <PropertyRef Name="FolderId" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="MemberId" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="FolderId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="From" Type="DateTime" Precision="3" />
+          <Property Name="To" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="View_Chat_user">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Source" Type="Int32" Nullable="false" />
+          <Property Name="Student" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="Target" Type="Int32" Nullable="false" />
+          <Property Name="Teacher" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="Start" Type="DateTime" Precision="3" />
+          <Property Name="Finish" Type="DateTime" Precision="3" />
+          <Property Name="ChatId" Type="Int64" />
+          <Property Name="ChatType" Type="Int32" />
+          <Property Name="Duration" Type="Int32" />
+          <Property Name="BalanceS" Type="Int32" />
+          <Property Name="Coins" Type="Int32" />
+        </EntityType>
+        <EntityType Name="View_UserLeftJoinMember">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Username" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="Category" Type="Int32" />
+          <Property Name="IsOnline" Type="Int32" />
+          <Property Name="IsActive" Type="Int32" />
+          <Property Name="IsEnable" Type="Int32" />
+          <Property Name="Nickname" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="Birth" Type="DateTime" Precision="3" />
+          <Property Name="Mobile" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="MemberId" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="From" Type="DateTime" Precision="3" />
+          <Property Name="To" Type="DateTime" Precision="3" />
+        </EntityType>
+        <Association Name="FK_Folder_Folder">
+          <End Type="StudyOnline.Folder" Role="Folder" Multiplicity="0..1" />
+          <End Type="StudyOnline.Folder" Role="Folder1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Folder">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Folder1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -1372,6 +1828,7 @@
           <EntitySetMapping Name="Document">
             <EntityTypeMapping TypeName="StudyOnline.Document">
               <MappingFragment StoreEntitySet="Document">
+                <ScalarProperty Name="Sort" ColumnName="Sort" />
                 <ScalarProperty Name="AuditCase" ColumnName="AuditCase" />
                 <ScalarProperty Name="AuditDate" ColumnName="AuditDate" />
                 <ScalarProperty Name="FolderId" ColumnName="FolderId" />
@@ -1402,6 +1859,9 @@
           <EntitySetMapping Name="Folder">
             <EntityTypeMapping TypeName="StudyOnline.Folder">
               <MappingFragment StoreEntitySet="Folder">
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="Cover" ColumnName="Cover" />
+                <ScalarProperty Name="Sort" ColumnName="Sort" />
                 <ScalarProperty Name="LevelId" ColumnName="LevelId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -1433,6 +1893,7 @@
           <EntitySetMapping Name="Level">
             <EntityTypeMapping TypeName="StudyOnline.Level">
               <MappingFragment StoreEntitySet="Level">
+                <ScalarProperty Name="ShowCover" ColumnName="ShowCover" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ShowBrowser" ColumnName="ShowBrowser" />
                 <ScalarProperty Name="Show" ColumnName="Show" />
@@ -1449,9 +1910,29 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Member">
+            <EntityTypeMapping TypeName="StudyOnline.Member">
+              <MappingFragment StoreEntitySet="Member">
+                <ScalarProperty Name="Month" ColumnName="Month" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Member_User">
+            <EntityTypeMapping TypeName="StudyOnline.Member_User">
+              <MappingFragment StoreEntitySet="Member_User">
+                <ScalarProperty Name="To" ColumnName="To" />
+                <ScalarProperty Name="From" ColumnName="From" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="NimUser">
             <EntityTypeMapping TypeName="StudyOnline.NimUser">
               <MappingFragment StoreEntitySet="NimUser">
+                <ScalarProperty Name="IsQueue" ColumnName="IsQueue" />
                 <ScalarProperty Name="Device" ColumnName="Device" />
                 <ScalarProperty Name="System" ColumnName="System" />
                 <ScalarProperty Name="Enqueue" ColumnName="Enqueue" />
@@ -1600,33 +2081,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="View_User">
-            <EntityTypeMapping TypeName="StudyOnline.View_User">
-              <MappingFragment StoreEntitySet="View_User">
-                <ScalarProperty Name="Coins" ColumnName="Coins" />
-                <ScalarProperty Name="Country" ColumnName="Country" />
-                <ScalarProperty Name="Avatar" ColumnName="Avatar" />
-                <ScalarProperty Name="Nickname" ColumnName="Nickname" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="IsEnable" ColumnName="IsEnable" />
-                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
-                <ScalarProperty Name="Category" ColumnName="Category" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
-                <ScalarProperty Name="Accid" ColumnName="Accid" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <AssociationSetMapping Name="Photo" TypeName="StudyOnline.Photo" StoreEntitySet="Photo">
-            <EndProperty Name="NimUser">
-              <ScalarProperty Name="Id" ColumnName="UserId" />
-            </EndProperty>
-            <EndProperty Name="UploadFile">
-              <ScalarProperty Name="Id" ColumnName="FileId" />
-            </EndProperty>
-          </AssociationSetMapping>
           <EntitySetMapping Name="X_Menu">
             <EntityTypeMapping TypeName="StudyOnline.X_Menu">
               <MappingFragment StoreEntitySet="X_Menu">
@@ -1661,6 +2115,57 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="View_Document">
+            <EntityTypeMapping TypeName="StudyOnline.View_Document">
+              <MappingFragment StoreEntitySet="View_Document">
+                <ScalarProperty Name="AuditDate" ColumnName="AuditDate" />
+                <ScalarProperty Name="AuditCase" ColumnName="AuditCase" />
+                <ScalarProperty Name="SoundPath" ColumnName="SoundPath" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
+                <ScalarProperty Name="FolderName" ColumnName="FolderName" />
+                <ScalarProperty Name="FolderId" ColumnName="FolderId" />
+                <ScalarProperty Name="ShowBrowser" ColumnName="ShowBrowser" />
+                <ScalarProperty Name="LevelName" ColumnName="LevelName" />
+                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="View_User">
+            <EntityTypeMapping TypeName="StudyOnline.View_User">
+              <MappingFragment StoreEntitySet="View_User">
+                <ScalarProperty Name="Coins" ColumnName="Coins" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
+                <ScalarProperty Name="Avatar" ColumnName="Avatar" />
+                <ScalarProperty Name="Nickname" ColumnName="Nickname" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsEnable" ColumnName="IsEnable" />
+                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Accid" ColumnName="Accid" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="Member_Folder" TypeName="StudyOnline.Member_Folder" StoreEntitySet="Member_Folder">
+            <EndProperty Name="Member">
+              <ScalarProperty Name="Id" ColumnName="MemberId" />
+            </EndProperty>
+            <EndProperty Name="Folder">
+              <ScalarProperty Name="Id" ColumnName="FolderId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="Photo" TypeName="StudyOnline.Photo" StoreEntitySet="Photo">
+            <EndProperty Name="NimUser">
+              <ScalarProperty Name="Id" ColumnName="UserId" />
+            </EndProperty>
+            <EndProperty Name="UploadFile">
+              <ScalarProperty Name="Id" ColumnName="FileId" />
+            </EndProperty>
+          </AssociationSetMapping>
           <AssociationSetMapping Name="X_Menu_X_Role" TypeName="StudyOnline.X_Menu_X_Role" StoreEntitySet="X_Menu_X_Role">
             <EndProperty Name="X_Role">
               <ScalarProperty Name="Id" ColumnName="Id_Role" />
@@ -1677,7 +2182,72 @@
               <ScalarProperty Name="Id" ColumnName="Id_Role" />
             </EndProperty>
           </AssociationSetMapping>
-          </EntityContainerMapping>
+          <EntitySetMapping Name="View_FolderWithLevel">
+            <EntityTypeMapping TypeName="StudyOnline.View_FolderWithLevel">
+              <MappingFragment StoreEntitySet="View_FolderWithLevel">
+                <ScalarProperty Name="ShowCover" ColumnName="ShowCover" />
+                <ScalarProperty Name="ShowBrowser" ColumnName="ShowBrowser" />
+                <ScalarProperty Name="LevelShow" ColumnName="LevelShow" />
+                <ScalarProperty Name="LevelSort" ColumnName="LevelSort" />
+                <ScalarProperty Name="LevelName" ColumnName="LevelName" />
+                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
+                <ScalarProperty Name="FolderCover" ColumnName="FolderCover" />
+                <ScalarProperty Name="FolderSort" ColumnName="FolderSort" />
+                <ScalarProperty Name="FolderName" ColumnName="FolderName" />
+                <ScalarProperty Name="FolderId" ColumnName="FolderId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="View_Folder_Member_User">
+            <EntityTypeMapping TypeName="StudyOnline.View_Folder_Member_User">
+              <MappingFragment StoreEntitySet="View_Folder_Member_User">
+                <ScalarProperty Name="To" ColumnName="To" />
+                <ScalarProperty Name="From" ColumnName="From" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="FolderId" ColumnName="FolderId" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="View_Chat_user">
+            <EntityTypeMapping TypeName="StudyOnline.View_Chat_user">
+              <MappingFragment StoreEntitySet="View_Chat_user">
+                <ScalarProperty Name="Coins" ColumnName="Coins" />
+                <ScalarProperty Name="BalanceS" ColumnName="BalanceS" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="ChatType" ColumnName="ChatType" />
+                <ScalarProperty Name="ChatId" ColumnName="ChatId" />
+                <ScalarProperty Name="Finish" ColumnName="Finish" />
+                <ScalarProperty Name="Start" ColumnName="Start" />
+                <ScalarProperty Name="Teacher" ColumnName="Teacher" />
+                <ScalarProperty Name="Target" ColumnName="Target" />
+                <ScalarProperty Name="Student" ColumnName="Student" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="View_UserLeftJoinMember">
+            <EntityTypeMapping TypeName="StudyOnline.View_UserLeftJoinMember">
+              <MappingFragment StoreEntitySet="View_UserLeftJoinMember">
+                <ScalarProperty Name="To" ColumnName="To" />
+                <ScalarProperty Name="From" ColumnName="From" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="Mobile" ColumnName="Mobile" />
+                <ScalarProperty Name="Birth" ColumnName="Birth" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Nickname" ColumnName="Nickname" />
+                <ScalarProperty Name="IsEnable" ColumnName="IsEnable" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>

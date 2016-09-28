@@ -1,6 +1,4 @@
-﻿@using StudyOnline.Models;
-@using Webdiyer.WebControls.Mvc;
-
+﻿@model PagedList<View_Document>
 @{
     Layout = null;
     List<Level> levels = ViewBag.Levels;
@@ -29,11 +27,11 @@
         </div>
         <div id="main">
             <ul>
-                @foreach (var item in documents)
+                @foreach (View_Document item in Model)
                 {
                     <li>
-                        <a href='@Url.Action("Index", new { level = item.LevelId })'><span style="color:#B26646;">[@item.Level.Name]</span></a>
-                        <a href="@Url.Action("Detail", new { id = item.Id })">@item.Title<span style="color:#57b4b7;padding-left:10px;">(@item.AuditDate.Value.ToString("yyyy-MM-dd"))</span></a>
+                        <a href='@Url.Action("Index", new { level = item.LevelId })'><span style="color:#B26646;">[@item.LevelName]</span></a>
+                        <a href="@Url.Action("Detail", new { id = item.DocumentId })">@item.Title<span style="color:#57b4b7;padding-left:10px;">(@item.AuditDate.Value.ToString("yyyy-MM-dd"))</span></a>
                     </li>
                 }
             </ul>

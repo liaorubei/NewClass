@@ -15,10 +15,10 @@
             <ul class="searchContent">
                 <li>
                     <label>名称：</label>
-                    <input type="text" name="keyword" placeholder="请输入" value="@ViewBag.Keyword"/>
+                    <input type="text" name="keyword" placeholder="请输入" value="@ViewBag.Keyword" />
                 </li>
                 <li>
-                    <label>级别：</label>@Html.DropDownList("levelId",(List<SelectListItem>)ViewBag.Levels, new {@class="combox" })
+                    <label>级别：</label>@Html.DropDownList("levelId", (List<SelectListItem>)ViewBag.Levels, new { @class = "combox" })
                 </li>
             </ul>
 
@@ -38,18 +38,19 @@
             <li><a class="delete" href='@Url.Action("FolderDelete",new {id="{id}"})' target="ajaxTodo" title="确定要删除吗？" warn="请选择"><span>删除</span></a></li>
             <li><a class="update" href='@Url.Action("FolderCreate",new {id="{id}"})' target="dialog" rel="AdminFolderCreate" title="修改合集" width="600" height="400" mask="true" warn="请选择"><span>修改</span></a></li>
             <li class="line">line</li>
-            <li><a class="icon" href='@Url.Action("FolderSelect",new {id="{id}"})' ta target="dialog" rel="AdminFolderSelect" title="文章选择" width="800" height="600" mask="true" warn="请选择"><span>文章选择</span></a></li>
+            <li><a class="icon" href='@Url.Action("FolderSelect",new {id="{id}"})' target="dialog" rel="AdminFolderSelect" title="文章选择" width="800" height="600" mask="true" warn="请选择"><span>文章选择</span></a></li>
 
             @*<li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targettype="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
                 <li><a class="icon" href="javascript:$.printBox('w_list_print')"><span>打印</span></a></li>*@
         </ul>
     </div>
-    <table class="list" style="width:100%;" targettype="navTab" asc="asc" desc="desc" layouth="116">
+    <table class="list" targettype="navTab" asc="asc" desc="desc" layouth="116">
         <thead>
             <tr>
-                <th width="50" align="center">序号</th>
+                <th width="35" align="center">序号</th>
                 <th>文件夹名称</th>
                 <th>文件夹级别</th>
+                <th width="150" align="center">排序</th>
             </tr>
         </thead>
         <tbody>
@@ -60,10 +61,24 @@
                     <td align="center">@(++i)</td>
                     <td>@item.Name</td>
                     <td>@(item.Level == null ? "" : item.Level.Name)</td>
+                    <td align="center">
+                        <input type="text" id="folderSort@(i)" value="@item.Sort" class="digits" style="width:25px;text-align:center;" /> @Html.ActionLink("保存", "FolderSort", new { id = item.Id, sort = "{folderSort" + i + "}" }, new { target = "ajaxTodo" })
+                    </td>
                 </tr>
             }
-
         </tbody>
     </table>
     @Html.PanelBar(folders, 10)
 </div>
+<script>
+    function updateFolderSort(dom) {
+        var $a = $(dom);
+        console.log($a);
+        $.ajax({
+            url: $a.attr("href"),
+            type: "POST",
+            data: { sort: $(dom).prev().value() },
+            dataType: "json"
+        });
+    }
+</script>

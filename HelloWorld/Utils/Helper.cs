@@ -43,7 +43,7 @@ namespace StudyOnline.Utils
             builder.AppendLine("<div class='panelBar'>");
             builder.AppendLine("    <div class='pages'>");
             builder.AppendLine("        <span>显示</span>");
-            builder.AppendLine("        <select name=\"numPerPage\" onchange=\"dwzPageBreak({targetType:'" + targetType + "', numPerPage:this.value})\">");
+            builder.AppendLine("        <select class='combox' name=\"numPerPage\" onchange=\"dwzPageBreak({targetType:'" + targetType + "', numPerPage:this.value})\">");
             builder.AppendLine(String.Format("            <option value='20'   {0}>20</option>", list.PageSize == 20 ? " selected='selected'" : ""));
             builder.AppendLine(String.Format("            <option value='50'   {0}>50</option>", list.PageSize == 50 ? " selected='selected'" : ""));
             builder.AppendLine(String.Format("            <option value='80'   {0}>80</option>", list.PageSize == 80 ? " selected='selected'" : ""));
@@ -76,8 +76,6 @@ namespace StudyOnline.Utils
 
             return new MvcHtmlString(builder.ToString());
         }
-
-
 
         internal static UploadFile SaveUploadFile(HttpServerUtilityBase server, HttpPostedFileBase item)
         {

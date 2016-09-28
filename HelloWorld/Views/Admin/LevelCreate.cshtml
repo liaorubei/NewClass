@@ -26,6 +26,11 @@
                 <label><input type="radio" name="ShowBrowser" value="1" @(Model.ShowBrowser == 1?"checked='checked'":"") />是</label>
                 <label><input type="radio" name="ShowBrowser" value="0" @(Model.ShowBrowser == 0?"checked='checked'":"") />否</label>
             </div>
+            <div class="unit">
+                <label>是否有封面：</label>
+                <label><input type="radio" name="ShowCover" value="1" @(Model.ShowCover == 1 ? "checked='checked'" : "") />是</label>
+                <label><input type="radio" name="ShowCover" value="0" @(Model.ShowCover == 0 ? "checked='checked'" : "") />否</label>
+            </div>
         </div>
         <div class="formBar">
             <ul>

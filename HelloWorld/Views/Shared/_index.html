@@ -3,8 +3,8 @@
 
 <div class="pageHeader">
     <form id="pagerForm" onsubmit="return navTabSearch(this);" action="demo_page1.html" method="post">
-        <input type="hidden" name="pageNum" value="1" />
-        <input type="hidden" name="numPerPage" value="${model.numPerPage}" />
+        <input type="hidden" name="pageNum" value="@Model.CurrentPageIndex" />
+        <input type="hidden" name="numPerPage" value="@Model.PageSize" />
         <div class="searchBar">
             <ul class="searchContent">
                 <li>
@@ -45,7 +45,7 @@
     <table class="list" layoutH="115">
         <thead>
             <tr>
-                <th width="80"></th>
+                <th width="35"></th>
                 <th width="120">客户号</th>
                 <th>客户名称</th>
                 <th width="100">客户类型</th>

@@ -1,0 +1,35 @@
+﻿@model Member
+@{
+    Layout = null;
+}
+
+
+<div class="pageContent">
+
+    <form method="post" action='@Url.Action("Create")' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent " layoutH="58">
+
+            <dl>
+                <dt>必填：</dt>
+                <dd>
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <input type="text" name="Name" maxlength="32" class="required" value="@Model.Name"/>
+                </dd>
+            </dl>
+            <dl>
+                <dt>整数：</dt>
+                <dd>
+                    <input type="text" name="Month" class="digits" min="1" value="@Model.Month"/>(个月)
+                </dd>
+            </dl>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+
+</div>
+

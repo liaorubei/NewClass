@@ -239,6 +239,7 @@ namespace StudyOnline.Areas.Api.Controllers
             user.Password = EncryptionUtil.Md5Encode(password);
             user.Category = category;
             user.CreateDate = DateTime.Now;
+            user.IsActive = 1;
 
             //同步云信帐号系统
             String json = NimUtil.UserCreate(user.Accid, null, null, HttpUtility.UrlEncode(email));
@@ -708,8 +709,8 @@ namespace StudyOnline.Areas.Api.Controllers
                 duration = studentData.Sum(o => o.Duration) ?? 0;
             }
 
-            //user.IsOnline = 1;
-            //user.IsEnable = 1;
+            user.IsOnline = 1;
+            user.IsEnable = 1;
             user.Refresh = DateTime.Now;
             user.System = system;
             user.Device = device;
@@ -949,6 +950,7 @@ namespace StudyOnline.Areas.Api.Controllers
         {
             NimUser user = entities.NimUser.Single(o => o.Username == username);
             user.IsOnline = 1;
+            user.IsOnline = 1;
             user.Refresh = DateTime.Now;
 
             //默认category=1为老师  //要求是老师,在线,可用
@@ -1014,6 +1016,7 @@ namespace StudyOnline.Areas.Api.Controllers
             {
                 user.IsEnable = 1;
                 user.Enqueue = DateTime.Now;
+                user.IsQueue = 1;
             }
             entities.SaveChanges();
 
@@ -1280,7 +1283,8 @@ namespace StudyOnline.Areas.Api.Controllers
                 {
                     return Json(new { code = 204, desc = "帐号类型出错" });
                 }
-                if (student.Coins <= 0)
+                //当学币为空的时候也提示学币不足
+                if ((student.Coins ?? 0) <= 0)
                 {
                     return Json(new { code = 203, desc = "学生余额不足" });
                 }
@@ -1424,7 +1428,7 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult TeacherInqueue(int skip, int take)
         {
-            Expression<Func<NimUser, bool>> predicate = o => o.IsOnline == 1 && o.IsEnable == 1 && o.Category == 1;//默认category=1为老师  //要求是老师,在线,可用
+            Expression<Func<NimUser, bool>> predicate = o => o.IsOnline == 1 && o.IsEnable == 1 && o.Category == 1 && o.IsQueue == 1;//默认category=1为老师  //要求是老师,在线,可用
             Expression<Func<NimUser, DateTime?>> keySelector = o => o.Enqueue;
             List<NimUser> teachers = entities.NimUser.Where(predicate).OrderBy(keySelector).Skip(skip).Take(take).ToList();
             return Json(new
@@ -1457,7 +1461,7 @@ namespace StudyOnline.Areas.Api.Controllers
         {
             try
             {//.OrderByDescending(o => o.IsOnline) //20160527 不在线的老师不用显示,即不在排队状态的老师不显示
-                var teacher = entities.NimUser.Where(o => o.Category == 1 && o.IsOnline == 1 & o.IsEnable == 1).OrderByDescending(o => o.IsEnable).ThenBy(o => o.Enqueue).Skip(skip).Take(take).ToList();
+                var teacher = entities.NimUser.Where(o => o.IsActive == 1 && o.Category == 1 && o.IsOnline == 1 & o.IsEnable == 1 && o.IsQueue == 1).OrderByDescending(o => o.IsEnable).ThenBy(o => o.Enqueue).Skip(skip).Take(take).ToList();
                 return Json(new
                 {
                     code = 200,
@@ -1544,7 +1548,7 @@ namespace StudyOnline.Areas.Api.Controllers
         {
             try
             {
-                var teacher = entities.NimUser.Where(o => o.Category == 1 && o.IsOnline == 1).OrderByDescending(o => o.IsEnable).ThenBy(o => o.Enqueue).Skip(skip).Take(take).ToList();
+                var teacher = entities.NimUser.Where(o => o.IsActive != 0 && o.Category == 1 && o.IsOnline == 1 && o.IsQueue == 1).OrderByDescending(o => o.IsEnable).ThenBy(o => o.Enqueue).Skip(skip).Take(take).ToList();
                 return Json(new
                 {
                     code = 200,
@@ -1626,6 +1630,7 @@ namespace StudyOnline.Areas.Api.Controllers
 
                 nimUser.IsEnable = 1;
                 nimUser.IsOnline = 1;
+                nimUser.IsQueue = 1;
                 nimUser.Refresh = DateTime.Now;
                 nimUser.Enqueue = DateTime.Now;
                 entities.SaveChanges();
@@ -1670,8 +1675,9 @@ namespace StudyOnline.Areas.Api.Controllers
                     return Json(new { code = 201, desc = "出队失败" });
                 }
 
-                nimUser.IsEnable = 0;
-                nimUser.IsOnline = 0;
+                nimUser.IsOnline = 0;//不在线
+                nimUser.IsEnable = 0;//不可用
+                nimUser.IsQueue = 0;//不在队列中
                 nimUser.Refresh = DateTime.Now;
                 entities.SaveChanges();
                 return Json(new { code = 200, desc = "出队成功" });
@@ -1690,21 +1696,13 @@ namespace StudyOnline.Areas.Api.Controllers
         /// <param name="device">手机型号,如:OnePlus 2</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult TeacherRefresh(Int32? id, Int32? system, String device)
+        public ActionResult TeacherRefresh(Int32? id, Int32? system, String device, Int32? isOnline)
         {
             try
             {
-                NimUser nimUser = null;
-                if (id != null)
-                {
-                    nimUser = entities.NimUser.Find(id);
-                }
-
-                //暂时不设置在线状态
-                //nimUser.IsOnline = 1;
+                NimUser nimUser = entities.NimUser.Find(id);
+                nimUser.IsOnline = isOnline ?? 1;
                 nimUser.Refresh = DateTime.Now;
-                nimUser.System = system;
-                nimUser.Device = device;
                 entities.SaveChanges();
 
                 return Json(new { code = 200, desc = "刷新成功" });
@@ -1753,7 +1751,9 @@ namespace StudyOnline.Areas.Api.Controllers
             try
             {
                 NimUser user = entities.NimUser.Find(id);
-                var a = entities.NimUser.Where(o => o.Category == 1 && o.IsOnline == 1).OrderByDescending(o => o.IsEnable).ThenBy(o => o.Enqueue).Skip(skip ?? 0);
+
+                //要求是教师,在线,入队,可用,激活的
+                var a = entities.NimUser.Where(o => o.Category == 1 && o.IsOnline == 1 && o.IsQueue == 1 && o.IsActive != 0 && o.IsEnable == 1).OrderByDescending(o => o.IsEnable).ThenBy(o => o.Enqueue).Skip(skip ?? 0);
                 List<NimUser> teachers = take == null ? a.ToList() : a.Take(take.Value).ToList();
                 return Json(new
                 {
@@ -1769,6 +1769,7 @@ namespace StudyOnline.Areas.Api.Controllers
                             o.Username,
                             IsEnable = o.IsEnable == 1,
                             IsOnline = o.IsOnline == 1,
+                            o.IsQueue,
                             Nickname = o.NimUserEx.Name,
                             o.NimUserEx.Spoken,
                             Photos = o.UploadFile.Select(p => p.Path).ToList()
@@ -1779,7 +1780,8 @@ namespace StudyOnline.Areas.Api.Controllers
                             user.Username,
                             user.IsOnline,
                             user.IsEnable,
-                            user.IsActive
+                            user.IsActive,
+                            user.IsQueue
                         }
                     }
                 });

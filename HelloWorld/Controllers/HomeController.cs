@@ -40,6 +40,10 @@ namespace StudyOnline.Controllers
             ViewBag.Levels = new List<Level>() { new Level() { Id = 1, LevelName = "LevelName" } };
             ViewBag.Documents = new PagedList<Document>(new List<Document>() { new Document() { Id = 1,AuditDate=DateTime.Now, Title = "Title",Level=new Level() { LevelName= "LevelName" } } }, 1, 15) { };
  */
+
+            ViewData.Model = db.View_Document.Where(o => o.ShowBrowser == 1 && o.AuditCase == AuditCase.审核).OrderByDescending(o => o.AuditDate).ToPagedList(index ?? 0, pageSize);
+
+
             return View();
         }
 

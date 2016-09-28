@@ -264,7 +264,8 @@ SELECT * FROM [dbo].[NimUser] where category=1
 --alter table [dbo].[NimUser] alter column [Enqueue] datetime
 
 --alter table [dbo].[NimUser] add [System] int           --手机系统,安卓为1,苹果为2,其它为0
---alter table [dbo].[NimUser] add [Device] nvarchar(64)
+--alter table [dbo].[NimUser] add [Device] nvarchar(128)  
+--alter table [dbo].[NimUser] alter column [Device] nvarchar(128)
 
 --//创建视图
 --drop view View_User
@@ -274,3 +275,119 @@ SELECT * FROM [dbo].[NimUser] where category=1
 
 --//添加教师审核同步数据字段
 --alter table [dbo].[Teacherreginfo] add IsSync int 
+
+--20160808 添加教材分类,教材文件夹要求有封面显示功能
+alter table [dbo].[Folder] add [Sort] int,[Cover] nvarchar(256)
+alter table [dbo].[Level] add [HasCover] int
+
+--文件夹要求有嵌套功能
+alter table Folder add ParentId int, constraint FK_Folder_Folder foreign key (ParentId) references Folder(Id)
+
+--//创建文档视图,
+--Drop View View_Document
+--Create View View_Document as 
+--select L.Id as LevelId,L.Name as LevelName,L.[ShowBrowser],F.Id as FolderId,F.Name as  FolderName,D.Id as DocumentId,D.[Title],D.[SoundPath],D.[AuditCase],D.[AuditDate] from
+--Level as L inner join Folder as F on L.Id=F.LevelId inner join [dbo].[Document] as D on F.Id=D.FolderId
+
+--20160815由于加入课本,生词,阅读等原因,加之审核时间不确定,因此要求给文档加入排序功能1.1,1.2,1.3
+alter table document add [Sort] float
+
+--DROP TABLE [dbo].[Member_Folder]
+--DROP TABLE [dbo].[Member_User]
+--DROP TABLE [dbo].[Member]
+
+--会员表
+CREATE TABLE Member(
+Id      varchar(32),
+Name   nvarchar(32),
+[Month]  int,
+constraint PK_Member primary key ([Id])
+)
+
+--会员文件夹表
+CREATE TABLE Member_Folder(
+MemberId varchar(32),
+FolderId int,
+CONSTRAINT PK_Member_Folder        primary key ([MemberId],[FolderId]),
+CONSTRAINT FK_Member_Folder_Member foreign key ([MemberId]) references Member (Id),
+CONSTRAINT FK_Member_Folder_Folder foreign key ([FolderId]) references Folder (Id)
+)
+
+--会员用户表
+CREATE TABLE Member_User(
+MemberId varchar(32),
+UserId int,
+[From] datetime,
+[To]   datetime,
+CONSTRAINT PK_Member_User         PRIMARY KEY (MemberId,UserId),
+CONSTRAINT FK_Member_User_Member  FOREIGN KEY (MemberId) REFERENCES Member  (Id),
+CONSTRAINT FK_Member_User_User	  FOREIGN KEY (UserId)   REFERENCES NimUser (Id)        
+)
+
+
+
+--DROP   VIEW View_FolderWithLevel
+--CREATE VIEW View_FolderWithLevel as 
+SELECT F.Id as FolderId,F.Name as FolderName,F.Sort as FolderSort,F.Cover as FolderCover,L.[Id] AS LevelId,L.[Name] AS LevelName,L.Sort as LevelSort,L.Show as LevelShow,L.[ShowBrowser],L.[ShowCover] 
+FROM [Folder] AS F LEFT JOIN [Level] AS L ON F.[LevelId]=L.[Id]
+Order by L.Sort ,F.Sort,F.Name
+
+
+
+--DROP   VIEW View_Folder_Member_User
+--CREATE VIEW View_Folder_Member_User AS 
+SELECT 
+[Member_Folder].[MemberId],
+[Member_Folder].[FolderId],
+[Member_User].[UserId],
+[Member_User].[From],
+[Member_User].[To]
+FROM [Member_Folder] INNER JOIN [Member_User] 
+ON   [Member_Folder].[MemberId]=[Member_User].[MemberId]
+
+
+--在查询学生或教师学习记录时会用到
+--DROP   VIEW View_Chat_User
+--CREATE VIEW View_Chat_user AS
+SELECT
+C.[Id],
+C.[Source],
+N1.Name AS Student,
+C.[Target],
+N2.Name AS Teacher,
+C.[Start],
+C.[Finish],
+C.[ChatId],
+C.[ChatType],
+C.[Coins],
+C.[Duration],
+C.[BalanceS]
+FROM      [CallLog] C
+LEFT JOIN [NimUserEx] N1 ON C.[Source]=N1.Id
+LEFT JOIN [NimUserEx] N2 ON C.[Target]=N2.Id
+
+
+/****** Script for 创建一个方便给会员添加用户,或者用户添加会员功能的视图,主要是用在管理系统会员相关的模块  ******/
+--DROP   VIEW View_UserLeftJoinMember
+--CREATE VIEW View_UserLeftJoinMember as
+(
+SELECT N.[Id]
+ ,N.[Username]
+ ,N.[CreateDate]
+ ,N.[Category]
+ ,N.[IsOnline]
+ ,N.[IsActive]
+ ,N.[IsEnable]
+ ,E.Name as Nickname
+ ,E.[Email]
+ ,E.[Birth]
+ ,E.[Mobile]
+ ,M.[MemberId]
+ ,M.[From]
+ ,M.[To]
+FROM       [NimUser] as N 
+INNER JOIN [NimUserEx] as E on N.Id=E.Id
+LEFT  JOIN [Member_User] as M  on N.Id=M.UserId
+) 
+
+

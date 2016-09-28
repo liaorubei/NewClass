@@ -18,6 +18,8 @@
     <form id="pagerForm" onsubmit="return navTabSearch(this);" action="@Url.Action("DocsList")" method="post">
         <input type="hidden" name="pageNum" value="@docs.CurrentPageIndex" />
         <input type="hidden" name="numPerPage" value="@docs.PageSize" />
+        <input type="hidden" name="orderField" value="@ViewBag.OrderField" />
+        <input type="hidden" name="orderDirection" value="desc" />
         <div class="searchBar">
             <ul class="searchContent">
                 <li>
@@ -58,20 +60,28 @@
         <ul class="toolBar">
             <li><a class="create" href='@Url.Action("DocsCreate")' target="navTab" rel="AdminDocsCreate" title="新建文章"><span>添加</span></a></li>
             <li><a class="update" href='@Url.Action("DocsCreate", new { id = "{id}" })' target="navTab" rel="AdminDocsCreate" title="修改文章" warn="请选择"><span>修改</span></a></li>
+            <li class="line">line</li>
             <li><a class="delete" href='@Url.Action("DocsDelete", new { id = "{id}" })' target="ajaxTodo" title="确定要删除吗？" warn="请选择"><span>删除</span></a></li>
-            <li><a class="delete" href='@Url.Action("AuditDocs", new { id = "{id}" })' target="ajaxTodo" title="确定要审核吗？" warn="请选择"><span>审核</span></a></li>
+            <li><a class="update" href='@Url.Action("AuditDocs", new { id = "{id}" })' target="ajaxTodo" title="确定要审核吗？" warn="请选择"><span>审核</span></a></li>
+            <li class="line">line</li>
+            <li><a class="delete" href='@Url.Action("BatchDocumentDelete")' target="selectedTodo" rel="ids" title="确定要删除吗？"><span>批量删除</span></a></li>
+            <li><a class="update" href='@Url.Action("BatchDocumentAudit")' target="selectedTodo" rel="ids" title="确定要审核吗？"><span>批量审核</span></a></li>
         </ul>
     </div>
 
     <div id="w_list_print">
-        <table class="list" style="width:100%;" targettype="navTab" asc="asc" desc="desc" layouth="116">
+        <table class="list" targettype="navTab" asc="asc" desc="desc" layouth="116">
             <thead>
                 <tr>
-                    <th width="50" align="center">序号</th>
-                    <th>文章标题</th>
+                    <th width="25" align="center"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
+                    <th width="25" align="center">序号</th>
+                    <th>一级标题</th>
+                    <th>二级标题</th>
                     <th>文件夹</th>
                     <th align="center" width="100">文章级别</th>
-                    <th align="center" width="75">审核日期</th>
+                    <th align="center" width="150" orderField="AddDate" @("AddDate".Equals(ViewBag.OrderField) ? "class=desc" : "")>创建日期</th>
+                    <th align="center" width="150" orderField="AuditDate" @("AuditDate".Equals(ViewBag.OrderField) ? "class=desc" : "")>审核日期</th>
+                    <th align="center" orderField="Sort" @("Sort".Equals(ViewBag.OrderField) ? "class=desc" : "")>排序</th>
                 </tr>
             </thead>
             <tbody>
@@ -79,11 +89,17 @@
                 @foreach (var item in docs)
                 {
                     <tr target="id" rel="@item.Id">
+                        <td align="center"><input name="ids" value="@item.Id" type="checkbox"></td>
                         <td align="center">@(++i)</td>
                         <td>@item.Title</td>
+                        <td>@item.TitleTwo</td>
                         <td align="center">@(item.Folder == null ? "" : item.Folder.Name)</td>
                         <td align="center">@item.Level.Name</td>
-                        <td align="center">@(item.AuditDate == null ?  "":item.AuditDate.Value.ToString("yyyy-MM-dd"))</td>
+                        <td align="center">@(item.AddDate.HasValue ? item.AddDate.Value.ToString("yyyy-MM-dd HH:mm:ss") : null)</td>
+                        <td align="center">@(item.AuditDate.HasValue ? item.AuditDate.Value.ToString("yyyy-MM-dd HH:mm:ss") : null)</td>
+                        <td align="center">
+                            <input type="text" id="documentSort@(i)" value="@item.Sort" class="number" style="width:30px;text-align:center;" /> @Html.ActionLink("保存", "DocumentSort", new { id = item.Id, sort = "{documentSort" + i + "}" }, new { target = "ajaxTodo" })
+                        </td>
                     </tr>
                 }
             </tbody>

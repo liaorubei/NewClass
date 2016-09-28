@@ -8,24 +8,65 @@
     List<Level> levels = ViewBag.Levels;
     levels.Insert(0, new Level() { Id = 0, Name = "-请选择-" });
 }
+<style type="text/css" media="screen">
+    .uploadify { margin-bottom: 0; display: inline-block; }
+
+    .uploadify-button { border: none; border-radius: 0; }
+    /*.uploadify-queue { display: none; }*/
+</style>
+
 <div class="pageContent">
 
     <form method="post" action='@Url.Action("FolderCreate")' class="pageForm" onsubmit="return validateCallback(this, dialogAjaxDone)">
         <div class="pageFormContent" layoutH="58">
-            <div class="unit">
-                <label>全集名称：</label>
-                <input type="text" name="Name" class="required" value="@Model.Name" />
-            </div>
-            <div class="unit">
-                <label>合集级别：</label>
-
-                <select class="required" name="LevelId">
-                    @foreach (var item in levels)
-                    {
-                        <option value="@(item.Id==0?"":item.Id+"")" @(Model.LevelId == item.Id ? "selected='selected'" : "")>@item.Name</option>
-                    }
-                </select>
-            </div>
+            <table class="formTable">
+                <tr>
+                    <th style="width:100px;">文件夹名称：</th>
+                    <td>
+                        <input type="text" name="Name" class="required" value="@Model.Name" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>文件夹级别：</th>
+                    <td>
+                        <select class="combox required" name="LevelId">
+                            @foreach (var item in levels)
+                            {
+                                <option value="@(item.Id==0?"":item.Id+"")" @(Model.LevelId == item.Id ? "selected='selected'" : "")>@item.Name</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>父级文件夹：</th>
+                    <td>
+                        <input type="text" name="ParentId" value="@Model.ParentId" /><a class="btnLook" href="demo/database/dwzOrgLookup.html" lookupGroup="org1">查找带回</a>	
+                    </td>
+                </tr>
+                <tr>
+                    <th>排序:</th>
+                    <td>
+                        <input type="text" name="Sort" value="@Model.Sort" class="digits" />
+                    </td>
+                </tr>
+                <tr>
+                    <th style="vertical-align:top;padding-top:10px;">文件夹封面：</th>
+                    <td>
+                        <span>
+                            @if (!String.IsNullOrEmpty(Model.Cover))
+                            {
+                                <span class="fileList">
+                                    <img src="@Model.Cover" width="100" height="100">
+                                    <input type="hidden" name="Cover" value="@Model.Cover">
+                                    <span>@Model.Cover</span>
+                                    <a href="javascript:;" class="close" title="移除" onclick="$(this).parent().remove();"></a>
+                                </span>
+                            }
+                        </span>
+                        <input id="testFileInput" type="file" name="file" uploaderOption="{swf:'/Content/uploadify/scripts/uploadify.swf',uploader:'/Admin/UploadifyFull',buttonText:'请选择封面',fileTypeDesc:'*.jpg;*.jpeg;*.gif;*.png;',fileTypeExts:'*.jpg;*.jpeg;*.gif;*.png;',auto:true,multi:false,onUploadSuccess:uploadifySuccess}" />
+                    </td>
+                </tr>
+            </table>
         </div>
         <div class="formBar">
             <ul>
@@ -36,3 +77,16 @@
     </form>
 
 </div>
+<script>
+    /*uploadifySuccess*/
+    function uploadifySuccess(file, data, response) {
+        var o = $.parseJSON(data);
+        console.log(o);
+        var $c = $("#testFileInput").prev();
+        $c.html("<span class='fileList'><img src='" + o.filePath + "' width='100' height='100'/></span>");
+        var input = "<input type='hidden' name='Cover' value='" + o.filePath + "' />";
+        var span = "<span>" + o.fileName + "</span>";
+        var a = "<a href=\"javascript:;\" class=\"close\" title=\"移除\" onclick='$(this).parent().remove();'></a>";
+        $c.children().append(input).append(span).append(a);
+    }
+</script>

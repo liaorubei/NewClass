@@ -1,4 +1,5 @@
 ﻿using StudyOnline.Models;
+using StudyOnline.Results;
 using StudyOnline.Utils;
 using System;
 using System.Collections.Generic;
@@ -59,8 +60,6 @@ namespace StudyOnline.Areas.Api.Controllers
 
             return Json(new { code = 200, desc = "创建成功", info = new { chat.Id, chat.Source, chat.Target } });
         }
-
-
 
         /// <summary>
         /// 平衡学生的学币
@@ -218,7 +217,7 @@ namespace StudyOnline.Areas.Api.Controllers
             entities.SaveChanges();
 
             var span = call.Refresh - call.Start;
-            var coins = user.Coins.Value - (((Int32)span.Value.TotalMinutes) * Constants.Price);
+            var coins = (user.Coins ?? 0) - (((Int32)span.Value.TotalMinutes) * Constants.Price);
 
             if (coins <= 0)
             {
@@ -517,6 +516,15 @@ namespace StudyOnline.Areas.Api.Controllers
             });
         }
 
+        /// <summary>
+        /// 取得指定用户在指定时间内的通话记录
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult GetByUserIdAndYearMonth(Int32? id, Int32? skip, Int32? take, DateTime? from, DateTime? to)
         {
@@ -600,6 +608,59 @@ namespace StudyOnline.Areas.Api.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult GetListByUserId(Int32 userId, Int32? skip, Int32? take, DateTime? from, DateTime? to)
+        {
+            NimUser user = entities.NimUser.Find(userId);
+            if (user == null)
+            {
+                return Json(new { code = 201, desc = "用户不存在" });
+            }
 
+            //区分用户类型,如果是学生,则取学生的,如果是老师,则取老师的
+            Expression<Func<View_Chat_user, bool>> predicateCategory = o => true;
+            if (user.Category == 0)
+            {
+                predicateCategory = o => o.Source == user.Id;
+            }
+            else if (user.Category == 1)
+            {
+                predicateCategory = o => o.Target == user.Id;
+            }
+
+            Expression<Func<View_Chat_user, bool>> predicateFrom = o => true;
+            if (from != null)
+            {
+                predicateFrom = o => from < o.Start;
+            }
+
+            Expression<Func<View_Chat_user, bool>> predicateTo = o => true;
+            if (to != null)
+            {
+                predicateTo = o => o.Start < to;
+            }
+
+            var query = entities.View_Chat_user.Where(o => o.ChatType == 1 && o.BalanceS == 1).Where(predicateCategory).Where(predicateFrom).Where(predicateTo).OrderByDescending(o => o.Start);
+            Int32 count = query.Count();
+            Int32 duration = query.Sum(o => o.Duration) ?? 0;
+            var temp = query.Skip(skip ?? 0).Take(take ?? Int32.MaxValue).Select(o => new
+            {
+                o.Id,
+                o.Source,
+                o.Student,
+                o.Target,
+                o.Teacher,
+                o.Start,
+                o.Finish,
+                o.ChatId,
+                o.ChatType,
+                o.Duration,
+                o.BalanceS,
+                o.Coins,
+                Themes = entities.LogTheme.Where(t => t.ChatId == o.ChatId).Select(t => new { t.Theme.Name, Id = t.ThemeId })
+            });
+
+            return new DateTimeSEJsonResult(new { code = 200, desc = "查询成功", info = new { duration, count, from, to, list = temp } });
+        }
     }
 }

@@ -11,6 +11,14 @@ namespace ChineseChat.Library
         private readonly static string UserCreatePath = "https://api.netease.im/nimserver/user/create.action";
         private static readonly string UserUpdatePath = "https://api.netease.im/nimserver/user/update.action";
 
+        /// <summary>
+        /// 创建云信帐户
+        /// </summary>
+        /// <param name="accid"></param>
+        /// <param name="token"></param>
+        /// <param name="props"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static String UserCreate(String accid, String token, String props, String name)
         {
             NameValueCollection headers = GenerateHeaders();

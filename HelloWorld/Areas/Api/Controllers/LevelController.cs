@@ -15,7 +15,7 @@ namespace StudyOnline.Areas.Api.Controllers
         public ActionResult Select()
         {
             var temp = entities.Level.Where(o => o.Show == 1).OrderBy(o => o.Sort);
-            return Json(new { code = 200, desc = "查询成功", info = temp.Select(o => new { o.Id, o.Name, o.Sort, DocsCount = o.Document.Count }) });
+            return Json(new { code = 200, desc = "查询成功", info = temp.Select(o => new { o.Id, o.Name, o.Sort, DocsCount = o.Document.Count, o.ShowCover }) });
         }
 
         [HttpPost]
@@ -31,7 +31,8 @@ namespace StudyOnline.Areas.Api.Controllers
                     o.Id,
                     o.Name,
                     o.Sort,
-                    Folders = o.Folder.OrderByDescending(f => f.Id).Take(25).Select(f => new { f.Id, f.Name, DocsCount = f.Document.Count(d => d.AuditCase == AuditCase.审核) })
+                    o.ShowCover,
+                    Folders = o.Folder.OrderBy(f => f.Sort).Take(25).Select(f => new { f.Id, f.Name, f.Sort, f.LevelId, Permission = f.Member.Any(), DocsCount = f.Document.Count(d => d.AuditCase == AuditCase.审核), f.Cover })
                 })
             });
         }

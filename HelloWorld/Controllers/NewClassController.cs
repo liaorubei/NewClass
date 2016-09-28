@@ -49,7 +49,14 @@ namespace StudyOnline.Controllers
                 predicateFolder = o => o.FolderId == folderId;
             }
 
-            var temp = db.Document.Where(o => o.AuditCase == AuditCase.审核).Where(predicateFolder).OrderByDescending(t => t.AuditDate).Skip(skip ?? 0).Take(take ?? 20).ToList();
+            //20160824 添加新功能,如果该文件夹有权限相关功能,不返回数据,客户端新版本可以使用 /api/document/getlistbyfolderId 接口
+            //Folder folder = db.Folder.Find(folderId);
+            //if (folder != null && folder.Member.Any())
+            //{
+            //    return Json(new Document[] { new Document() { Title = "-", TitleTwo = "该课程要求权限,请升级你的客户端" } });
+            //}
+
+            var temp = db.Document.Where(o => o.AuditCase == AuditCase.审核).Where(predicateFolder).OrderBy(o => o.Sort).ThenByDescending(t => t.AuditDate).Skip(skip ?? 0).Take(take ?? Int32.MaxValue).ToList();
             var data = temp.Select(t => new
             {
                 t.Id,
@@ -61,7 +68,7 @@ namespace StudyOnline.Controllers
                 t.Length,
                 t.LengthString,
                 DateString = (t.AuditDate == null ? "" : t.AuditDate.Value.ToString("yyyy-MM-dd")),
-                Date = (t.AuditDate == null ? "" : t.AuditDate.Value.ToString("yyyy-MM-dd")),
+                Date = (t.AuditDate.HasValue ? null : t.AuditDate.Value.ToString("yyyy-MM-dd")),
                 Size = t.Length,
                 Time = t.Duration
             });

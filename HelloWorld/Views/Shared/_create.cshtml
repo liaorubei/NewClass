@@ -1,4 +1,4 @@
-﻿
+﻿@model
 @{
     Layout = null;
 }
@@ -6,7 +6,7 @@
 
 <div class="pageContent">
 
-    <form method="post" action="demo/common/ajaxDone.html" class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
+    <form method="post" action='@Url.Action("")' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
         <div class="pageFormContent " layoutH="58">
 
             <dl>

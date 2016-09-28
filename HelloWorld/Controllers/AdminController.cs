@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using Webdiyer.WebControls.Mvc;
@@ -59,7 +60,7 @@ namespace StudyOnline.Controllers
 
         public ActionResult Player() { return View(); }
 
-        //文档相关
+        #region 文档相关
         public ActionResult DocsList(FormCollection form)
         {
             //分页处理
@@ -89,8 +90,27 @@ namespace StudyOnline.Controllers
                 predicateFolderId = o => o.FolderId == folderId;
             }
 
+            Func<Document, object> keySelector = o => o.AddDate;
+            if (!String.IsNullOrEmpty(form["orderField"]))
+            {
+                if ("AddDate".Equals(form["orderField"]))
+                {
+                    keySelector = o => o.AddDate;
+                }
+                else if ("AuditDate".Equals(form["orderField"]))
+                {
+                    keySelector = o => o.AuditDate;
+                }
+                else if ("Sort".Equals(form["orderField"]))
+                {
+                    keySelector = o => o.Sort;
+                }
+            }
+
+
+
             //数据和分页检索条件处理
-            PagedList<Document> docs = entities.Document.Where(predicateKeyWord).Where(predicateLevelId).Where(predicateFolderId).OrderByDescending(d => d.AddDate).OrderByDescending(t => t.AddDate).ToPagedList(pageIndex, pageSize);
+            PagedList<Document> docs = entities.Document.Where(predicateKeyWord).Where(predicateLevelId).Where(predicateFolderId).OrderByDescending(keySelector).ToPagedList(pageIndex, pageSize);
             ViewBag.Docs = docs;
 
             List<Level> levels = entities.Level.ToList();
@@ -101,6 +121,7 @@ namespace StudyOnline.Controllers
             ViewBag.KeyWord = keyword;//关键字
             ViewBag.LevelId = levelId;//文章级别
             ViewBag.FolderId = folderId;//文件夹
+            ViewBag.OrderField = form["orderField"] ?? "AddDate";
             return View();
         }
 
@@ -135,7 +156,6 @@ namespace StudyOnline.Controllers
             ViewBag.LevelId = levelId;//文章级别
             return View();
         }
-
 
         public ActionResult DocsCreate(int? id)
         {
@@ -184,6 +204,20 @@ namespace StudyOnline.Controllers
             return Json(data);
         }
 
+        /// <summary>
+        /// 给文档添加排序功能
+        /// </summary>
+        /// <param name="id">文档Id</param>
+        /// <param name="sort">序号</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult DocumentSort(Int32 id, Double? sort)
+        {
+            entities.Document.Find(id).Sort = sort;
+            entities.SaveChanges();
+            return Json(new ResponseModel() { statusCode = "200", message = "操作完成" });
+        }
+
         public ActionResult AuditDocs(Int32? id)
         {
             Document doc = entities.Document.Find(id);
@@ -206,10 +240,37 @@ namespace StudyOnline.Controllers
             return Json(data);
         }
 
+        [HttpPost]
+        public ActionResult BatchDocumentDelete(Int32[] ids)
+        {
+            if (ids != null)
+            {
+                entities.Database.ExecuteSqlCommand(String.Format("DELETE FROM [Document] WHERE Id IN({0})", String.Join(",", ids)));
+            }
+            return Json(new ResponseModel() { statusCode = "200", message = "批量删除成功", rel = "AdminDocsList", navTabId = "AdminDocsList" });
+        }
+
+        [HttpPost]
+        public ActionResult BatchDocumentAudit(Int32[] ids)
+        {
+            if (ids != null)
+            {
+                StringBuilder builder = new StringBuilder();
+                DateTime now = DateTime.Now;
+                foreach (var item in ids)
+                {
+                    builder.AppendLine(String.Format("UPDATE [Document] SET [AuditCase]=2,[AuditDate]='{0}' WHERE Id={1}", now.ToString("yyyy-MM-dd HH:mm:ss"), item));
+                }
+                entities.Database.ExecuteSqlCommand(builder.ToString());
+            }
+            return Json(new ResponseModel() { statusCode = "200", message = "批量审核成功", rel = "AdminDocsList", navTabId = "AdminDocsList" });
+        }
+        #endregion
+
         #region 分类相关
         public ActionResult LevelList(FormCollection form)
         {
-            PagedList<Level> levels = entities.Level.OrderBy(l => l.Id).ToPagedList(1, 20);
+            PagedList<Level> levels = entities.Level.OrderBy(l => l.Sort).ToPagedList(1, 25);
             ViewBag.Levels = levels;
             return View();
         }
@@ -288,48 +349,25 @@ namespace StudyOnline.Controllers
             ViewBag.Levels = items;
 
 
-            PagedList<Folder> folders = entities.Folder.Where(predicate).Where(predicateLevel).OrderByDescending(t => t.Id).ToPagedList(pageIndex, pageSize);
+            PagedList<Folder> folders = entities.Folder.Where(predicate).Where(predicateLevel).OrderBy(o => o.Sort).ToPagedList(pageIndex, pageSize);
             ViewBag.Folders = folders;
             return View();
         }
 
-        public ActionResult FolderCreate(int? id, FormCollection form)
+        public ActionResult FolderCreate(Int32? id)
         {
             List<Level> levels = entities.Level.ToList();
             ViewBag.Levels = levels;
-
-
-            if (id == null)
-            {
-                ViewData.Model = new Folder() { Id = 0 };
-            }
-            else
-            {
-                ViewData.Model = entities.Folder.Find(id);
-            }
-
-            //分页处理
-            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 20);
-            int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
-            PagedList<Document> docs = entities.Document.OrderByDescending(o => o.AddDate).Where(o => true).ToPagedList(pageIndex, pageSize);
-            ViewBag.Documents = docs;
-
-
-
-
-
-
+            ViewData.Model = id == null ? new Folder() : entities.Folder.Find(id);
             return View();
         }
 
         [HttpPost]
-        public ActionResult FolderCreate(Folder folder, String DocsIds, FormCollection form)
+        public ActionResult FolderCreate(Folder folder)
         {
             if (folder.Id > 0)
             {
-                Folder contextEntity = entities.Folder.Find(folder.Id);
-                contextEntity.Name = folder.Name;
-                contextEntity.LevelId = folder.LevelId;
+                entities.Entry(folder).State = EntityState.Modified;
             }
             else
             {
@@ -337,20 +375,17 @@ namespace StudyOnline.Controllers
             }
             entities.SaveChanges();
 
-            // context.Database.ExecuteSqlCommand("UPDATE dbo.Posts SET Rating = 5 WHERE Author = @p0", userSuppliedAuthor);
-            // context.Database.ExecuteSqlCommand("UPDATE dbo.Posts SET Rating = 5 WHERE Author = @author", new SqlParameter("@author", userSuppliedAuthor));
-
-            //首先清除原来的数据
-            //  entities.Database.ExecuteSqlCommand("update document set folderId=null where folderId=@folderId", new SqlParameter("@folderId", folder.Id));
-
-            //再保存新的数据
-            //if (!String.IsNullOrEmpty(form["document.DocsIds"]))
-            //{
-            //    entities.Database.ExecuteSqlCommand("update document set folderId=@folderId where id in(" + form["document.DocsIds"] + ")", new SqlParameter("@folderId", folder.Id));
-            //}
-
             var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminFolderIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" };
             return Json(data);
+        }
+
+        [HttpPost]
+        public ActionResult FolderSort(Int32 id, Int32 sort)
+        {
+            entities.Folder.Find(id).Sort = sort;
+            entities.SaveChanges();
+
+            return Json(new ResponseModel() { statusCode = "200", message = "操作成功" });
         }
 
         public ActionResult FolderCreateRight(FormCollection form)
@@ -381,7 +416,6 @@ namespace StudyOnline.Controllers
             var data = new { statusCode = "200", message = "操作成功", navTabId = "AdminFolderIndex", rel = "", callbackType = "", forwardUrl = "" };
             return Json(data);
         }
-
 
         public ActionResult FolderSelect(int id)
         {

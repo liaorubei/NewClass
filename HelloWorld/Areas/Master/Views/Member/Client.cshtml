@@ -1,0 +1,73 @@
+﻿@model PagedList<View_UserLeftJoinMember>
+@{
+    Layout = null;
+}
+
+
+<div class="pageHeader">
+    <form id="pagerForm" onsubmit="return dialogSearch(this);" action='@Url.Action("Client")' method="post">
+        <input type="hidden" name="pageNum" value="@Model.CurrentPageIndex" />
+        <input type="hidden" name="numPerPage" value="@Model.PageSize" />
+        <input type="hidden" name="id" value="@ViewBag.Id" />
+        <input type="hidden" name="operate" value="@ViewBag.Operate" />
+        <div class="searchBar">
+            <table class="searchContent">
+                <tr>
+                    <td>
+                        <input type="text" name="keyword" value="@ViewBag.Keyword" placeholder="关键字" />
+                    </td>
+                    <td>
+                        @Html.DropDownList("category", (List<SelectListItem>)ViewBag.Category, new { @class = "combox" })
+                    </td>
+                    <td>
+                        <div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+    <div class="panelBar">
+        <ul class="toolBar">
+            <li><a class="create" href='@Url.Action("ClientOperate", new { id = ViewBag.Id, operate = ViewBag.Operate })' target="selectedTodo" targetType="dialog" rel="ids" title="确定要继续吗?"><span>@("append".Equals(ViewBag.Operate) ? "添加" : "移除")</span></a></li>
+        </ul>
+    </div>
+    <table class="list" layoutH="91">
+        <thead>
+            <tr>
+                <th width="25" align="center"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
+                <th width="25" align="center">序号</th>
+                <th>帐号</th>
+                <th>昵称</th>
+                <th>邮箱</th>
+                <th width="35" align="center">昵称</th>
+                @if ("remove".Equals(ViewBag.Operate))
+                {
+                    <th>From</th>
+                    <th>To</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @{Int32 i = 0;}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center"><input name="ids" value="@item.Id" type="checkbox"></td>
+                    <td align="center">@(++i)</td>
+                    <td>@item.Username</td>
+                    <td>@item.Nickname</td>
+                    <td>@item.Email</td>
+                    <td align="center">@(item.Category == 0 ? "学生" : item.Category == 1 ? "教师" : "未知")</td>
+                    @if ("remove".Equals(ViewBag.Operate))
+                    {
+                        <td>@item.From.Value.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@item.To.Value.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    @Html.NavTabPages(Model, 10, "dialog")
+</div>
