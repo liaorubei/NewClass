@@ -16,6 +16,7 @@ if (m != null)
                 <td></td>
                 <td></td>
                 <td></td>
+                <td>@item.Order</td>
             </tr>
             @show(item.X_Menu1.OrderBy(o=>o.Order).ToList())
     }
@@ -48,10 +49,11 @@ if (m != null)
                     <th>控制器</th>
                     <th>视图</th>
                     <th>链接类型</th>
+                    <th>排序</th>
                 </tr>
             </thead>
             <tbody>
-                <tr> <td>顶级菜单</td><td></td><td></td><td></td><td></td></tr>
+                <tr> <td>顶级菜单</td><td></td><td></td><td></td><td></td><td></td></tr>
                 @show(Model.OrderBy(o=>o.Order).ToList())
             </tbody>
         </table>

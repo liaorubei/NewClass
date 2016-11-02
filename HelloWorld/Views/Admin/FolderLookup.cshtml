@@ -1,0 +1,52 @@
+﻿@model PagedList<Folder>
+@{
+    Layout = null;
+}
+
+<div class="pageHeader">
+    <form id="pagerForm" action='@Url.Action("FolderLookup")' method="post" onsubmit="return dwzSearch(this, 'dialog');">
+        <input type="hidden" name="id" value="@ViewBag.Id" />
+        <input type="hidden" name="pageNum" value="@Model.CurrentPageIndex" />
+        <input type="hidden" name="numPerPage" value="@Model.PageSize" />
+        <div class="searchBar">
+            <table class="searchContent">
+                <tr>
+                    <td>
+                        <label>关键字:</label>
+                        <input type="text" name="keyword" value="@ViewBag.Keyword">
+                    </td>
+                    <td>
+                        <div class="buttonActive"><div class="buttonContent"><button type="submit">查询</button></div></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+    <table class="list" layoutH="65" style="width:100%;" targetType="dialog" @* width="100%"*@>
+        <thead>
+            <tr>
+                <th align="center" width="25">序号</th>
+                <th align="center">名称</th>
+                <th align="center">等级</th>
+                <th align="center">选择</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ Int32 i = 0;}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center">@(++i)</td>
+                    <td>@item.Name</td>
+                    <td>@(item.LevelId.HasValue ? item.Level.Name : "")</td>
+                    <td>
+                        <a class="btnSelect" href="javascript:;" onclick="$.bringBack({ ParentId: '@item.Id', ParentName: '@item.Name' })" title="查找带回">选择</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @Html.NavTabPages(Model, 5, "dialog")
+</div>

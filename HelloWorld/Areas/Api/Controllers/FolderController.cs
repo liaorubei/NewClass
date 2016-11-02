@@ -10,6 +10,14 @@ namespace StudyOnline.Areas.Api.Controllers
     public class FolderController : Controller
     {
         StudyOnlineEntities entities = new StudyOnlineEntities();
+
+        /// <summary>
+        /// 获取指定等级下的文件夹列表
+        /// </summary>
+        /// <param name="levelId">等级Id</param>
+        /// <param name="skip">skip</param>
+        /// <param name="take">take</param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult GetByLevelId(Int32 levelId, Int32 skip, Int32 take)
         {
@@ -53,6 +61,60 @@ namespace StudyOnline.Areas.Api.Controllers
                     o.Cover,
                     DocsCount = o.Document.Count(i => i.AuditCase == AuditCase.审核),
                     Permission = o.Member.Any(),
+                })
+            });
+        }
+
+        /// <summary>
+        /// 获取指定等级下的文件夹列表,一级文件夹,即没有父文件夹的条目
+        /// </summary>
+        /// <param name="levelId">等级Id</param>
+        /// <param name="skip">skip</param>
+        /// <param name="take">take</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult GetListByLevelIdV2(Int32 levelId, Int32? skip, Int32? take)
+        {
+            var temp = entities.Folder.Where(o => o.LevelId == levelId && o.ParentId == null).OrderBy(o => o.Sort).Skip(skip ?? 0).Take(take ?? Int32.MaxValue);
+            return Json(new
+            {
+                code = 200,
+                desc = "查询成功",
+                info = temp.Select(o => new
+                {
+                    o.Id,
+                    o.Name,
+                    o.LevelId,
+                    o.Cover,
+                    DocsCount = o.Document.Count(i => i.AuditCase == AuditCase.审核),
+                    Permission = o.Member.Any(),
+                    HasChildren = o.Folder1.Any(), isFolder = true
+                })
+            });
+        }
+
+        /// <summary>
+        /// 获取指定文件夹的子文件夹列表
+        /// </summary>
+        /// <param name="folderId">文件夹Id</param>
+        /// <returns>指定文件夹的子文件夹列表</returns>
+        [HttpPost]
+        public ActionResult GetChildListByParentId(Int32 folderId)
+        {
+            var temp = entities.Folder.Where(o => o.ParentId == folderId).OrderBy(o => o.Sort).ToList();
+
+            return Json(new
+            {
+                code = 200,
+                desc = "查询成功",
+                info = temp.Select(o => new
+                {
+                    o.Id,
+                    o.Name,
+                    o.Cover,
+                    DocsCount = o.Document.Count(i => i.AuditCase == AuditCase.审核),
+                    Permission = o.Member.Any(),
+                    HasChildren = o.Folder1.Any(),isFolder=true
                 })
             });
         }

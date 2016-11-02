@@ -1,7 +1,4 @@
-﻿@using Webdiyer.WebControls.Mvc;
-@using StudyOnline.Models;
-@using StudyOnline.Utils;
-@model StudyOnline.Models.Folder
+﻿@model StudyOnline.Models.Folder
 
 @{
     Layout = null;
@@ -16,20 +13,20 @@
 </style>
 
 <div class="pageContent">
-
     <form method="post" action='@Url.Action("FolderCreate")' class="pageForm" onsubmit="return validateCallback(this, dialogAjaxDone)">
         <div class="pageFormContent" layoutH="58">
             <table class="formTable">
                 <tr>
                     <th style="width:100px;">文件夹名称：</th>
                     <td>
-                        <input type="text" name="Name" class="required" value="@Model.Name" />
+                        <input type="hidden" name="folder.Id" value="@Model.Id" />
+                        <input type="text" name="folder.Name" class="required" value="@Model.Name" />
                     </td>
                 </tr>
                 <tr>
                     <th>文件夹级别：</th>
                     <td>
-                        <select class="combox required" name="LevelId">
+                        <select class="combox required" name="folder.LevelId">
                             @foreach (var item in levels)
                             {
                                 <option value="@(item.Id==0?"":item.Id+"")" @(Model.LevelId == item.Id ? "selected='selected'" : "")>@item.Name</option>
@@ -40,13 +37,14 @@
                 <tr>
                     <th>父级文件夹：</th>
                     <td>
-                        <input type="text" name="ParentId" value="@Model.ParentId" /><a class="btnLook" href="demo/database/dwzOrgLookup.html" lookupGroup="org1">查找带回</a>	
+                        <input type="hidden" name="folder.ParentId" value="@Model.ParentId" />
+                        <input type="text"   name="folder.ParentName" value="@(Model.ParentId.HasValue?Model.Folder2.Name:"")" /><a href='@Url.Action("FolderLookup", new { id = Model.Id })' class="btnLook" width="500" height="250" lookupGroup="folder">查找带回</a>
                     </td>
                 </tr>
                 <tr>
                     <th>排序:</th>
                     <td>
-                        <input type="text" name="Sort" value="@Model.Sort" class="digits" />
+                        <input type="text" name="folder.Sort" value="@Model.Sort" class="digits" />
                     </td>
                 </tr>
                 <tr>
@@ -57,7 +55,7 @@
                             {
                                 <span class="fileList">
                                     <img src="@Model.Cover" width="100" height="100">
-                                    <input type="hidden" name="Cover" value="@Model.Cover">
+                                    <input type="hidden" name="folder.Cover" value="@Model.Cover">
                                     <span>@Model.Cover</span>
                                     <a href="javascript:;" class="close" title="移除" onclick="$(this).parent().remove();"></a>
                                 </span>
@@ -84,7 +82,7 @@
         console.log(o);
         var $c = $("#testFileInput").prev();
         $c.html("<span class='fileList'><img src='" + o.filePath + "' width='100' height='100'/></span>");
-        var input = "<input type='hidden' name='Cover' value='" + o.filePath + "' />";
+        var input = "<input type='hidden' name='folder.Cover' value='" + o.filePath + "' />";
         var span = "<span>" + o.fileName + "</span>";
         var a = "<a href=\"javascript:;\" class=\"close\" title=\"移除\" onclick='$(this).parent().remove();'></a>";
         $c.children().append(input).append(span).append(a);

@@ -1,0 +1,92 @@
+﻿@model PagedList<Hskk>
+@{
+    Layout = null;
+    var selectListRank = new List<SelectListItem>();
+    var selectListPart = new List<SelectListItem>();
+
+    selectListRank.Add(new SelectListItem() { Text = "-所有的-", Value = "" });
+    selectListRank.Add(new SelectListItem() { Text = "-初级-", Value = "1", Selected = ViewBag.Rank == 1 });
+    selectListRank.Add(new SelectListItem() { Text = "-中级-", Value = "2", Selected = ViewBag.Rank == 2 });
+    selectListRank.Add(new SelectListItem() { Text = "-高级-", Value = "3", Selected = ViewBag.Rank == 3 });
+
+    selectListPart.Add(new SelectListItem() { Text = "-所有的-", Value = "" });
+    selectListPart.Add(new SelectListItem() { Text = "第一部分", Value = "1", Selected = ViewBag.Part == 1 });
+    selectListPart.Add(new SelectListItem() { Text = "第二部分", Value = "2", Selected = ViewBag.Part == 2 });
+    selectListPart.Add(new SelectListItem() { Text = "第三部分", Value = "3", Selected = ViewBag.Part == 3 });
+}
+
+
+<div class="pageHeader">
+    <form id="pagerForm" onsubmit="return navTabSearch(this);" action='@Url.Action("Select","Hskk", new { area="Master"})' method="post">
+        <input type="hidden" name="pageNum" value="@Model.CurrentPageIndex" />
+        <input type="hidden" name="numPerPage" value="@Model.PageSize" />
+        <div class="searchBar">
+            <ul class="searchContent">
+                <li>
+                    <label>我的客户：</label>
+                    <input type="text" name="keyword" value="@ViewBag.Keyword" />
+                </li>
+                <li>
+                    <label>HSKK等级：</label>
+                    @Html.DropDownList("rank", selectListRank, new { @class = "combox" })
+                </li>
+                <li>
+                    <label>HSKK部分：</label>
+                    @Html.DropDownList("part", selectListPart, new { @class = "combox" })
+                </li>
+            </ul>
+
+            <div class="subBar">
+                <ul>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
+                    <li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+    <div class="panelBar">
+        <ul class="toolBar">
+            <li><a class="create" href='@Url.Action("Create")' target="dialog" mask="true" title="添加题型"><span>添加</span></a></li>
+            <li><a class="update" href='@Url.Action("Create", new { id="{id}"})' target="dialog" mask="true" title="修改题型" width="600" height="400"><span>修改</span></a></li>
+            <li><a class="delete" href='@Url.Action("",new{id="{id}"})' target="dialog" mask="true"><span>修改</span></a></li>
+            <li class="line">line</li>
+            <li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targetType="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
+        </ul>
+    </div>
+    <table class="list" layoutH="115">
+        <thead>
+            <tr>
+                <th width="35" align="center">序号</th>
+                <th align="center">级别</th>
+                <th align="center">部分</th>
+                <th align="center">名称</th>
+                <th align="center">描述</th>
+                <th align="center">可见</th>
+                <th align="center">类型</th>
+                <th align="center">题目</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ Int32 i = 0;}
+            @foreach (var item in Model)
+            {
+                <tr target="id" rel="@item.Id">
+                    <td align="center">@(++i)</td>
+                    <td align="center">@item.Rank</td>
+                    <td align="center">@item.Part</td>
+                    <td align="center">@item.Name</td>
+                    <td align="center">@item.Desc</td>
+                    <td align="center">@item.Visible</td>
+                    <td align="center">@item.Category</td>
+                    <td align="center">
+                        <a target="navtab" href=@Url.Action("Question", new { id=item.Id}) style="text-decoration:underline;" title="题目" mask="true" width="600" height="400">@item.HskkQuestion.Count</a>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+    @Html.NavTabPages(Model, 10)
+</div>

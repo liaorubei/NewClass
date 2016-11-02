@@ -390,4 +390,62 @@ INNER JOIN [NimUserEx] as E on N.Id=E.Id
 LEFT  JOIN [Member_User] as M  on N.Id=M.UserId
 ) 
 
+--Document20161012要求添加拼音标题,英文标题,二级标题,同时二级标题同时支持中文,英文,拼音
+  alter table [dbo].[Document] 
+  add 
+  Category int,
+  TitlePy nvarchar(256),
+  TitleSubCn nvarchar(256),
+  TitleSubEn nvarchar(256),
+  TitleSubPy nvarchar(256)
 
+  alter table [Document] drop column [TitleSubCn],[TitleSubEn],[TitleSubPy],[Category]
+  update [dbo].[Document] set [TitleSubCn]=[TitleTwo] where LevelId=8
+  update Document set [TitleTwo]='TitleEn' where LevelId=8
+  update Document set [Category]=1 where LevelId=8
+
+
+
+drop table HSKKQuestion
+drop table HSKK
+
+Create table Hskk(
+[Id] int identity(1,1),
+[Rank] int,
+[Part] int,
+[Name] nvarchar(256),
+[Desc] nvarchar(256),
+[Visible] int,
+[Category] int,
+Constraint PK_Hskk primary key(Id)
+)
+
+insert into [Hskk]([Rank],[Part],[Name],[Desc],[Visible],[Category]) values(1,1,'','听后重复',0,1)
+insert into [Hskk]([Rank],[Part],[Name],[Desc],[Visible],[Category]) values(1,1,'','听后重复',0,1)
+insert into [Hskk]([Rank],[Part],[Name],[Desc],[Visible],[Category]) values(1,1,'','听后重复',0,1)
+insert into [Hskk]([Rank],[Part],[Name],[Desc],[Visible],[Category]) values(1,1,'','听后重复',0,1)
+insert into [Hskk]([Rank],[Part],[Name],[Desc],[Visible],[Category]) values(1,1,'','听后重复',0,1)
+
+select * from [dbo].[Hskk]
+
+create table HskkQuestion(
+[Id] int identity(1,1),
+[Sort] float,
+[HskkId] int,
+[Image] nvarchar(256),
+[Audio] nvarchar(256),
+[TextCN] nvarchar(1024),
+[TextPY] nvarchar(1024),
+Constraint PK_HskkQuestion primary key (Id),
+CONSTRAINT FK_HskkQuerstion_Hskk Foreign key (HskkId) references Hskk(Id)
+)
+
+insert into [dbo].[HskkQuestion]([HskkId],[TextCN]) values(1,'我爸爸爱喝茶')
+insert into [dbo].[HskkQuestion]([HskkId],[TextCN]) values(1,'我爸爸爱喝茶')
+insert into [dbo].[HskkQuestion]([HskkId],[TextCN]) values(1,'我爸爸爱喝茶')
+insert into [dbo].[HskkQuestion]([HskkId],[TextCN]) values(1,'我爸爸爱喝茶')
+insert into [dbo].[HskkQuestion]([HskkId],[TextCN]) values(1,'我爸爸爱喝茶')
+select * from [dbo].[HskkQuestion]
+
+
+--alter table document add Cover nvarchar(256) 20161031为新闻添加封面

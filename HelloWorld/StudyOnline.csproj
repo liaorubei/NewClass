@@ -245,7 +245,9 @@
     <Compile Include="Areas\Api\Controllers\FeedbackController.cs" />
     <Compile Include="Areas\Api\Controllers\FolderController.cs" />
     <Compile Include="Areas\Api\Controllers\GroupController.cs" />
+    <Compile Include="Areas\Api\Controllers\HskkController.cs" />
     <Compile Include="Areas\Api\Controllers\LevelController.cs" />
+    <Compile Include="Areas\Api\Controllers\LogController.cs" />
     <Compile Include="Areas\Api\Controllers\PaymentController.cs" />
     <Compile Include="Areas\Api\Controllers\ProductController.cs" />
     <Compile Include="Areas\Api\Controllers\StudentController.cs" />
@@ -254,7 +256,9 @@
     <Compile Include="Areas\Api\Controllers\ThemeController.cs" />
     <Compile Include="Areas\Master\Controllers\AuditController.cs" />
     <Compile Include="Areas\Master\Controllers\BaseController.cs" />
+    <Compile Include="Areas\Master\Controllers\DocumentController.cs" />
     <Compile Include="Areas\Master\Controllers\FeedbackController.cs" />
+    <Compile Include="Areas\Master\Controllers\HskkController.cs" />
     <Compile Include="Areas\Master\Controllers\MemberController.cs" />
     <Compile Include="Areas\Master\Controllers\SystemController.cs" />
     <Compile Include="Areas\Master\Controllers\DefectController.cs" />
@@ -296,6 +300,12 @@
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Group.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Hskk.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\HskkQuestion.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\HsLevel.cs">
@@ -814,6 +824,12 @@
     <Content Include="Areas\Master\Views\Member\Client.cshtml" />
     <Content Include="Areas\Master\Views\Feedback\Select.cshtml" />
     <Content Include="Areas\Master\Views\Feedback\Detail.cshtml" />
+    <Content Include="Areas\Master\Views\Document\Select.cshtml" />
+    <Content Include="Areas\Master\Views\Hskk\Select.cshtml" />
+    <Content Include="Areas\Master\Views\Hskk\Create.cshtml" />
+    <Content Include="Areas\Master\Views\Hskk\Part.cshtml" />
+    <Content Include="Areas\Master\Views\Hskk\Question.cshtml" />
+    <Content Include="Areas\Master\Views\Hskk\AttachmentLookup.cshtml" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -1250,6 +1266,10 @@
     <Content Include="Views\Admin\Recharge.cshtml" />
     <Content Include="Views\Admin\Account.cshtml" />
     <Content Include="Scripts\webuploader-0.1.5\README.md" />
+    <Content Include="Views\Admin\FolderLookup.cshtml" />
+    <Content Include="Views\Admin\DocumentBatchUpdate.cshtml" />
+    <Content Include="Views\Admin\Upload.cshtml" />
+    <Content Include="Views\Admin\FolderTreeLookUp.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Api\Views\CallLog\" />
@@ -1257,7 +1277,9 @@
     <Folder Include="Areas\Api\Views\Feedback\" />
     <Folder Include="Areas\Api\Views\Folder\" />
     <Folder Include="Areas\Api\Views\Group\" />
+    <Folder Include="Areas\Api\Views\Hskk\" />
     <Folder Include="Areas\Api\Views\Level\" />
+    <Folder Include="Areas\Api\Views\Log\" />
     <Folder Include="Areas\Api\Views\Payment\" />
     <Folder Include="Areas\Api\Views\Product\" />
     <Folder Include="Areas\Api\Views\Shared\" />

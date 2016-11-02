@@ -1,0 +1,63 @@
+﻿@model Hskk
+@{
+    Layout = null;
+
+
+    List<SelectListItem> listRank = new List<SelectListItem>();
+    listRank.Add(new SelectListItem() { Value = "1", Text = "初级", Selected = 1 == Model.Rank });
+    listRank.Add(new SelectListItem() { Value = "2", Text = "中级", Selected = 2 == Model.Rank });
+    listRank.Add(new SelectListItem() { Value = "3", Text = "高级", Selected = 3 == Model.Rank });
+
+    List<SelectListItem> listPart = new List<SelectListItem>();
+    listPart.Add(new SelectListItem() { Value = "1", Text = "第一部分", Selected = 1 == Model.Part });
+    listPart.Add(new SelectListItem() { Value = "2", Text = "第二部分", Selected = 2 == Model.Part });
+    listPart.Add(new SelectListItem() { Value = "3", Text = "第三部分", Selected = 3 == Model.Part });
+
+    List<SelectListItem> listVisible = new List<SelectListItem>();
+    listVisible.Add(new SelectListItem() { Value = "0", Text = "不可见", Selected = 0 == Model.Visible });
+    listVisible.Add(new SelectListItem() { Value = "1", Text = "可见", Selected = 1 == Model.Visible });
+
+    List<SelectListItem> listCategory = new List<SelectListItem>();
+    listCategory.Add(new SelectListItem() { Value = "1", Text = "文字", Selected = 1 == Model.Category });
+    listCategory.Add(new SelectListItem() { Value = "2", Text = "图片", Selected = 2 == Model.Category });
+    listCategory.Add(new SelectListItem() { Value = "3", Text = "音频", Selected = 3 == Model.Category });
+
+}
+
+<div class="pageContent">
+    <form method="post" action='@Url.Action("Create","Hskk", new { area = "Master" })' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent " layoutH="58">
+            <dl>
+                <dt>题型级别：</dt>
+                <dd>
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    @Html.DropDownList("Rank", listRank, new { @class = "combox" })
+                </dd>
+            </dl>
+            <dl>
+                <dt>题型部分：</dt>
+                <dd>
+                    @Html.DropDownList("Part", listPart, new { @class = "combox" })
+                </dd>
+            </dl>
+            <dl>
+                <dt>学生可见题目：</dt>
+                <dd>
+                    @Html.DropDownList("Visible", listVisible, new { @class = "combox" })
+                </dd>
+            </dl>
+            <dl>
+                <dt>题型类型：</dt>
+                <dd>
+                    @Html.DropDownList("Category", listCategory, new { @class = "combox" })
+                </dd>
+            </dl>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+</div>

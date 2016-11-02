@@ -56,6 +56,9 @@
         <EntityTypeShape EntityType="StudyOnline.View_Chat_user" Width="1.5" PointX="17.375" PointY="0.75" />
         <EntityTypeShape EntityType="StudyOnline.View_UserLeftJoinMember" Width="1.5" PointX="17.375" PointY="4.75" />
         <AssociationConnector Association="StudyOnline.FK_Folder_Folder" />
+        <EntityTypeShape EntityType="StudyOnline.Hskk" Width="1.5" PointX="17.375" PointY="10" />
+        <EntityTypeShape EntityType="StudyOnline.HskkQuestion" Width="1.5" PointX="19.625" PointY="10" />
+        <AssociationConnector Association="StudyOnline.FK_HskkQuerstion_Hskk" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

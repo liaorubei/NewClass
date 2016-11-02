@@ -15,7 +15,20 @@ namespace StudyOnline.Areas.Api.Controllers
         public ActionResult Select()
         {
             var temp = entities.Level.Where(o => o.Show == 1).OrderBy(o => o.Sort);
-            return Json(new { code = 200, desc = "查询成功", info = temp.Select(o => new { o.Id, o.Name, o.Sort, DocsCount = o.Document.Count, o.ShowCover }) });
+            return Json(new
+            {
+                code = 200,
+                desc = "查询成功",
+                info = temp.Select(o => new
+                {
+                    o.Id,
+                    o.Name,
+                    o.Sort,
+                    o.Show,
+                    o.ShowCover,
+                    HasFolder = o.Folder.Any()
+                })
+            });
         }
 
         [HttpPost]

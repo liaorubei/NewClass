@@ -34,6 +34,12 @@ namespace StudyOnline.Models
         public Nullable<System.DateTime> AuditDate { get; set; }
         public Nullable<int> AuditCase { get; set; }
         public Nullable<double> Sort { get; set; }
+        public string TitleSubCn { get; set; }
+        public string TitleSubEn { get; set; }
+        public string TitleSubPy { get; set; }
+        public Nullable<int> Category { get; set; }
+        public string TitlePy { get; set; }
+        public string Cover { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Comment> Comment { get; set; }

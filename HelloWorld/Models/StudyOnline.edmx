@@ -82,6 +82,12 @@
           <Property Name="AuditDate" Type="datetime" />
           <Property Name="AuditCase" Type="int" />
           <Property Name="Sort" Type="float" />
+          <Property Name="Category" Type="int" />
+          <Property Name="TitlePy" Type="nvarchar" MaxLength="256" />
+          <Property Name="TitleSubCn" Type="nvarchar" MaxLength="256" />
+          <Property Name="TitleSubEn" Type="nvarchar" MaxLength="256" />
+          <Property Name="TitleSubPy" Type="nvarchar" MaxLength="256" />
+          <Property Name="Cover" Type="nvarchar" MaxLength="256" />
         </EntityType>
         <EntityType Name="Feedback">
           <Key>
@@ -115,6 +121,30 @@
           <Property Name="Theme" Type="nvarchar" MaxLength="1024" />
           <Property Name="Notice" Type="nvarchar" MaxLength="1024" />
           <Property Name="CreateDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Hskk">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Rank" Type="int" />
+          <Property Name="Part" Type="int" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" />
+          <Property Name="Desc" Type="nvarchar" MaxLength="256" />
+          <Property Name="Visible" Type="int" />
+          <Property Name="Category" Type="int" />
+        </EntityType>
+        <EntityType Name="HskkQuestion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Sort" Type="float" />
+          <Property Name="HskkId" Type="int" />
+          <Property Name="Image" Type="nvarchar" MaxLength="256" />
+          <Property Name="Audio" Type="nvarchar" MaxLength="256" />
+          <Property Name="TextCN" Type="nvarchar" MaxLength="1024" />
+          <Property Name="TextPY" Type="nvarchar" MaxLength="1024" />
         </EntityType>
         <EntityType Name="HsLevel">
           <Key>
@@ -582,6 +612,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_HskkQuerstion_Hskk">
+          <End Role="Hskk" Type="Self.Hskk" Multiplicity="0..1" />
+          <End Role="HskkQuestion" Type="Self.HskkQuestion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Hskk">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="HskkQuestion">
+              <PropertyRef Name="HskkId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <!--生成过程中发现错误:
 警告 6035: 关系“FK_LogTheme_CallLog”在关系主端上有一些列不属于表的键的一部分。已排除了此关系。
         <Association Name="FK_LogTheme_CallLog" />-->
@@ -778,6 +820,8 @@
           <EntitySet Name="Feedback" EntityType="Self.Feedback" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Folder" EntityType="Self.Folder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Group" EntityType="Self.Group" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Hskk" EntityType="Self.Hskk" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HskkQuestion" EntityType="Self.HskkQuestion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HsLevel" EntityType="Self.HsLevel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Level" EntityType="Self.Level" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LogTheme" EntityType="Self.LogTheme" Schema="dbo" store:Type="Tables" />
@@ -918,6 +962,10 @@
           <AssociationSet Name="FK_Group_NimUser" Association="Self.FK_Group_NimUser">
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="Group" EntitySet="Group" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HskkQuerstion_Hskk" Association="Self.FK_HskkQuerstion_Hskk">
+            <End Role="Hskk" EntitySet="Hskk" />
+            <End Role="HskkQuestion" EntitySet="HskkQuestion" />
           </AssociationSet>
           <AssociationSet Name="FK_LogTheme_ThemeId" Association="Self.FK_LogTheme_ThemeId">
             <End Role="Theme" EntitySet="Theme" />
@@ -1093,6 +1141,12 @@
             <End Role="Folder" EntitySet="Folder" />
             <End Role="Folder1" EntitySet="Folder" />
           </AssociationSet>
+          <EntitySet Name="Hskk" EntityType="StudyOnline.Hskk" />
+          <EntitySet Name="HskkQuestion" EntityType="StudyOnline.HskkQuestion" />
+          <AssociationSet Name="FK_HskkQuerstion_Hskk" Association="StudyOnline.FK_HskkQuerstion_Hskk">
+            <End Role="Hskk" EntitySet="Hskk" />
+            <End Role="HskkQuestion" EntitySet="HskkQuestion" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Android">
           <Key>
@@ -1177,6 +1231,12 @@
           <NavigationProperty Name="Comment" Relationship="StudyOnline.FK_Comment_Document" FromRole="Document" ToRole="Comment" />
           <NavigationProperty Name="Folder" Relationship="StudyOnline.FK_Document_Folder" FromRole="Document" ToRole="Folder" />
           <NavigationProperty Name="Level" Relationship="StudyOnline.FK_Document_Level" FromRole="Document" ToRole="Level" />
+          <Property Name="TitleSubCn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="TitleSubEn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="TitleSubPy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Category" Type="Int32" />
+          <Property Name="TitlePy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Cover" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Feedback">
           <Key>
@@ -1756,6 +1816,44 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Hskk">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Rank" Type="Int32" />
+          <Property Name="Part" Type="Int32" />
+          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Desc" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Visible" Type="Int32" />
+          <Property Name="Category" Type="Int32" />
+          <NavigationProperty Name="HskkQuestion" Relationship="StudyOnline.FK_HskkQuerstion_Hskk" FromRole="Hskk" ToRole="HskkQuestion" />
+        </EntityType>
+        <EntityType Name="HskkQuestion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Sort" Type="Double" />
+          <Property Name="HskkId" Type="Int32" />
+          <Property Name="Image" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Audio" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="TextCN" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="TextPY" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Hskk" Relationship="StudyOnline.FK_HskkQuerstion_Hskk" FromRole="HskkQuestion" ToRole="Hskk" />
+        </EntityType>
+        <Association Name="FK_HskkQuerstion_Hskk">
+          <End Type="StudyOnline.Hskk" Role="Hskk" Multiplicity="0..1" />
+          <End Type="StudyOnline.HskkQuestion" Role="HskkQuestion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Hskk">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="HskkQuestion">
+              <PropertyRef Name="HskkId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1828,6 +1926,12 @@
           <EntitySetMapping Name="Document">
             <EntityTypeMapping TypeName="StudyOnline.Document">
               <MappingFragment StoreEntitySet="Document">
+                <ScalarProperty Name="Cover" ColumnName="Cover" />
+                <ScalarProperty Name="TitlePy" ColumnName="TitlePy" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="TitleSubPy" ColumnName="TitleSubPy" />
+                <ScalarProperty Name="TitleSubEn" ColumnName="TitleSubEn" />
+                <ScalarProperty Name="TitleSubCn" ColumnName="TitleSubCn" />
                 <ScalarProperty Name="Sort" ColumnName="Sort" />
                 <ScalarProperty Name="AuditCase" ColumnName="AuditCase" />
                 <ScalarProperty Name="AuditDate" ColumnName="AuditDate" />
@@ -2247,7 +2351,33 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-        </EntityContainerMapping>
+          <EntitySetMapping Name="Hskk">
+            <EntityTypeMapping TypeName="StudyOnline.Hskk">
+              <MappingFragment StoreEntitySet="Hskk">
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Visible" ColumnName="Visible" />
+                <ScalarProperty Name="Desc" ColumnName="Desc" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Part" ColumnName="Part" />
+                <ScalarProperty Name="Rank" ColumnName="Rank" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HskkQuestion">
+            <EntityTypeMapping TypeName="StudyOnline.HskkQuestion">
+              <MappingFragment StoreEntitySet="HskkQuestion">
+                <ScalarProperty Name="TextPY" ColumnName="TextPY" />
+                <ScalarProperty Name="TextCN" ColumnName="TextCN" />
+                <ScalarProperty Name="Audio" ColumnName="Audio" />
+                <ScalarProperty Name="Image" ColumnName="Image" />
+                <ScalarProperty Name="HskkId" ColumnName="HskkId" />
+                <ScalarProperty Name="Sort" ColumnName="Sort" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>

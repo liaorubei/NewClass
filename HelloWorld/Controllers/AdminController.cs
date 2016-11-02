@@ -75,7 +75,7 @@ namespace StudyOnline.Controllers
             String keyword = form["keyword"];
             if (!String.IsNullOrEmpty(keyword))
             {
-                predicateKeyWord = o => o.Title.Contains(keyword) || o.TitleTwo.Contains(keyword);
+                predicateKeyWord = o => o.Title.Contains(keyword) || (o.TitleSubCn ?? "").Contains(keyword);
             }
 
             int levelId = ConvertUtil.ToInt32(form["levelId"], -1);
@@ -110,7 +110,7 @@ namespace StudyOnline.Controllers
 
 
             //数据和分页检索条件处理
-            PagedList<Document> docs = entities.Document.Where(predicateKeyWord).Where(predicateLevelId).Where(predicateFolderId).OrderByDescending(keySelector).ToPagedList(pageIndex, pageSize);
+            PagedList<Document> docs = entities.Document.Where(predicateKeyWord).Where(predicateLevelId).Where(predicateFolderId).OrderByDescending(keySelector).ToList().ToPagedList(pageIndex, pageSize);
             ViewBag.Docs = docs;
 
             List<Level> levels = entities.Level.ToList();
@@ -157,46 +157,68 @@ namespace StudyOnline.Controllers
             return View();
         }
 
-        public ActionResult DocsCreate(int? id)
+        /// <summary>
+        /// 创建文档界面,选择文件夹功能的附加功能,因为文件夹太多了,所以使用查找带回功能,
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult FolderTreeLookUp()
         {
-            if (id != null)
-            {
-                ViewData.Model = entities.Document.FirstOrDefault(d => d.Id == id);
-            }
-            else
-            {
-                ViewData.Model = new Document() { Id = 0 };
-            }
-            List<Level> levels = entities.Level.OrderBy(l => l.Id).ToList();
-            List<Folder> folders = entities.Folder.OrderBy(o => o.Id).ToList();
+            ViewData.Model = entities.Folder.Where(o => o.ParentId == null).OrderBy(o => o.Sort).ThenBy(o => o.Name).ToList();
+            return View();
+        }
 
-            ViewBag.Levels = levels;
-            ViewBag.Folders = folders;
+        public ActionResult DocsCreate(Int32? id)
+        {
+            Document document = id == null ? new Document() { Id = 0, Folder = new Folder() } : entities.Document.FirstOrDefault(d => d.Id == id);
+            ViewData.Model = document;
 
+            List<Level> levels = entities.Level.OrderBy(o => o.Sort).ToList();
+            List<SelectListItem> selectListLevels = new List<SelectListItem>();
+            selectListLevels.Add(new SelectListItem() { Value = "", Text = "-请选择-" });
+            foreach (var item in levels)
+            {
+                selectListLevels.Add(new SelectListItem() { Value = item.Id.ToString(), Text = item.Name, Selected = document.LevelId == item.Id });
+            }
+            ViewBag.Levels = selectListLevels;
+
+            List<SelectListItem> selectListCourse = new List<SelectListItem>();
+            selectListCourse.Add(new SelectListItem() { Value = "", Text = "-请选择-" });
+            selectListCourse.Add(new SelectListItem() { Value = "1", Text = "普通", Selected = 1 == document.Category });
+            selectListCourse.Add(new SelectListItem() { Value = "2", Text = "课程", Selected = 2 == document.Category });
+            selectListCourse.Add(new SelectListItem() { Value = "3", Text = "新闻", Selected = 3 == document.Category });
+
+            ViewBag.Course = selectListCourse;
             return View();
         }
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult DocsCreate(Document doc)
+        public ActionResult DocsCreate(Document document)
         {
-            if (doc.Id > 0)
+            if (document.Id > 0)
             {
-                Document oldDoc = entities.Document.FirstOrDefault(d => d.Id == doc.Id);
-                oldDoc.LevelId = doc.LevelId;
-                oldDoc.FolderId = doc.FolderId;
-                oldDoc.Title = doc.Title;
-                oldDoc.Lyrics = doc.Lyrics;
-                oldDoc.SoundPath = doc.SoundPath;//音频路径
-                oldDoc.Length = doc.Length;//文件长度
-                oldDoc.TitleTwo = doc.TitleTwo;//文件的标题（翻译）
-                oldDoc.LengthString = doc.LengthString;//音频文件的播放长度
-                oldDoc.AuditCase = doc.AuditCase;//审核情况
-                oldDoc.AuditDate = doc.AuditDate;//审核日期
+                Document model = entities.Document.FirstOrDefault(d => d.Id == document.Id);
+                model.LevelId = document.LevelId;
+                model.FolderId = document.FolderId;
+                model.Title = document.Title;
+                model.TitleTwo = document.TitleTwo;//文件的标题（翻译）
+                model.TitlePy = document.TitlePy;
+                model.TitleSubCn = document.TitleSubCn;
+                model.TitleSubEn = document.TitleSubEn;
+                model.TitleSubPy = document.TitleSubPy;
+                model.Category = document.Category;
+                model.Lyrics = document.Lyrics;
+                model.SoundPath = document.SoundPath;//音频路径
+                model.Length = document.Length;//文件长度
+                model.LengthString = document.LengthString;//音频文件的播放长度
+                model.AuditCase = document.AuditCase;//审核情况
+                model.AuditDate = document.AuditDate;//审核日期
+                model.Cover = Request.Form["Cover.FilePath"];//封面,查找带回
             }
             else
             {
-                doc.AddDate = DateTime.Now;
-                entities.Document.Add(doc);
+                document.AddDate = DateTime.Now;
+                document.Cover = Request.Form["Cover.FilePath"];//封面,查找带回
+                entities.Document.Add(document);
             }
             entities.SaveChanges();
 
@@ -215,7 +237,7 @@ namespace StudyOnline.Controllers
         {
             entities.Document.Find(id).Sort = sort;
             entities.SaveChanges();
-            return Json(new ResponseModel() { statusCode = "200", message = "操作完成" });
+            return Json(new { message = "操作完成" });
         }
 
         public ActionResult AuditDocs(Int32? id)
@@ -265,6 +287,22 @@ namespace StudyOnline.Controllers
             }
             return Json(new ResponseModel() { statusCode = "200", message = "批量审核成功", rel = "AdminDocsList", navTabId = "AdminDocsList" });
         }
+
+        /// <summary>
+        /// 批量编辑,为了方便批量编辑排序,一级标题,二级标题,三级标题
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult DocumentBatchUpdate()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult DocumentBatchUpdate(Document[] documents)
+        {
+            return Json(new ResponseModel() { });
+        }
+
         #endregion
 
         #region 分类相关
@@ -348,8 +386,7 @@ namespace StudyOnline.Controllers
             }
             ViewBag.Levels = items;
 
-
-            PagedList<Folder> folders = entities.Folder.Where(predicate).Where(predicateLevel).OrderBy(o => o.Sort).ToPagedList(pageIndex, pageSize);
+            PagedList<Folder> folders = entities.Folder.Where(predicate).Where(predicateLevel).OrderBy(o => o.LevelId).ThenBy(o => o.ParentId).ThenBy(o => o.Sort).ToPagedList(pageIndex, pageSize);
             ViewBag.Folders = folders;
             return View();
         }
@@ -359,6 +396,20 @@ namespace StudyOnline.Controllers
             List<Level> levels = entities.Level.ToList();
             ViewBag.Levels = levels;
             ViewData.Model = id == null ? new Folder() : entities.Folder.Find(id);
+            return View();
+        }
+
+        public ActionResult FolderLookup(Int32 id, Int32? pageNum, Int32? numPerPage, String keyword)
+        {
+            Expression<Func<Folder, bool>> predicate = o => true;
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                predicate = o => o.Name.Contains(keyword);
+            }
+
+            ViewData.Model = entities.Folder.Where(o => o.Id != id).Where(predicate).OrderBy(o => o.LevelId).ThenBy(o => o.Sort).ToPagedList(pageNum ?? 0, numPerPage ?? 25);
+            ViewBag.Id = id;
+            ViewBag.Keyword = keyword;
             return View();
         }
 
@@ -1166,5 +1217,45 @@ namespace StudyOnline.Controllers
             return RedirectToAction("Index");
 
         }
+
+
+        #region 单文件上传
+        /// <summary>
+        /// 单文件上传界面
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Upload()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// 单文件上传回调
+        /// </summary>
+        /// <param name="file">文件实体,要求表单名称为file</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Upload(HttpPostedFileBase file)
+        {
+            //相对路径
+            String path = String.Format("/File/{0}/{1}/{2}", DateTime.Now.ToString("yyyyMMdd"), Guid.NewGuid(), Path.GetExtension(file.FileName));
+
+            //绝对路径
+            FileInfo fileInfo = new FileInfo(Server.MapPath("~" + path));
+            if (!fileInfo.Directory.Exists)
+            {
+                fileInfo.Directory.Create();
+            }
+
+            //保存文件到绝对路径
+            file.SaveAs(fileInfo.FullName);
+
+            //数据返回
+            return Json(new { FileName = file.FileName, FilePath = path, FullPath = fileInfo.FullName, FileSize = file.ContentLength });
+        }
+
+        #endregion
+
+
     }
 }

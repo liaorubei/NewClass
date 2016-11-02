@@ -7,7 +7,6 @@ namespace StudyOnline.Utils
 {
     public class ConvertUtil
     {
-
         /// <summary>
         /// 将一个字符串转化成Int32类型数据,如果转化失败,返回默认值
         /// </summary>

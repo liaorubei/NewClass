@@ -1,0 +1,109 @@
+﻿
+@{
+    Layout = null;
+}
+<div class="pageHeader">
+    <form rel="pagerForm" method="post" action="demo/database/dwzOrgLookup.html" onsubmit="return dwzSearch(this, 'dialog');">
+        <div class="searchBar">
+            <ul class="searchContent">
+                <li>
+                    <label>部门名称:</label>
+                    <input class="textInput" name="orgName" value="" type="text">
+                </li>
+                <li>
+                    <label>部门编号:</label>
+                    <input class="textInput" name="orgNum" value="" type="text">
+                </li>
+                <li>
+                    <label>部门经理:</label>
+                    <input class="textInput" name="fullName" value="" type="text">
+                </li>
+                <li>
+                    <label>上级部门:</label>
+                    <input class="textInput" name="parentOrg.orgName" value="" type="text">
+                </li>
+            </ul>
+            <div class="subBar">
+                <ul>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">查询</button></div></div></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+    <table class="table" layoutH="118">
+        <thead>
+            <tr>
+                <th orderfield="orgName">级别</th>
+                <th orderfield="orgNum">部分</th>
+                <th width="80">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>初级</td>
+                <td>听后重复</td>
+                <td>
+                    <a class="btnSelect" href="javascript:$.bringBack({Rank:'1', Part:'技术部', Name:'听后重复'})" title="查找带回">选择</a>
+                </td>
+            </tr>
+            <tr>
+                <td>初级</td>
+                <td>administrator</td>
+                <td>
+                    <a class="btnSelect" href="javascript:$.bringBack({Rank:'2', Part:'人事部', Name:'1002'})" title="查找带回">选择</a>
+                </td>
+            </tr>
+            <tr>
+                <td>初级</td>
+                <td>回答问题</td>
+                <td>
+                    <a class="btnSelect" href="javascript:$.bringBack({Rank:'1', Part:'技术部', Name:'回答问题'})" title="查找带回">选择</a>
+                </td>
+            </tr>
+            <tr>
+                <td>中级</td>
+                <td>听后重复</td>
+                <td>
+                    <a class="btnSelect" href="javascript:$.bringBack({Rank:'2', Part:'人事部', Name:'听后重复'})" title="查找带回">选择</a>
+                </td>
+            </tr>
+            <tr>
+                <td>中级</td>
+                <td>1001</td>
+                <td>
+                    <a class="btnSelect" href="javascript:$.bringBack({Rank:'1', Part:'技术部', Name:'1001'})" title="查找带回">选择</a>
+                </td>
+            </tr>
+            <tr>
+                <td>中级</td>
+                <td>回答问题</td>
+                <td>
+                    <a class="btnSelect" href="javascript:$.bringBack({Rank:'2', Part:'人事部', Name:'回答问题'})" title="查找带回">选择</a>
+                </td>
+            </tr>
+            <tr>
+                <td>高级</td>
+                <td>1001</td>
+                <td>
+                    <a class="btnSelect" href="javascript:$.bringBack({Rank:'1', Part:'技术部', Name:'1001'})" title="查找带回">选择</a>
+                </td>
+            </tr>
+            <tr>
+                <td>高级</td>
+                <td>administrator</td>
+                <td>
+                    <a class="btnSelect" href="javascript:$.bringBack({Rank:'2', Part:'人事部', Name:'1002'})" title="查找带回">选择</a>
+                </td>
+            </tr>
+            <tr>
+                <td>高级</td>
+                <td>回答问题</td>
+                <td>
+                    <a class="btnSelect" href="javascript:$.bringBack({Rank:'2', Part:'人事部', Name:'回答问题'})" title="查找带回">选择</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

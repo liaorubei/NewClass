@@ -1,0 +1,49 @@
+﻿@model Hskk
+@{
+    Layout = null;
+}
+<div class="pageContent">
+    <form method="post" action='@Url.Action("Question","Hskk", new { area="Master"})' class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone)">
+        <div class="pageFormContent " layoutH="58">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <table class="list itemDetail" addButton="新建" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th type="textarea" size="0" fieldAttrs="{style:'width:98%',rows:5}" style="width:80%;" name="questions[#index#].TextCN">题目(中文)</th>
+                        @*<th type="textarea" size="0" fieldAttrs="{style:'width:98%',rows:5}" style="width:30%;" name="questions[#index#].TextPY">题目(拼音)</th>*@
+                        <th type="attach" size="0" fieldAttrs="{style:'width:75%'}" style="width:10%;" name="questions[#index#].Image" lookupGroup="questions[#index#]" lookupUrl='@Url.Action("AttachmentLookup")' lookupPk="id">图片</th>
+                        <th type="text" size="0" fieldAttrs="{style:'width:98%'}" style="width:5%;" name="questions[#index#].Sort" fieldClass="number">排序</th>
+                        <th type="del">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ Int16 i = 0;
+                        var items = Model.HskkQuestion.OrderBy(o => o.Sort);}
+                    @foreach (var item in items)
+                    {
+                        <tr>
+                            <td><textarea  name="questions[@(i)].TextCN" rows="5" style="width:98%;">@item.TextCN</textarea></td>
+                            <td>
+                                <input type="hidden" name="questions[@(i)].id" value="@item.Id">
+                                <input type="text" style="width:90%;" name="questions[@(i)].Image" value="@item.Image" />
+                                <a class="btnAttach" href="/Master/Hskk/AttachmentLookup" lookupgroup="questions[@(i)]" lookuppk="id" width="400" height="200" title="查找带回">查找带回</a>
+                            </td>
+                            <td><input type="text" style="width:98%;" name="questions[@(i++)].Sort" value="@item.Sort" class="number" /></td>
+                            <td>
+                                <a href="javascript:void(0)" class="btnDel ">删除</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+</div>
+
+

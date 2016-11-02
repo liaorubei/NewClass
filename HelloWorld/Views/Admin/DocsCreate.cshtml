@@ -1,70 +1,68 @@
-﻿@using StudyOnline.Models;
-@model StudyOnline.Models.Document
-
+﻿@model Document
 @{
     Layout = null;
-    List<Level> levels = ViewBag.Levels;
-    levels.Insert(0, new Level() { Id = -1, Name = "-请选择-" });
-    List<Folder> folders = ViewBag.Folders;
-    folders.Insert(0, new Folder() { Id = -1, Name = "-请选择-" });
 }
-@*<h2 class="contentTitle">表单验证</h2>*@
-
 <style type="text/css" media="screen">
-    .uploadify {
-        margin-bottom: 0;
-        display: inline-block;
-    }
+    .uploadify { margin-bottom: 0; display: inline-block; }
 
-    .uploadify-button {
-        border: none;
-        border-radius: 0;
-    }
+    .uploadify-button { border: none; border-radius: 0; }
     /*.uploadify-queue { display: none; }*/
 </style>
 <div class="pageContent">
-    <form method="post" action='@Url.Action("DocsCreate")' class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
+    <form method="post" action='@Url.Action("DocsCreate","Admin")' class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
         <div class="pageFormContent nowrap" layouth="56">
             <table class="formTable">
                 <tr>
-                    <th style="width:100px;">标题(原文)</th>
-                    <td colspan="5"><input type="text" name="Title" style="width:99%" class="required" value="@Model.Title" /></td>
+                    <th style="width:100px;">一级标题(原文)</th>
+                    <td colspan="5">
+                        <input type="hidden" name="document.Id" value="@Model.Id" />
+                        <input type="text" name="document.Title" style="width:99%" class="required" value="@Model.Title" />
+                    </td>
                 </tr>
                 <tr>
-                    <th style="width:100px;">标题(译文)</th>
-                    <td colspan="5"><input type="text" name="TitleTwo" style="width:99%" class="required" value="@Model.TitleTwo" /></td>
+                    <th style="width:100px;">一级标题(译文)</th>
+                    <td colspan="5"><input type="text" name="document.TitleTwo" style="width:99%" value="@Model.TitleTwo" /></td>
                 </tr>
                 <tr>
-                    <th>级别</th>
+                    <th style="width:100px;">一级标题(拼音)</th>
+                    <td colspan="5"><input type="text" name="document.TitlePy" style="width:99%" value="@Model.TitlePy" /></td>
+                </tr>
+                <tr>
+                    <th style="width:100px;background:#0ff;">二级标题(中文)</th>
+                    <td colspan="5"><input type="text" name="document.TitleSubCn" style="width:99%" value="@Model.TitleSubCn" /></td>
+                </tr>
+                <tr>
+                    <th style="width:100px;background:#0ff;">二级标题(英文)</th>
+                    <td colspan="5"><input type="text" name="document.TitleSubEn" style="width:99%" value="@Model.TitleSubEn" /></td>
+                </tr>
+                <tr>
+                    <th style="width:100px;background:#0ff;">二级标题(拼音)</th>
+                    <td colspan="5"><input type="text" name="document.TitleSubPy" style="width:99%" value="@Model.TitleSubPy" /></td>
+                </tr>
+                <tr>
+                    <th>文档级别</th>
                     <td style="width:200px;">
-                        <select class="required" name="LevelId" style="text-align:center;">
-                            @foreach (var item in levels)
-                            {
-                                <option value="@(item.Id>0?item.Id+"":"")" @(Model.LevelId == item.Id ? "selected='selected'" : "")>@item.Name</option>
-                            }
-                        </select>
+                        @Html.DropDownList("document.LevelId", (List<SelectListItem>)ViewBag.Levels, new { @class = "combox" })
                     </td>
                     <th>文件夹</th>
                     <td style="width:200px;">
-                        <select class="required" name="FolderId">
-                            @foreach (var item in folders)
-                            {
-                                <option value="@(item.Id >0 ? item.Id + "" : "")" @(Model.FolderId == item.Id ? "selected='selected'" : "")>@item.Name</option>
-                            }
-                        </select>
+                        <input type="hidden" name="document.FolderId" value="@Model.FolderId" />
+                        <input type="text" readonly="readonly" name="document.FolderName" value="@(Model.Folder==null? null :Model.Folder.Name)" style="width:90%;" />
+                        <a class="btnLook" href='@Url.Action("FolderTreeLookUp","Admin")' lookupGroup="document" title="选择文件夹" width="400" heigth="800">选择文件夹</a>
                     </td>
                     <th>时长</th>
                     <td style="width:200px;">
-                        <input type="text" style="width:96%" name="LengthString" class="required" value="@Model.LengthString" />
+                        <input type="text" style="width:96%" name="document.LengthString" class="required" value="@Model.LengthString" />
                     </td>
                 </tr>
-
                 <tr>
-
-
+                    <th style="background:#0ff;">文档类型</th>
+                    <td>
+                        @Html.DropDownList("document.Category", (List<SelectListItem>)ViewBag.Course, new { @class = "combox" })
+                    </td>
                     <th>审核情况</th>
                     <td style="width:200px;">
-                        <select class="required" name="AuditCase">
+                        <select class="required" name="document.AuditCase">
                             <option value="@AuditCase.添加" @(Model.AuditCase == AuditCase.添加 ? "selected='selected'" : "")>添加</option>
                             <option value="@AuditCase.修改" @(Model.AuditCase == AuditCase.修改 ? "selected='selected'" : "")>修改</option>
                             <option value="@AuditCase.审核" @(Model.AuditCase == AuditCase.审核 ? "selected='selected'" : "")>审核</option>
@@ -72,13 +70,13 @@
                     </td>
                     <th>审核时间</th>
                     <td style="width:200px;">
-                        <input type="text" style="width:96%" name="AuditDate" class="date" value="@(Model.AuditDate==null?"":Model.AuditDate.Value.ToString("yyyy-MM-dd"))" />
+                        <input type="text" style="width:96%" name="document.AuditDate" class="date" value="@(Model.AuditDate==null?"":Model.AuditDate.Value.ToString("yyyy-MM-dd"))" />
                     </td>
                 </tr>
                 <tr>
                     <th style="vertical-align:top;padding-top:10px;">歌词</th>
                     <td colspan="5">
-                        <textarea name="Lyrics" wrap="off" style="height:350px;width:99%;font-family:'宋体';" class="required">@Model.Lyrics</textarea>
+                        <textarea name="document.Lyrics" wrap='soft' spellcheck="false" style="height:350px;width:99%;font-family:Courier New, Courier, monospace,'宋体';" class="required">@Model.Lyrics</textarea>
                     </td>
                 </tr>
                 <tr>
@@ -88,14 +86,22 @@
                             @if (!String.IsNullOrEmpty(Model.SoundPath))
                             {
                                 <span class="fileList">
-                                    <input type='hidden' name='SoundPath' value='@Model.SoundPath' />
-                                    <input type='hidden' name='Length' value='@Model.Length' />
+                                    <input type='hidden' name='document.SoundPath' value='@Model.SoundPath' />
+                                    <input type='hidden' name='document.Length' value='@Model.Length' />
                                     <span>@Model.SoundPath</span>
+                                    @*<audio src="@Model.SoundPath" controls="controls"/>*@
                                     <a href='javascript:;' class='close' title='移除' onclick='$(this).parent().remove();'></a>
                                 </span>
                             }
                         </span>
                         <input id="SoundPath" type="file" name="file" uploaderoption="{'swf':'/Content/uploadify/scripts/uploadify.swf','uploader':'/Admin/Uploadify','buttonText':'请选择文件','auto':true,'multi':false,'onUploadSuccess':successA}" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>封面图片</th>
+                    <td colspan="5">
+                        <input name="Cover.FilePath" readonly="readonly" type="text" value="@Model.Cover" style="width:400px;" />
+                        <a class="btnAttach" href='@Url.Action("Upload","Admin")' lookupGroup="Cover" width="400" height="200" title="上传附件">上传附件</a>
                     </td>
                 </tr>
             </table>
@@ -113,9 +119,11 @@
     function successA(file, data, response) {
         var o = $.parseJSON(data);
         var $c = $("#SoundPath").prev();
+        $c.children().remove();
         $c.html("<span class='fileList'></span>");
-        var input = "<input type='hidden' name='SoundPath' value='" + o.filePath + "'/><input type='hidden' name='Length' value='" + o.Length + "'/>";
+        var input = "<input type='hidden' name='document.SoundPath' value='" + o.filePath + "'/><input type='hidden' name='document.Length' value='" + o.Length + "'/>";
         var span = "<span>" + o.fileName + "</span>";
+        var audio = "<audio src='" + o.filePath + "' controls='controls' onloadedmetadata='console.log(this.duration)'/>";
         var a = "<a href=\"javascript:;\" class=\"close\" title=\"移除\" onclick='$(this).parent().remove();'></a>";
         $c.children().append(input).append(span).append(a);
     }

@@ -66,6 +66,8 @@
             <li class="line">line</li>
             <li><a class="delete" href='@Url.Action("BatchDocumentDelete")' target="selectedTodo" rel="ids" title="确定要删除吗？"><span>批量删除</span></a></li>
             <li><a class="update" href='@Url.Action("BatchDocumentAudit")' target="selectedTodo" rel="ids" title="确定要审核吗？"><span>批量审核</span></a></li>
+            <li class="line">line</li>
+            <li><a class="update" href='@Url.Action("DocumentBatchUpdate")' target="dialog" rel="DocumentBatchUpdate" width="800" height="600"><span>批量编辑</span></a></li>
         </ul>
     </div>
 
@@ -75,10 +77,9 @@
                 <tr>
                     <th width="25" align="center"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
                     <th width="25" align="center">序号</th>
-                    <th>一级标题</th>
-                    <th>二级标题</th>
-                    <th>文件夹</th>
-                    <th align="center" width="100">文章级别</th>
+                    <th align="center">一级标题(CN)</th>
+                    <th align="center">一级标题(EN)</th>
+                    <th align="center">二级标题(CN)</th>
                     <th align="center" width="150" orderField="AddDate" @("AddDate".Equals(ViewBag.OrderField) ? "class=desc" : "")>创建日期</th>
                     <th align="center" width="150" orderField="AuditDate" @("AuditDate".Equals(ViewBag.OrderField) ? "class=desc" : "")>审核日期</th>
                     <th align="center" orderField="Sort" @("Sort".Equals(ViewBag.OrderField) ? "class=desc" : "")>排序</th>
@@ -93,10 +94,9 @@
                         <td align="center">@(++i)</td>
                         <td>@item.Title</td>
                         <td>@item.TitleTwo</td>
-                        <td align="center">@(item.Folder == null ? "" : item.Folder.Name)</td>
-                        <td align="center">@item.Level.Name</td>
-                        <td align="center">@(item.AddDate.HasValue ? item.AddDate.Value.ToString("yyyy-MM-dd HH:mm:ss") : null)</td>
-                        <td align="center">@(item.AuditDate.HasValue ? item.AuditDate.Value.ToString("yyyy-MM-dd HH:mm:ss") : null)</td>
+                        <td>@item.TitleSubCn</td>
+                        <td align="center">@item.AddDate</td>
+                        <td align="center">@item.AuditDate</td>
                         <td align="center">
                             <input type="text" id="documentSort@(i)" value="@item.Sort" class="number" style="width:30px;text-align:center;" /> @Html.ActionLink("保存", "DocumentSort", new { id = item.Id, sort = "{documentSort" + i + "}" }, new { target = "ajaxTodo" })
                         </td>
