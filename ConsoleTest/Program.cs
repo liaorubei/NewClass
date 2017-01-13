@@ -4,8 +4,10 @@ using StudyOnline.Models;
 using StudyOnline.Service;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 
 namespace ConsoleTest
 {
@@ -13,13 +15,11 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
-            NimUserEx ex = new NimUserEx();
-            ex.Coins = ex.Coins + 0;
-            if ((ex.Coins ?? 0) <= 0)
-            {
-                Console.WriteLine("ds");
-            }
 
+            var now = DateTime.Now;
+
+            Console.WriteLine(now.ToString("o"));
+            Console.WriteLine(now.ToString("O"));
             Console.Read();
         }
 

@@ -50,7 +50,9 @@
                 <th width="35" align="center">序号</th>
                 <th>文件夹级别</th>
                 <th>父级文件夹</th>
-                <th>文件夹名称</th>
+                <th>名称（中文）</th>
+                <th>名称（英文）</th>
+                <th>二级标题</th>
                 <th width="150" align="center">排序</th>
             </tr>
         </thead>
@@ -63,6 +65,8 @@
                     <td>@(item.Level == null ? "" : item.Level.Name)</td>
                     <td>@(item.Folder2 == null ? "" : item.Folder2.Name)</td>
                     <td>@item.Name</td>
+                    <td>@item.NameEn</td>
+                    <td>@item.NameSubCn</td>
                     <td align="center">
                         <input type="text" id="folderSort@(i)" value="@item.Sort" class="digits" style="width:25px;text-align:center;" /> @Html.ActionLink("保存", "FolderSort", new { id = item.Id, sort = "{folderSort" + i + "}" }, new { target = "ajaxTodo" })
                     </td>

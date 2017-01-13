@@ -25,6 +25,7 @@ namespace StudyOnline.Models
         public Nullable<int> HsLevelId { get; set; }
         public Nullable<int> Sort { get; set; }
         public Nullable<int> IsDelete { get; set; }
+        public string NameEn { get; set; }
     
         public virtual HsLevel HsLevel { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -11,15 +11,20 @@ namespace StudyOnline.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Product
+    public partial class View_Folder_LeftJoin_MemberFolder
     {
         public int Id { get; set; }
-        public Nullable<double> Coin { get; set; }
-        public Nullable<decimal> USD { get; set; }
-        public Nullable<decimal> CNY { get; set; }
+        public string Name { get; set; }
+        public string NameEn { get; set; }
+        public string NameSubCn { get; set; }
+        public string NameSubEn { get; set; }
         public Nullable<int> Sort { get; set; }
-        public Nullable<int> Enabled { get; set; }
-        public Nullable<System.DateTime> Createtime { get; set; }
-        public Nullable<double> Hour { get; set; }
+        public Nullable<int> Show { get; set; }
+        public string Cover { get; set; }
+        public Nullable<int> LevelId { get; set; }
+        public Nullable<int> ParentId { get; set; }
+        public string MemberId { get; set; }
+        public Nullable<int> DocsCount { get; set; }
+        public Nullable<int> KidsCount { get; set; }
     }
 }

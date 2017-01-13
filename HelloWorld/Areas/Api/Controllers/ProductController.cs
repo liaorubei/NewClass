@@ -12,7 +12,7 @@ namespace StudyOnline.Areas.Api.Controllers
         public ActionResult Select()
         {
             var temp = entities.Product.Where(o => o.Enabled == 1).OrderBy(o => o.Sort).ToList();
-            return Json(new { code = 200, desc = "查询成功", info = temp.Select(o => new { o.Coin, o.USD, o.CNY }) });
+            return Json(new { code = 200, desc = "查询成功", info = temp.Select(o => new { o.Coin, o.USD, o.CNY,o.Hour }) });
         }
     }
 }

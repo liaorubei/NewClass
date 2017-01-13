@@ -1563,9 +1563,13 @@ namespace StudyOnline.Areas.Api.Controllers
                         Nickname = o.NimUserEx.Name,
                         IsEnable = 1 == o.IsEnable,
                         IsOnline = 1 == o.IsOnline,
+
                         //  o.Enqueue,
+                        o.NimUserEx.School,
                         o.NimUserEx.Spoken,
                         o.NimUserEx.Country,
+                        o.NimUserEx.Language,
+                        o.NimUserEx.Hobbies,
                         Photos = o.UploadFile.Select(p => p.Path).ToList()
                     })
                 });

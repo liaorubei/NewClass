@@ -106,6 +106,7 @@ namespace StudyOnline.Controllers
             return Json(m, JsonRequestBehavior.AllowGet);
         }
 
+        //[HttpPost]
         public ActionResult DocById(int id)
         {
             var temp = db.Document.Find(id);
@@ -127,6 +128,10 @@ namespace StudyOnline.Controllers
                 temp.Title,
                 TitleOne = temp.Title,
                 temp.TitleTwo,
+                TitleCn = temp.Title,
+                TitleEn = temp.TitleTwo,
+                temp.Category,
+                temp.Cover,
                 Lyrics = lines.Select(t => new { TimeLabel = t.TimeLabel.TotalMilliseconds, t.Original, t.Translate }),
                 temp.SoundPath,
                 temp.Length,
@@ -135,7 +140,15 @@ namespace StudyOnline.Controllers
                 temp.AddDate,
                 Date = (temp.AuditDate == null ? "" : temp.AddDate.Value.ToString("yyyy-MM-dd")),
                 Size = temp.Length,
-                Time = temp.LengthString
+                Time = temp.LengthString,
+                Folder = (temp.FolderId.HasValue ? new
+                {
+                    temp.Folder.Id,
+                    temp.Folder.Name,
+                    temp.Folder.NameEn,
+                    temp.Folder.NameSubCn,
+                    temp.Folder.NameSubEn
+                } : null)
             };
             return Json(data, JsonRequestBehavior.AllowGet);
         }

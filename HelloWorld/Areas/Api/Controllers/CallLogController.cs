@@ -25,8 +25,21 @@ namespace StudyOnline.Areas.Api.Controllers
         /// <param name="target">目标人</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Start(Int64 chatId, Int32 chatType, Int32 source, Int32 target)
+        public ActionResult Start(Int64 chatId, Int32 chatType, Int32 source, Int32 target, Int32? userId)
         {
+            //try
+            //{
+            //    NimUser e = new NimUser();
+            //    e.Id = target;
+            //    entities.Entry(e).State = System.Data.Entity.EntityState.Modified;
+
+            //}
+            //catch (Exception)
+            //{
+            //    logger.Debug(String.Format("通话创建失败:chatId={0}, chatType={1}, source={2}, target={3} and message:\r\n", chatId, chatType, source, target) + ex.Message + " \r\nStackTrace:\r\n" + ex.StackTrace + " \r\nInnerException \r\n" + ex.InnerException.StackTrace);
+            //    throw;
+            //}
+
             CallLog chat = entities.CallLog.SingleOrDefault(o => o.ChatId == chatId);
             NimUser teacher = entities.NimUser.Find(target);
 
@@ -48,12 +61,11 @@ namespace StudyOnline.Areas.Api.Controllers
                     //20160630创建对话的同时,把教师设置成忙状态
                     teacher.IsEnable = 0;
                     entities.SaveChanges();
-                    logger.Debug(String.Format("chat history create success with:chatId={0}, chatType={1}, source={2}, target={3}", chatId, chatType, source, target));
+                    logger.Debug(String.Format("通话创建:chatId={0}, chatType={1}, source={2}, target={3}, userId={4}", chatId, chatType, source, target, userId));
                 }
                 catch (Exception ex)
                 {
-
-                    logger.Debug(String.Format("chat history create failure with:chatId={0}, chatType={1}, source={2}, target={3} and message:\r\n", chatId, chatType, source, target) + ex.Message + " \r\nStackTrace:\r\n" + ex.StackTrace + " \r\nInnerException \r\n" + ex.InnerException.StackTrace);
+                    logger.Debug(String.Format("通话创建失败:chatId={0}, chatType={1}, source={2}, target={3} and message:\r\n", chatId, chatType, source, target) + ex.Message + " \r\nStackTrace:\r\n" + ex.StackTrace + " \r\nInnerException \r\n" + ex.InnerException.StackTrace);
                     return Json(new { code = 201, desc = "创建失败", info = new { chat.Id, chat.Source, chat.Target } });
                 }
             }
@@ -76,6 +88,8 @@ namespace StudyOnline.Areas.Api.Controllers
             chat.BalanceS = 1;//平衡学生学币
             chat.BalanceT = 0;//不用平衡教师
 
+
+
             //在帐号表里面减去学生相应的学币
             chat.NimUser.NimUserEx.Coins -= chat.Coins;
         }
@@ -86,7 +100,7 @@ namespace StudyOnline.Areas.Api.Controllers
         /// <param name="chatId">云信的通话ID</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Finish(String callId, Int64? chatId)
+        public ActionResult Finish(String callId, Int64? chatId, Int32? userId)
         {
             CallLog chat = null;
 
@@ -137,6 +151,7 @@ namespace StudyOnline.Areas.Api.Controllers
 
             if (chat.BalanceS != 1)
             {
+                logger.Debug(String.Format("通话结束:chatId={0} coins={1} userId={2}", chat.ChatId, chat.NimUser.NimUserEx.Coins, userId));
                 Balance(chat);
             }
 
@@ -211,20 +226,35 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult Refresh(String callId, Int64? chatId)
         {
-            CallLog call = entities.CallLog.Find(callId);
-            call.Refresh = DateTime.Now;
-            NimUserEx user = entities.NimUserEx.Find(call.Source);
-            entities.SaveChanges();
-
-            var span = call.Refresh - call.Start;
-            var coins = (user.Coins ?? 0) - (((Int32)span.Value.TotalMinutes) * Constants.Price);
-
-            if (coins <= 0)
+            try
             {
+                CallLog call = entities.CallLog.Find(callId);
+                call.Refresh = DateTime.Now;
+                NimUserEx user = entities.NimUserEx.Find(call.Source);
+                entities.SaveChanges();
+
+                var span = call.Refresh - call.Start;
+                var coins = (user.Coins ?? 0) - (((Int32)span.Value.TotalMinutes) * Constants.Price);
+
+                if (coins <= 0)
+                {
+                    return Json(new
+                    {
+                        code = 201,
+                        desc = "学币不足",
+                        info = new
+                        {
+                            user.Id,
+                            user.Name,
+                            Nickname = user.Name,
+                            Coins = coins
+                        }
+                    });
+                }
                 return Json(new
                 {
-                    code = 201,
-                    desc = "学币不足",
+                    code = 200,
+                    desc = "刷新成功",
                     info = new
                     {
                         user.Id,
@@ -234,18 +264,15 @@ namespace StudyOnline.Areas.Api.Controllers
                     }
                 });
             }
-            return Json(new
+            catch (Exception ex)
             {
-                code = 200,
-                desc = "刷新成功",
-                info = new
+                logger.Debug(String.Format("callId={0}, ex={1}", callId, ex.StackTrace));
+                return Json(new
                 {
-                    user.Id,
-                    user.Name,
-                    Nickname = user.Name,
-                    Coins = coins
-                }
-            });
+                    code = 201,
+                    desc = ex.Message
+                });
+            }
         }
 
         /// <summary>
@@ -425,6 +452,8 @@ namespace StudyOnline.Areas.Api.Controllers
                 desc = "查询成功",
                 info = temp.Select(o => new
                 {
+                    UtcStart = o.Start.Value.ToUniversalTime().ToString("u"),
+                    UtcFinish = o.Finish.Value.ToUniversalTime().ToString("u"),
                     Start = o.Start.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                     Finish = o.Finish.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                     (o.Finish - o.Start).Value.TotalSeconds,
@@ -466,6 +495,8 @@ namespace StudyOnline.Areas.Api.Controllers
                 return Json(new { code = 201, desc = "指定用户名不存在" });
             }
 
+            from.Value.ToUniversalTime().ToString();
+
             Expression<Func<CallLog, bool>> userPredicate = o => user.Category == 0 ? o.Source == id : o.Target == id;
             Expression<Func<CallLog, bool>> rangePredicate = o => from < o.Start && o.Start <= to;
             List<CallLog> chats = entities.CallLog.Where(o => o.Start != null && o.Finish != null).Where(userPredicate).Where(rangePredicate).OrderByDescending(o => o.Start).Skip(skip ?? 0).Take(take ?? pageSize).ToList();
@@ -494,7 +525,8 @@ namespace StudyOnline.Areas.Api.Controllers
                 desc = "查询成功",
                 info = chats.Select(o => new
                 {
-                    Start = o.Start.Value.ToString("yyyy-MM-dd HH:mm:ss"),
+                    utcStart = o.Start.Value.ToUniversalTime().ToString("u"),
+                    Start = o.Start.Value.ToString("yyyy-MM-dd HH:mm:ss zzz"),
                     Finish = o.Finish.Value.ToString("yyyy-MM-dd HH:mm:ss"),
                     Duration = (Int32)((o.Finish - o.Start).Value.TotalMinutes + 0.5),
                     Teacher = new
@@ -595,12 +627,28 @@ namespace StudyOnline.Areas.Api.Controllers
         {
             try
             {
+                Theme theme = entities.Theme.Find(themeId);
+                var questions = theme.Question.OrderBy(o => o.Sort).ToList();
+
                 LogTheme model = new LogTheme();
                 model.ChatId = chatId;
                 model.ThemeId = themeId;
                 entities.LogTheme.Add(model);
                 entities.SaveChanges();
-                return Json(new { code = 200, desc = "添加成功", info = new { model.ChatId, model.ThemeId } });
+                return Json(new
+                {
+                    code = 200,
+                    desc = "添加成功",
+                    info = new
+                    {
+                        model.ChatId,
+                        model.ThemeId,
+                        theme.Id,
+                        theme.Name,
+                        theme.NameEn,
+                        Questions = questions.Select(o => new { o.Id, o.Name })
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -608,6 +656,15 @@ namespace StudyOnline.Areas.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// 根据用户Id获取通话记录
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <param name="skip">跳过记录数</param>
+        /// <param name="take">获取记录数</param>
+        /// <param name="from">记录的开始时间（GMT+8为准）</param>
+        /// <param name="to">记录的结束时间（GMT+8为准）</param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult GetListByUserId(Int32 userId, Int32? skip, Int32? take, DateTime? from, DateTime? to)
         {
@@ -643,13 +700,15 @@ namespace StudyOnline.Areas.Api.Controllers
             var query = entities.View_Chat_user.Where(o => o.ChatType == 1 && o.BalanceS == 1).Where(predicateCategory).Where(predicateFrom).Where(predicateTo).OrderByDescending(o => o.Start);
             Int32 count = query.Count();
             Int32 duration = query.Sum(o => o.Duration) ?? 0;
-            var temp = query.Skip(skip ?? 0).Take(take ?? Int32.MaxValue).Select(o => new
+            var temp = query.Skip(skip ?? 0).Take(take ?? Int32.MaxValue).ToList().Select(o => new
             {
                 o.Id,
                 o.Source,
                 o.Student,
                 o.Target,
                 o.Teacher,
+                UtcStart = o.Start.Value.ToUniversalTime().ToString("u"),
+                UtcFinish = o.Finish.Value.ToUniversalTime().ToString("u"),
                 o.Start,
                 o.Finish,
                 o.ChatId,

@@ -59,6 +59,7 @@
         <EntityTypeShape EntityType="StudyOnline.Hskk" Width="1.5" PointX="17.375" PointY="10" />
         <EntityTypeShape EntityType="StudyOnline.HskkQuestion" Width="1.5" PointX="19.625" PointY="10" />
         <AssociationConnector Association="StudyOnline.FK_HskkQuerstion_Hskk" />
+        <EntityTypeShape EntityType="StudyOnline.View_Folder_LeftJoin_MemberFolder" Width="1.5" PointX="18.375" PointY="13.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

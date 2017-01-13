@@ -12,24 +12,75 @@ namespace StudyOnline.Areas.Api.Controllers
         private StudyOnline.Models.StudyOnlineEntities entities = new StudyOnline.Models.StudyOnlineEntities();
 
         [HttpPost]
-        public ActionResult Select(Int32 take, Int32 skip)
+        public ActionResult Select(Int32? take, Int32? skip)
         {
-            var temp = entities.Theme.OrderBy(o => o.Id).Skip(skip).Take(take).ToList();
-            return Json(new { code = 200, desc = "", info = temp.Select(o => new { o.Id, o.Name }) });
+            var temp = entities.Theme.OrderBy(o => o.Sort).Skip(skip ?? 0).Take(take ?? Int32.MaxValue).ToList();
+            return Json(new
+            {
+                code = 200,
+                desc = "查询成功",
+                info = temp.Select(o => new
+                {
+                    o.Id,
+                    o.Name,
+                    o.NameEn,
+                    o.Sort
+                })
+            });
         }
 
-
-        public ActionResult GetById(int id)
+        [HttpPost]
+        public ActionResult GetById(Int32 id)
         {
             Theme theme = entities.Theme.Find(id);
-            return Json(new { code = 200, desc = "查询成功", info = new { theme.Id, theme.Name, Questions = theme.Question.Select(o => new { o.Id, o.Name }) } });
+            return Json(new
+            {
+                code = 200,
+                desc = "查询成功",
+                info = new
+                {
+                    theme.Id,
+                    theme.Name,
+                    theme.NameEn,
+                    theme.Sort,
+                    Questions = theme.Question.OrderBy(o => o.Sort).Select(o => new
+                    {
+                        o.Id,
+                        o.Name
+                    })
+                }
+            });
         }
 
         [HttpPost]
         public ActionResult HsLevelAndTheme()
         {
-            var hsLevels = entities.HsLevel.OrderBy(o => o.Id);
-            return Json(new { code = 200, desc = "查询成功", info = hsLevels.Select(o => new { o.Id, o.Name, Theme = o.Theme.Select(t => new { t.Id, t.Name }) }) });
+            var hsLevels = entities.HsLevel.OrderBy(o => o.Id).ToList();
+            var themes = entities.Theme.ToList();
+
+            foreach (var item in hsLevels)
+            {
+                item.Theme.Clear();
+            }
+            hsLevels.First().Theme = themes;
+
+            return Json(new
+            {
+                code = 200,
+                desc = "查询成功",
+                info = hsLevels.Select(o => new
+                {
+                    o.Id,
+                    o.Name,
+                    Theme = o.Theme.Select(t => new
+                    {
+                        t.Id,
+                        t.Name,
+                        t.NameEn,
+                        t.Sort
+                    })
+                })
+            });
         }
 
         // POST: Api/Theme/Create

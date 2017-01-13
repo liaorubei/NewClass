@@ -449,3 +449,29 @@ select * from [dbo].[HskkQuestion]
 
 
 --alter table document add Cover nvarchar(256) 20161031为新闻添加封面
+--alter table [dbo].[Folder] add NameEn nvarchar(256) 20161115为文件夹添加英文名称
+--alter table [Folder] add [NameSubCn] nvarchar(256),[NameSubEn] nvarchar(256) 20161121按要求添加文件夹的二级标题，要求显示合集内容
+--alter table [Folder] add [Show] int  20161122由于版权问题，某些课本不能显示，所以按要求添加了这个这段，用来控制课本的显示
+
+ --alter table [dbo].[Product] add [Hour] float 20161216 更改价目表，添加一个学时的字段 
+
+--20161229由于要求添加组织机构，客户端显示方式改变成未登录只能查看公开内容，登录之后可以查看未公开内容，所以添加了这个视图方便查看
+DROP   VIEW View_Folder_LeftJoin_MemberFolder
+CREATE VIEW View_Folder_LeftJoin_MemberFolder AS
+(
+SELECT 
+[Folder].[Id],
+[Folder].[Name],
+[Folder].[NameEn],
+[Folder].[NameSubCn],
+[Folder].[NameSubEn],
+[Folder].[Sort],
+[Folder].[Show],
+[Folder].[Cover],
+[Folder].[LevelId],
+[Folder].[ParentId],
+[Member_Folder].[MemberId],
+(SELECT COUNT(FolderId) FROM Document AS D WHERE D.FolderId=[Folder].[Id]) AS DocsCount,
+(SELECT COUNT(ParentId) FROM Folder   AS F WHERE F.ParentId=[Folder].[Id]) AS KidsCount
+FROM [Folder] LEFT JOIN [Member_Folder] ON [Folder].[Id]=[Member_Folder].[FolderId]
+)

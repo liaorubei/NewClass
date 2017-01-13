@@ -2,7 +2,6 @@
 @{
     Layout = null;
     List<Level> levels = ViewBag.Levels;
-    PagedList<Document> documents = ViewBag.Documents;
 }
 <!DOCTYPE html>
 <html lang="zh-cn">
@@ -35,7 +34,7 @@
                     </li>
                 }
             </ul>
-            @Html.Pager(documents, new PagerOptions() { AutoHide = true, ShowFirstLast = false, AlwaysShowFirstLastPageNumber = false, CssClass = "end fy", CurrentPagerItemWrapperFormatString = "<span class='fyed'>{0}</span>", PagerItemWrapperFormatString = "<span class='fye'>{0}</span>", NumericPagerItemCount = 5, PageIndexParameterName = "index", PagerItemsSeperator = "" })
+            @Html.Pager(Model, new PagerOptions() { AutoHide = true, ShowFirstLast = false, AlwaysShowFirstLastPageNumber = false, CssClass = "end fy", CurrentPagerItemWrapperFormatString = "<span class='fyed'>{0}</span>", PagerItemWrapperFormatString = "<span class='fye'>{0}</span>", NumericPagerItemCount = 5, PageIndexParameterName = "index", PagerItemsSeperator = "" })
         </div>
    <div style="position:relative;width:150px;background:#f00;left:800px;top:-100px;display:none;">
        <div style="position:absolute;top:200px">

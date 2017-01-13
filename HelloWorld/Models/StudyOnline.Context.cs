@@ -58,5 +58,6 @@ namespace StudyOnline.Models
         public virtual DbSet<View_UserLeftJoinMember> View_UserLeftJoinMember { get; set; }
         public virtual DbSet<Hskk> Hskk { get; set; }
         public virtual DbSet<HskkQuestion> HskkQuestion { get; set; }
+        public virtual DbSet<View_Folder_LeftJoin_MemberFolder> View_Folder_LeftJoin_MemberFolder { get; set; }
     }
 }

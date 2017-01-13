@@ -45,7 +45,17 @@ namespace StudyOnline.Areas.Api.Controllers
                     o.Name,
                     o.Sort,
                     o.ShowCover,
-                    Folders = o.Folder.OrderBy(f => f.Sort).Take(25).Select(f => new { f.Id, f.Name, f.Sort, f.LevelId, Permission = f.Member.Any(), DocsCount = f.Document.Count(d => d.AuditCase == AuditCase.审核), f.Cover })
+                    Folders = o.Folder.OrderBy(f => f.Sort).Take(25).Select(f => new
+                    {
+                        f.Id,
+                        f.Name,
+                        f.NameEn,
+                        f.Sort,
+                        f.LevelId,
+                        Permission = f.Member.Any(),
+                        DocsCount = f.Document.Count(d => d.AuditCase == AuditCase.审核),
+                        f.Cover
+                    })
                 })
             });
         }

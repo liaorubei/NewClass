@@ -108,6 +108,10 @@
           <Property Name="Sort" Type="int" />
           <Property Name="Cover" Type="nvarchar" MaxLength="256" />
           <Property Name="ParentId" Type="int" />
+          <Property Name="NameEn" Type="nvarchar" MaxLength="256" />
+          <Property Name="NameSubCn" Type="nvarchar" MaxLength="256" />
+          <Property Name="NameSubEn" Type="nvarchar" MaxLength="256" />
+          <Property Name="Show" Type="int" />
         </EntityType>
         <EntityType Name="Group">
           <Key>
@@ -279,6 +283,7 @@
           <Property Name="Sort" Type="int" />
           <Property Name="Enabled" Type="int" />
           <Property Name="Createtime" Type="datetime" />
+          <Property Name="Hour" Type="float" />
         </EntityType>
         <EntityType Name="Question">
           <Key>
@@ -323,6 +328,7 @@
           <Property Name="HsLevelId" Type="int" />
           <Property Name="Sort" Type="int" />
           <Property Name="IsDelete" Type="int" />
+          <Property Name="NameEn" Type="nvarchar" MaxLength="256" />
         </EntityType>
         <EntityType Name="UploadFile">
           <Key>
@@ -437,6 +443,27 @@
           <Property Name="SoundPath" Type="nvarchar" MaxLength="250" />
           <Property Name="AuditCase" Type="int" />
           <Property Name="AuditDate" Type="datetime" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“voc_test20160823.dbo.View_Folder_LeftJoin_MemberFolder”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="View_Folder_LeftJoin_MemberFolder">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="NameEn" Type="nvarchar" MaxLength="256" />
+          <Property Name="NameSubCn" Type="nvarchar" MaxLength="256" />
+          <Property Name="NameSubEn" Type="nvarchar" MaxLength="256" />
+          <Property Name="Sort" Type="int" />
+          <Property Name="Show" Type="int" />
+          <Property Name="Cover" Type="nvarchar" MaxLength="256" />
+          <Property Name="LevelId" Type="int" />
+          <Property Name="ParentId" Type="int" />
+          <Property Name="MemberId" Type="varchar" MaxLength="32" />
+          <Property Name="DocsCount" Type="int" />
+          <Property Name="KidsCount" Type="int" />
         </EntityType>
         <!--生成过程中发现错误:
 警告 6002: 表/视图“voc_test20160823.dbo.View_Folder_Member_User”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
@@ -873,6 +900,23 @@
     [View_Document].[AuditDate] AS [AuditDate]
     FROM [dbo].[View_Document] AS [View_Document]</DefiningQuery>
           </EntitySet>
+          <EntitySet Name="View_Folder_LeftJoin_MemberFolder" EntityType="Self.View_Folder_LeftJoin_MemberFolder" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_Folder_LeftJoin_MemberFolder].[Id] AS [Id], 
+    [View_Folder_LeftJoin_MemberFolder].[Name] AS [Name], 
+    [View_Folder_LeftJoin_MemberFolder].[NameEn] AS [NameEn], 
+    [View_Folder_LeftJoin_MemberFolder].[NameSubCn] AS [NameSubCn], 
+    [View_Folder_LeftJoin_MemberFolder].[NameSubEn] AS [NameSubEn], 
+    [View_Folder_LeftJoin_MemberFolder].[Sort] AS [Sort], 
+    [View_Folder_LeftJoin_MemberFolder].[Show] AS [Show], 
+    [View_Folder_LeftJoin_MemberFolder].[Cover] AS [Cover], 
+    [View_Folder_LeftJoin_MemberFolder].[LevelId] AS [LevelId], 
+    [View_Folder_LeftJoin_MemberFolder].[ParentId] AS [ParentId], 
+    [View_Folder_LeftJoin_MemberFolder].[MemberId] AS [MemberId], 
+    [View_Folder_LeftJoin_MemberFolder].[DocsCount] AS [DocsCount], 
+    [View_Folder_LeftJoin_MemberFolder].[KidsCount] AS [KidsCount]
+    FROM [dbo].[View_Folder_LeftJoin_MemberFolder] AS [View_Folder_LeftJoin_MemberFolder]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="View_Folder_Member_User" EntityType="Self.View_Folder_Member_User" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [View_Folder_Member_User].[MemberId] AS [MemberId], 
@@ -1147,6 +1191,7 @@
             <End Role="Hskk" EntitySet="Hskk" />
             <End Role="HskkQuestion" EntitySet="HskkQuestion" />
           </AssociationSet>
+          <EntitySet Name="View_Folder_LeftJoin_MemberFolder" EntityType="StudyOnline.View_Folder_LeftJoin_MemberFolder" />
         </EntityContainer>
         <EntityType Name="Android">
           <Key>
@@ -1262,6 +1307,10 @@
           <Property Name="ParentId" Type="Int32" />
           <NavigationProperty Name="Folder1" Relationship="StudyOnline.FK_Folder_Folder" FromRole="Folder" ToRole="Folder1" />
           <NavigationProperty Name="Folder2" Relationship="StudyOnline.FK_Folder_Folder" FromRole="Folder1" ToRole="Folder" />
+          <Property Name="NameEn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="NameSubCn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="NameSubEn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Show" Type="Int32" />
         </EntityType>
         <EntityType Name="Group">
           <Key>
@@ -1409,6 +1458,7 @@
           <Property Name="Sort" Type="Int32" />
           <Property Name="Enabled" Type="Int32" />
           <Property Name="Createtime" Type="DateTime" Precision="3" />
+          <Property Name="Hour" Type="Double" />
         </EntityType>
         <EntityType Name="Question">
           <Key>
@@ -1457,6 +1507,7 @@
           <NavigationProperty Name="HsLevel" Relationship="StudyOnline.FK_Theme_HsLevel" FromRole="Theme" ToRole="HsLevel" />
           <NavigationProperty Name="LogTheme" Relationship="StudyOnline.FK_LogTheme_ThemeId" FromRole="Theme" ToRole="LogTheme" />
           <NavigationProperty Name="Question" Relationship="StudyOnline.FK_Question_Theme" FromRole="Theme" ToRole="Question" />
+          <Property Name="NameEn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="UploadFile">
           <Key>
@@ -1854,6 +1905,25 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="View_Folder_LeftJoin_MemberFolder">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NameEn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="NameSubCn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="NameSubEn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Sort" Type="Int32" />
+          <Property Name="Show" Type="Int32" />
+          <Property Name="Cover" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="LevelId" Type="Int32" />
+          <Property Name="ParentId" Type="Int32" />
+          <Property Name="MemberId" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="DocsCount" Type="Int32" />
+          <Property Name="KidsCount" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1963,6 +2033,10 @@
           <EntitySetMapping Name="Folder">
             <EntityTypeMapping TypeName="StudyOnline.Folder">
               <MappingFragment StoreEntitySet="Folder">
+                <ScalarProperty Name="Show" ColumnName="Show" />
+                <ScalarProperty Name="NameSubEn" ColumnName="NameSubEn" />
+                <ScalarProperty Name="NameSubCn" ColumnName="NameSubCn" />
+                <ScalarProperty Name="NameEn" ColumnName="NameEn" />
                 <ScalarProperty Name="ParentId" ColumnName="ParentId" />
                 <ScalarProperty Name="Cover" ColumnName="Cover" />
                 <ScalarProperty Name="Sort" ColumnName="Sort" />
@@ -2101,6 +2175,7 @@
           <EntitySetMapping Name="Product">
             <EntityTypeMapping TypeName="StudyOnline.Product">
               <MappingFragment StoreEntitySet="Product">
+                <ScalarProperty Name="Hour" ColumnName="Hour" />
                 <ScalarProperty Name="Createtime" ColumnName="Createtime" />
                 <ScalarProperty Name="Enabled" ColumnName="Enabled" />
                 <ScalarProperty Name="Sort" ColumnName="Sort" />
@@ -2150,6 +2225,7 @@
           <EntitySetMapping Name="Theme">
             <EntityTypeMapping TypeName="StudyOnline.Theme">
               <MappingFragment StoreEntitySet="Theme">
+                <ScalarProperty Name="NameEn" ColumnName="NameEn" />
                 <ScalarProperty Name="IsDelete" ColumnName="IsDelete" />
                 <ScalarProperty Name="Sort" ColumnName="Sort" />
                 <ScalarProperty Name="HsLevelId" ColumnName="HsLevelId" />
@@ -2373,6 +2449,25 @@
                 <ScalarProperty Name="Image" ColumnName="Image" />
                 <ScalarProperty Name="HskkId" ColumnName="HskkId" />
                 <ScalarProperty Name="Sort" ColumnName="Sort" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="View_Folder_LeftJoin_MemberFolder">
+            <EntityTypeMapping TypeName="StudyOnline.View_Folder_LeftJoin_MemberFolder">
+              <MappingFragment StoreEntitySet="View_Folder_LeftJoin_MemberFolder">
+                <ScalarProperty Name="KidsCount" ColumnName="KidsCount" />
+                <ScalarProperty Name="DocsCount" ColumnName="DocsCount" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
+                <ScalarProperty Name="Cover" ColumnName="Cover" />
+                <ScalarProperty Name="Show" ColumnName="Show" />
+                <ScalarProperty Name="Sort" ColumnName="Sort" />
+                <ScalarProperty Name="NameSubEn" ColumnName="NameSubEn" />
+                <ScalarProperty Name="NameSubCn" ColumnName="NameSubCn" />
+                <ScalarProperty Name="NameEn" ColumnName="NameEn" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

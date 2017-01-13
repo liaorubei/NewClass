@@ -376,6 +376,9 @@
     <Compile Include="Models\View_FolderWithLevel.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\View_Folder_LeftJoin_MemberFolder.cs">
+      <DependentUpon>StudyOnline.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\View_Folder_Member_User.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
@@ -417,6 +420,8 @@
     <Compile Include="Utils\RSA.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\admin\login_bgx.gif" />
+    <Content Include="Content\admin\login_m_bg.png" />
     <Content Include="Content\dwz\dwz.frag.xml" />
     <Content Include="Content\dwz\themes\azure\images\accordion\accordion.png" />
     <Content Include="Content\dwz\themes\azure\images\account_info_bg.png" />
@@ -659,6 +664,8 @@
     <Content Include="Content\rate\rate.css" />
     <Content Include="Content\rate\star-off.png" />
     <Content Include="Content\rate\star-on.png" />
+    <Content Include="Content\admin\site_bg.png" />
+    <Content Include="Content\admin\style_log.css" />
     <Content Include="Content\ui.css" />
     <Content Include="Content\uicss.css" />
     <Content Include="Content\uploadify\Change Log.txt" />
@@ -833,7 +840,10 @@
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Properties\PublishProfiles\生产环境.pubxml">
+    <None Include="Properties\PublishProfiles\中国大陆.pubxml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\PublishProfiles\中国香港.pubxml">
       <SubType>Designer</SubType>
     </None>
     <None Include="Properties\PublishProfiles\测试环境.pubxml" />
@@ -1270,6 +1280,7 @@
     <Content Include="Views\Admin\DocumentBatchUpdate.cshtml" />
     <Content Include="Views\Admin\Upload.cshtml" />
     <Content Include="Views\Admin\FolderTreeLookUp.cshtml" />
+    <Content Include="Views\Home\Signin.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Api\Views\CallLog\" />

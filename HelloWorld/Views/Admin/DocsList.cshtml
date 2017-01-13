@@ -7,11 +7,21 @@
     Layout = null;
     PagedList<Document> docs = ViewBag.Docs;
     List<Level> levels = ViewBag.Levels;
-    levels.Insert(0, new Level() { Name = "-请选择-" });
-    int levelId = ViewBag.LevelId;
-
     List<Folder> folders = ViewBag.Folders;
-    int folderId = ViewBag.FolderId;
+    List<SelectListItem> dropLevel = new List<SelectListItem>();
+    List<SelectListItem> dropFolder = new List<SelectListItem>();
+
+    dropLevel.Add(new SelectListItem() { Value = "", Text = "-请选择-" });
+    foreach (var item in levels)
+    {
+        dropLevel.Add(new SelectListItem() { Value = item.Id.ToString(), Text = item.Name, Selected = item.Id == ViewBag.LevelId });
+    }
+
+    dropFolder.Add(new SelectListItem() { Value = "", Text = "-请选择-" });
+    foreach (var item in folders)
+    {
+        dropFolder.Add(new SelectListItem() { Value = item.Id.ToString(), Text = item.Name, Selected = item.Id == ViewBag.FolderId });
+    }
 }
 
 <div class="pageHeader">
@@ -28,22 +38,11 @@
                 </li>
                 <li>
                     <label>文章级别：</label>
-                    <select class="combox" name="levelId">
-                        @foreach (var item in levels)
-                        {
-                            <option value="@item.Id" @(levelId == item.Id ? "selected='selected'" : "")>@item.Name</option>
-                        }
-                    </select>
+                    @Html.DropDownList("levelId", dropLevel, new { @class = "combox" })
                 </li>
                 <li>
                     <label>文件夹：</label>
-                    <select class="combox" name="folderId">
-                        <option value="">-请选择-</option>
-                        @foreach (var item in folders)
-                        {
-                            <option value="@item.Id" @(folderId == item.Id ? "selected='selected'" : "")>@item.Name</option>
-                        }
-                    </select>
+                    @Html.DropDownList("folderId", dropFolder, new { @class = "combox" })
                 </li>
             </ul>
             <div class="subBar">

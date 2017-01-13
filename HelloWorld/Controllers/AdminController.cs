@@ -61,67 +61,58 @@ namespace StudyOnline.Controllers
         public ActionResult Player() { return View(); }
 
         #region 文档相关
-        public ActionResult DocsList(FormCollection form)
+        public ActionResult DocsList(String keyword, Int32? levelId, Int32? folderId, Int32? pageNum, Int32? numPerPage, String orderField, String orderDirection)
         {
-            //分页处理
-            int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 20);
-            int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
-
             //检索处理
             Func<Document, bool> predicateKeyWord = d => true;
             Func<Document, bool> predicateLevelId = d => true;
             Func<Document, bool> predicateFolderId = o => true;
 
-            String keyword = form["keyword"];
             if (!String.IsNullOrEmpty(keyword))
             {
                 predicateKeyWord = o => o.Title.Contains(keyword) || (o.TitleSubCn ?? "").Contains(keyword);
             }
 
-            int levelId = ConvertUtil.ToInt32(form["levelId"], -1);
-            if (levelId > 0)
+            if (levelId.HasValue && levelId > 0)
             {
                 predicateLevelId = o => o.LevelId == levelId;
             }
 
-            int folderId = ConvertUtil.ToInt32(form["folderId"], -1);
-            if (folderId > 0)
+            if (folderId.HasValue && folderId > 0)
             {
                 predicateFolderId = o => o.FolderId == folderId;
             }
 
-            Func<Document, object> keySelector = o => o.AddDate;
-            if (!String.IsNullOrEmpty(form["orderField"]))
+            Func<Document, object> keySelector = o => o.Sort;
+            if (!String.IsNullOrEmpty(orderField))
             {
-                if ("AddDate".Equals(form["orderField"]))
+                if ("AddDate".Equals(orderField))
                 {
                     keySelector = o => o.AddDate;
                 }
-                else if ("AuditDate".Equals(form["orderField"]))
+                else if ("AuditDate".Equals(orderField))
                 {
                     keySelector = o => o.AuditDate;
                 }
-                else if ("Sort".Equals(form["orderField"]))
+                else if ("Sort".Equals(orderField))
                 {
                     keySelector = o => o.Sort;
                 }
             }
 
-
-
             //数据和分页检索条件处理
-            PagedList<Document> docs = entities.Document.Where(predicateKeyWord).Where(predicateLevelId).Where(predicateFolderId).OrderByDescending(keySelector).ToList().ToPagedList(pageIndex, pageSize);
+            PagedList<Document> docs = entities.Document.Where(predicateKeyWord).Where(predicateLevelId).Where(predicateFolderId).OrderByDescending(keySelector).ToList().ToPagedList(pageNum ?? 0, numPerPage ?? 20);
             ViewBag.Docs = docs;
 
-            List<Level> levels = entities.Level.ToList();
-            List<Folder> folders = entities.Folder.ToList();
+            List<Level> levels = entities.Level.OrderBy(o => o.Name).ToList();
+            List<Folder> folders = entities.Folder.OrderBy(o => o.Name).ToList();
 
             ViewBag.Levels = levels;
             ViewBag.Folders = folders;
             ViewBag.KeyWord = keyword;//关键字
             ViewBag.LevelId = levelId;//文章级别
             ViewBag.FolderId = folderId;//文件夹
-            ViewBag.OrderField = form["orderField"] ?? "AddDate";
+            ViewBag.OrderField = orderField;
             return View();
         }
 
@@ -738,7 +729,6 @@ namespace StudyOnline.Controllers
             //分页处理
             int pageSize = ConvertUtil.ToInt32(form["numPerPage"], 25);
             int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
-            int hsLevelId = ConvertUtil.ToInt32(form["hsLevelId"], -1);
 
             Expression<Func<Theme, bool>> keyword = o => true;
             if (!String.IsNullOrEmpty(form["keyword"]))
@@ -747,31 +737,7 @@ namespace StudyOnline.Controllers
                 keyword = o => o.Name.Contains(k);
             }
             ViewBag.Kerword = form["keyword"];
-
-            Expression<Func<Theme, bool>> predicate = o => true;
-            if (hsLevelId > 0)
-            {
-                predicate = o => o.HsLevelId == hsLevelId;
-            }
-            else if (hsLevelId == 0)
-            {
-                predicate = o => o.HsLevelId == null;
-            }
-
-            List<SelectListItem> items = new List<SelectListItem>();
-            var i = entities.HsLevel.ToList();
-            i.Insert(0, new HsLevel() { Id = -1, Name = "-所有的-" });
-            i.Insert(1, new HsLevel() { Id = 0, Name = "-未分级-" });
-
-            foreach (var h in i)
-            {
-                items.Add(new SelectListItem() { Value = h.Id.ToString(), Text = h.Name, Selected = h.Id == hsLevelId });
-            }
-
-            ViewBag.SelectListItems = items;
-
-            ViewBag.Themes = entities.Theme.Where(keyword).Where(predicate).OrderBy(o => o.Id).ToPagedList(pageIndex, pageSize);
-
+            ViewBag.Themes = entities.Theme.Where(keyword).OrderBy(o => o.Sort).ToPagedList(pageIndex, pageSize);
             return View();
         }
 

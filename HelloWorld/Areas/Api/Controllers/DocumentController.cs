@@ -91,10 +91,16 @@ namespace StudyOnline.Areas.Api.Controllers
                     o.TitleSubCn,
                     o.TitleSubEn,
                     o.TitleSubPy,
+                    o.LevelId,
+                    o.FolderId,
                     o.Sort,
                     o.Cover,
                     o.Category,
-                    o.AuditDate
+                    o.AuditDate,
+                    o.Length,
+                    o.LengthString,
+                    o.Duration,
+                    o.SoundPath
                 })
             });
 
@@ -116,6 +122,8 @@ namespace StudyOnline.Areas.Api.Controllers
                     o.TitleTwo,
                     TitleCn = o.Title,
                     TitleEn = o.TitleTwo,
+                    o.LevelId,
+                    o.FolderId,
                     o.TitlePy,
                     o.Category,
                     o.TitleSubCn,
@@ -165,6 +173,10 @@ namespace StudyOnline.Areas.Api.Controllers
         public ActionResult GetById(Int32 id)
         {
             Document document = entities.Document.Find(id);
+            if (document == null)
+            {
+                return Json(new { code = 201, desc = "文档不存在" });
+            }
 
             //解析歌词
             Lyric lyric = LyricParser.Parse(document.Lyrics);
@@ -197,7 +209,15 @@ namespace StudyOnline.Areas.Api.Controllers
                     document.TitleSubCn,
                     document.TitleSubEn,
                     document.TitleSubPy,
-                    Lyrics = lines.Select(o => new { o.Original, o.Translate, o.TimeLabel.TotalMilliseconds })
+                    Lyrics = lines.Select(o => new { o.Original, o.Translate, o.TimeLabel.TotalMilliseconds }),
+                    document.FolderId,
+                    Folder = (document.FolderId.HasValue ? new
+                    {
+                        document.Folder.Id,
+                        document.Folder.Name,
+                        document.Folder.NameEn,
+                        document.Folder.Sort
+                    } : null)
                 }
             });
         }

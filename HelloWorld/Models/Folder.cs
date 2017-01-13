@@ -27,6 +27,10 @@ namespace StudyOnline.Models
         public Nullable<int> Sort { get; set; }
         public string Cover { get; set; }
         public Nullable<int> ParentId { get; set; }
+        public string NameEn { get; set; }
+        public string NameSubCn { get; set; }
+        public string NameSubEn { get; set; }
+        public Nullable<int> Show { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Document> Document { get; set; }

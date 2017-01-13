@@ -4,6 +4,11 @@
     Layout = null;
     List<Level> levels = ViewBag.Levels;
     levels.Insert(0, new Level() { Id = 0, Name = "-请选择-" });
+
+    List<SelectListItem> dropShow = new List<SelectListItem>();
+    dropShow.Add(new SelectListItem() { Value = "1", Text = "显示" });
+    dropShow.Add(new SelectListItem() { Value = "0", Text = "隐藏", Selected = Model.Show == 0 });
+
 }
 <style type="text/css" media="screen">
     .uploadify { margin-bottom: 0; display: inline-block; }
@@ -24,6 +29,18 @@
                     </td>
                 </tr>
                 <tr>
+                    <th style="width:100px;">文件夹名称(英文)：</th>
+                    <td>
+                        <input type="text" name="folder.NameEn" value="@Model.NameEn" />
+                    </td>
+                </tr>
+                <tr>
+                    <th style="width:100px;">二级标题(简略描述)：</th>
+                    <td>
+                        <input type="text" name="folder.NameSubCn" value="@Model.NameSubCn" />
+                    </td>
+                </tr>
+                <tr>
                     <th>文件夹级别：</th>
                     <td>
                         <select class="combox required" name="folder.LevelId">
@@ -38,13 +55,19 @@
                     <th>父级文件夹：</th>
                     <td>
                         <input type="hidden" name="folder.ParentId" value="@Model.ParentId" />
-                        <input type="text"   name="folder.ParentName" value="@(Model.ParentId.HasValue?Model.Folder2.Name:"")" /><a href='@Url.Action("FolderLookup", new { id = Model.Id })' class="btnLook" width="500" height="250" lookupGroup="folder">查找带回</a>
+                        <input type="text" name="folder.ParentName" value="@(Model.ParentId.HasValue?Model.Folder2.Name:"")" /><a href='@Url.Action("FolderLookup", new { id = Model.Id })' class="btnLook" width="500" height="250" lookupGroup="folder">查找带回</a>
                     </td>
                 </tr>
                 <tr>
                     <th>排序:</th>
                     <td>
-                        <input type="text" name="folder.Sort" value="@Model.Sort" class="digits" />
+                        <input type="text" name="folder.Sort" value="@Model.Sort" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>显示/隐藏:</th>
+                    <td>
+                        @Html.DropDownList("folder.Show",dropShow, new { @class="combox"})
                     </td>
                 </tr>
                 <tr>

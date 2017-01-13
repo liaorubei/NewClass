@@ -20,30 +20,14 @@ namespace StudyOnline.Controllers
 
         public ActionResult Index(int? index, int? level)
         {
-
             //取出文章等级数据,因为文章等级要一直显示(前提是要求在浏览器端显示)
             ViewBag.Levels = db.Level.Where(o => o.ShowBrowser == 1).ToList();
-
-            //过滤等级功能,如果没有则不过滤,如果不为空,说明要求按等级查询数据
-            Expression<Func<Document, bool>> predicate = m => true;
+            Expression<Func<View_Document, bool>> whereLevelId = o => true;
             if (level != null)
             {
-                predicate = m => m.LevelId == level;//如果不为空,则按等级要求查询数据
+                whereLevelId = o => o.LevelId == level;
             }
-
-            //分页数据要求
-            //1,先排序
-            //2,过滤查询参数
-            //3,分页取出数据
-            ViewBag.Documents = db.Document.Where(o => o.AuditCase == AuditCase.审核).OrderByDescending(m => m.AuditDate).Where(predicate).ToPagedList(index ?? 0, pageSize);
-            /* 
-            ViewBag.Levels = new List<Level>() { new Level() { Id = 1, LevelName = "LevelName" } };
-            ViewBag.Documents = new PagedList<Document>(new List<Document>() { new Document() { Id = 1,AuditDate=DateTime.Now, Title = "Title",Level=new Level() { LevelName= "LevelName" } } }, 1, 15) { };
- */
-
-            ViewData.Model = db.View_Document.Where(o => o.ShowBrowser == 1 && o.AuditCase == AuditCase.审核).OrderByDescending(o => o.AuditDate).ToPagedList(index ?? 0, pageSize);
-
-
+            ViewData.Model = db.View_Document.Where(o => o.ShowBrowser == 1 && o.AuditCase == AuditCase.审核).OrderByDescending(o => o.AuditDate).Where(whereLevelId).ToPagedList(index ?? 0, pageSize);
             return View();
         }
 
@@ -157,6 +141,8 @@ namespace StudyOnline.Controllers
             ViewData.Model = new LoginModel() { };
             return View();
         }
+
+        public ActionResult Signin() { return View(); }
 
         public ActionResult Logout()
         {
