@@ -22,20 +22,20 @@
         <div class="pageFormContent" layoutH="58">
             <table class="formTable">
                 <tr>
-                    <th style="width:100px;">文件夹名称：</th>
+                    <th style="width:150px;">文件夹名称：</th>
                     <td>
                         <input type="hidden" name="folder.Id" value="@Model.Id" />
                         <input type="text" name="folder.Name" class="required" value="@Model.Name" />
                     </td>
                 </tr>
                 <tr>
-                    <th style="width:100px;">文件夹名称(英文)：</th>
+                    <th style="width:150px;">文件夹名称(英文)：</th>
                     <td>
                         <input type="text" name="folder.NameEn" value="@Model.NameEn" />
                     </td>
                 </tr>
                 <tr>
-                    <th style="width:100px;">二级标题(简略描述)：</th>
+                    <th style="width:150px;">二级标题(简略描述)：</th>
                     <td>
                         <input type="text" name="folder.NameSubCn" value="@Model.NameSubCn" />
                     </td>
@@ -55,19 +55,27 @@
                     <th>父级文件夹：</th>
                     <td>
                         <input type="hidden" name="folder.ParentId" value="@Model.ParentId" />
-                        <input type="text" name="folder.ParentName" value="@(Model.ParentId.HasValue?Model.Folder2.Name:"")" /><a href='@Url.Action("FolderLookup", new { id = Model.Id })' class="btnLook" width="500" height="250" lookupGroup="folder">查找带回</a>
+                        <input type="text" name="folder.ParentName" value="@(Model.ParentId.HasValue?Model.Folder2.Name:"")" /><a href='@Url.Action("FolderLookup", new { id = Model.Id,mode="parent" })' class="btnLook" width="600" height="800" lookupGroup="folder">查找带回</a>
                     </td>
                 </tr>
                 <tr>
-                    <th>排序:</th>
+                    <th>指向文件夹：</th>
+                    <td>
+                        <input type="hidden" name="folder.TargetId" value="@Model.TargetId" />
+                        <input type="text" name="folder.TargetName" value="@(Model.TargetId.HasValue?Model.Folder3.Name:"")" /><a href='@Url.Action("FolderLookup", new { id = Model.Id,mode="target" })' class="btnLook" width="600" height="800" lookupGroup="folder">查找带回</a>
+                    <span   >相当于一个链接，如在一个机构下添加已经存在的内容时， 可以在这里选择已经存在的文件夹，但是不可以选择自己</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>排序：</th>
                     <td>
                         <input type="text" name="folder.Sort" value="@Model.Sort" />
                     </td>
                 </tr>
                 <tr>
-                    <th>显示/隐藏:</th>
+                    <th>显示/隐藏：</th>
                     <td>
-                        @Html.DropDownList("folder.Show",dropShow, new { @class="combox"})
+                        @Html.DropDownList("folder.Show", dropShow, new { @class = "combox" })
                     </td>
                 </tr>
                 <tr>

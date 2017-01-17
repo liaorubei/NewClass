@@ -19,6 +19,7 @@ namespace StudyOnline.Models
             this.Document = new HashSet<Document>();
             this.Member = new HashSet<Member>();
             this.Folder1 = new HashSet<Folder>();
+            this.Folder11 = new HashSet<Folder>();
         }
     
         public int Id { get; set; }
@@ -31,6 +32,7 @@ namespace StudyOnline.Models
         public string NameSubCn { get; set; }
         public string NameSubEn { get; set; }
         public Nullable<int> Show { get; set; }
+        public Nullable<int> TargetId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Document> Document { get; set; }
@@ -40,5 +42,8 @@ namespace StudyOnline.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Folder> Folder1 { get; set; }
         public virtual Folder Folder2 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Folder> Folder11 { get; set; }
+        public virtual Folder Folder3 { get; set; }
     }
 }

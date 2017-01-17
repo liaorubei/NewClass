@@ -12,7 +12,7 @@
         <EntityTypeShape EntityType="StudyOnline.Device" Width="1.5" PointX="0.75" PointY="3.875" />
         <EntityTypeShape EntityType="StudyOnline.Document" Width="1.5" PointX="9" PointY="0.75" />
         <EntityTypeShape EntityType="StudyOnline.Feedback" Width="1.5" PointX="13.75" PointY="15.875" />
-        <EntityTypeShape EntityType="StudyOnline.Folder" Width="1.5" PointX="3.75" PointY="3" />
+        <EntityTypeShape EntityType="StudyOnline.Folder" Width="1.5" PointX="3.5" PointY="2.875" />
         <EntityTypeShape EntityType="StudyOnline.Group" Width="1.5" PointX="5.25" PointY="11.125" />
         <EntityTypeShape EntityType="StudyOnline.HsLevel" Width="1.5" PointX="10.75" PointY="11.5" />
         <EntityTypeShape EntityType="StudyOnline.Level" Width="1.5" PointX="1.5" PointY="6.375" />
@@ -51,7 +51,6 @@
         <AssociationConnector Association="StudyOnline.Photo" />
         <AssociationConnector Association="StudyOnline.X_Menu_X_Role" />
         <AssociationConnector Association="StudyOnline.X_Role_X_User" />
-        <EntityTypeShape EntityType="StudyOnline.View_FolderWithLevel" Width="1.5" PointX="11.375" PointY="0.75" />
         <EntityTypeShape EntityType="StudyOnline.View_Folder_Member_User" Width="1.5" PointX="0.75" PointY="0.75" />
         <EntityTypeShape EntityType="StudyOnline.View_Chat_user" Width="1.5" PointX="17.375" PointY="0.75" />
         <EntityTypeShape EntityType="StudyOnline.View_UserLeftJoinMember" Width="1.5" PointX="17.375" PointY="4.75" />
@@ -60,6 +59,8 @@
         <EntityTypeShape EntityType="StudyOnline.HskkQuestion" Width="1.5" PointX="19.625" PointY="10" />
         <AssociationConnector Association="StudyOnline.FK_HskkQuerstion_Hskk" />
         <EntityTypeShape EntityType="StudyOnline.View_Folder_LeftJoin_MemberFolder" Width="1.5" PointX="18.375" PointY="13.75" />
+        <AssociationConnector Association="StudyOnline.FK_Folder_TargetId" />
+        <EntityTypeShape EntityType="StudyOnline.View_Document_Lite" Width="1.5" PointX="11.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

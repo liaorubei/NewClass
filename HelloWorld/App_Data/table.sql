@@ -456,6 +456,8 @@ select * from [dbo].[HskkQuestion]
  --alter table [dbo].[Product] add [Hour] float 20161216 更改价目表，添加一个学时的字段 
 
 --20161229由于要求添加组织机构，客户端显示方式改变成未登录只能查看公开内容，登录之后可以查看未公开内容，所以添加了这个视图方便查看
+--20170115由于要求添加组织机构也能显示和大众会员都能看到的书籍，为了不重复添加，给文件添加链接Id
+ALTER TABLE [Folder] Add [TargetId] INT,CONSTRAINT FK_Folder_TargetId Foreign key([TargetId]) references [Folder] ([Id])--同上
 DROP   VIEW View_Folder_LeftJoin_MemberFolder
 CREATE VIEW View_Folder_LeftJoin_MemberFolder AS
 (
@@ -470,8 +472,28 @@ SELECT
 [Folder].[Cover],
 [Folder].[LevelId],
 [Folder].[ParentId],
+[Folder].[TargetId],
 [Member_Folder].[MemberId],
-(SELECT COUNT(FolderId) FROM Document AS D WHERE D.FolderId=[Folder].[Id]) AS DocsCount,
-(SELECT COUNT(ParentId) FROM Folder   AS F WHERE F.ParentId=[Folder].[Id]) AS KidsCount
+(SELECT COUNT(FolderId) FROM Document AS D WHERE D.FolderId=(case when [Folder].[TargetId]>0 then [Folder].[TargetId] else [Folder].[Id] end)) AS DocsCount,--因为添加了TargetId的原因，所以在这里做一个三元运算
+(SELECT COUNT(ParentId) FROM Folder   AS F WHERE F.ParentId=(case when [Folder].[TargetId]>0 then [Folder].[TargetId] else [Folder].[Id] end)) AS KidsCount --因为有TargetId之后，原数据就成了指向性内容，其本身没有内容
 FROM [Folder] LEFT JOIN [Member_Folder] ON [Folder].[Id]=[Member_Folder].[FolderId]
+)
+
+--优化后台数据查询而做的视图，只检索需要的字段，去掉大段文字的方案
+DROP VIEW   View_Document_Lite
+CREATE VIEW View_Document_Lite AS 
+(
+SELECT 
+[Document].[Id],
+[Document].[Title],
+[Document].[TitleTwo],
+[Document].[TitleSubCn],
+[Document].[TitleSubEn],
+[Document].[AddDate],
+[Document].[AuditCase],
+[Document].[AuditDate],
+[Document].[Sort],
+[Document].[LevelId],
+[Document].[FolderId]
+FROM [Document]
 )

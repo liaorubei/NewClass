@@ -52,12 +52,12 @@ namespace StudyOnline.Models
         public virtual DbSet<X_User> X_User { get; set; }
         public virtual DbSet<View_Document> View_Document { get; set; }
         public virtual DbSet<View_User> View_User { get; set; }
-        public virtual DbSet<View_FolderWithLevel> View_FolderWithLevel { get; set; }
         public virtual DbSet<View_Folder_Member_User> View_Folder_Member_User { get; set; }
         public virtual DbSet<View_Chat_user> View_Chat_user { get; set; }
         public virtual DbSet<View_UserLeftJoinMember> View_UserLeftJoinMember { get; set; }
         public virtual DbSet<Hskk> Hskk { get; set; }
         public virtual DbSet<HskkQuestion> HskkQuestion { get; set; }
         public virtual DbSet<View_Folder_LeftJoin_MemberFolder> View_Folder_LeftJoin_MemberFolder { get; set; }
+        public virtual DbSet<View_Document_Lite> View_Document_Lite { get; set; }
     }
 }

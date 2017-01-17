@@ -51,7 +51,7 @@ namespace StudyOnline.Areas.Api.Controllers
 
             //要求是Show！=0的数据才查询出去
             var temp = entities.View_Folder_LeftJoin_MemberFolder.Where(predicateUserId).Where(predicateLevelId).Where(predicateParentId).Where(o => o.Show != 0).OrderByDescending(o => o.MemberId).ThenBy(o => o.Sort).Skip(skip ?? 0).Take(take ?? Int32.MaxValue).ToList();
-        
+
             return Json(new
             {
                 code = 200,
@@ -68,6 +68,7 @@ namespace StudyOnline.Areas.Api.Controllers
                     o.Cover,
                     o.LevelId,
                     o.ParentId,
+                    o.TargetId,
                     o.MemberId,
                     o.DocsCount,
                     o.KidsCount,
@@ -100,6 +101,8 @@ namespace StudyOnline.Areas.Api.Controllers
                     o.NameSubEn,
                     o.LevelId,
                     o.Cover,
+                    o.ParentId,
+                    o.TargetId,
                     DocsCount = o.Document.Count,
                     Permission = o.Member.Any(),
                 })
@@ -136,8 +139,9 @@ namespace StudyOnline.Areas.Api.Controllers
             });
         }
 
+
         /// <summary>
-        /// 获取指定等级下的文件夹列表,一级文件夹,即没有父文件夹的条目
+        /// 获取指定等级下的文件夹列表,一级文件夹,即没有父文件夹的条目，，，，，，，该方法废弃
         /// </summary>
         /// <param name="levelId">等级Id</param>
         /// <param name="skip">skip</param>
@@ -146,7 +150,8 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult GetListByLevelIdV2(Int32 levelId, Int32? skip, Int32? take)
         {
-            var temp = entities.Folder.Where(o => o.Show != 0).Where(o => o.LevelId == levelId && o.ParentId == null).OrderBy(o => o.Sort).Skip(skip ?? 0).Take(take ?? Int32.MaxValue);
+            //因为没有输入User Id，所以只能查看没有限制的文件夹或者课本，而不是能查看全部
+            var temp = entities.View_Folder_LeftJoin_MemberFolder.Where(o => o.Show != 0).Where(o => o.LevelId == levelId && o.ParentId == null && o.MemberId == null).OrderBy(o => o.Sort).Skip(skip ?? 0).Take(take ?? Int32.MaxValue);
             return Json(new
             {
                 code = 200,
@@ -160,9 +165,11 @@ namespace StudyOnline.Areas.Api.Controllers
                     o.NameSubEn,
                     o.LevelId,
                     o.Cover,
-                    DocsCount = o.Document.Count(i => i.AuditCase == AuditCase.审核),
-                    Permission = o.Member.Any(),
-                    HasChildren = o.Folder1.Any(),
+                    o.DocsCount,
+                    o.KidsCount,
+                    o.TargetId,
+                    Permission = false,
+                    HasChildren = o.KidsCount > 0,
                     isFolder = true
                 })
             });
@@ -189,6 +196,8 @@ namespace StudyOnline.Areas.Api.Controllers
                     o.NameEn,
                     o.NameSubCn,
                     o.NameSubEn,
+                    o.ParentId,
+                    o.TargetId,
                     o.Cover,
                     DocsCount = o.Document.Count(i => i.AuditCase == AuditCase.审核),
                     Permission = o.Member.Any(),
@@ -251,7 +260,9 @@ namespace StudyOnline.Areas.Api.Controllers
                     folder.NameEn,
                     folder.NameSubCn,
                     folder.NameSubEn,
-                    folder.LevelId
+                    folder.LevelId,
+                    folder.ParentId,
+                    folder.TargetId
                 }
             });
         }

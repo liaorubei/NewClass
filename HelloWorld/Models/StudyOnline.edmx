@@ -112,6 +112,7 @@
           <Property Name="NameSubCn" Type="nvarchar" MaxLength="256" />
           <Property Name="NameSubEn" Type="nvarchar" MaxLength="256" />
           <Property Name="Show" Type="int" />
+          <Property Name="TargetId" Type="int" />
         </EntityType>
         <EntityType Name="Group">
           <Key>
@@ -403,7 +404,7 @@
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
         </EntityType>
         <!--生成过程中发现错误:
-警告 6002: 表/视图“voc_test20160823.dbo.View_Chat_user”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+警告 6002: 表/视图“ChineseChatTest.dbo.View_Chat_user”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
         <EntityType Name="View_Chat_user">
           <Key>
             <PropertyRef Name="Id" />
@@ -424,7 +425,7 @@
           <Property Name="BalanceS" Type="int" />
         </EntityType>
         <!--生成过程中发现错误:
-警告 6002: 表/视图“voc_test20160823.dbo.View_Document”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+警告 6002: 表/视图“ChineseChatTest.dbo.View_Document”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
         <EntityType Name="View_Document">
           <Key>
             
@@ -445,11 +446,28 @@
           <Property Name="AuditDate" Type="datetime" />
         </EntityType>
         <!--生成过程中发现错误:
-警告 6002: 表/视图“voc_test20160823.dbo.View_Folder_LeftJoin_MemberFolder”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+警告 6002: 表/视图“ChineseChatTest.dbo.View_Document_Lite”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="View_Document_Lite">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="TitleTwo" Type="nvarchar" MaxLength="256" />
+          <Property Name="TitleSubCn" Type="nvarchar" MaxLength="256" />
+          <Property Name="TitleSubEn" Type="nvarchar" MaxLength="256" />
+          <Property Name="AddDate" Type="datetime" />
+          <Property Name="AuditCase" Type="int" />
+          <Property Name="AuditDate" Type="datetime" />
+          <Property Name="Sort" Type="float" />
+          <Property Name="LevelId" Type="int" Nullable="false" />
+          <Property Name="FolderId" Type="int" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“ChineseChatTest.dbo.View_Folder_LeftJoin_MemberFolder”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
         <EntityType Name="View_Folder_LeftJoin_MemberFolder">
           <Key>
             <PropertyRef Name="Id" />
-            <PropertyRef Name="Name" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
@@ -461,12 +479,13 @@
           <Property Name="Cover" Type="nvarchar" MaxLength="256" />
           <Property Name="LevelId" Type="int" />
           <Property Name="ParentId" Type="int" />
+          <Property Name="TargetId" Type="int" />
           <Property Name="MemberId" Type="varchar" MaxLength="32" />
           <Property Name="DocsCount" Type="int" />
           <Property Name="KidsCount" Type="int" />
         </EntityType>
         <!--生成过程中发现错误:
-警告 6002: 表/视图“voc_test20160823.dbo.View_Folder_Member_User”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+警告 6002: 表/视图“ChineseChatTest.dbo.View_Folder_Member_User”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
         <EntityType Name="View_Folder_Member_User">
           <Key>
             <PropertyRef Name="MemberId" />
@@ -480,11 +499,11 @@
           <Property Name="To" Type="datetime" />
         </EntityType>
         <!--生成过程中发现错误:
-警告 6002: 表/视图“voc_test20160823.dbo.View_FolderWithLevel”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+警告 6002: 表/视图“ChineseChatTest.dbo.View_FolderWithLevel”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
         <EntityType Name="View_FolderWithLevel">
           <Key>
             <PropertyRef Name="FolderId" />
-            
+            <PropertyRef Name="FolderName" />
           </Key>
           <Property Name="FolderId" Type="int" Nullable="false" />
           <Property Name="FolderName" Type="nvarchar" MaxLength="50" Nullable="false" />
@@ -498,7 +517,7 @@
           <Property Name="ShowCover" Type="int" />
         </EntityType>
         <!--生成过程中发现错误:
-警告 6002: 表/视图“voc_test20160823.dbo.View_User”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+警告 6002: 表/视图“ChineseChatTest.dbo.View_User”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
         <EntityType Name="View_User">
           <Key>
             <PropertyRef Name="Id" />
@@ -520,11 +539,10 @@
           <Property Name="Coins" Type="int" />
         </EntityType>
         <!--生成过程中发现错误:
-警告 6002: 表/视图“voc_test20160823.dbo.View_UserLeftJoinMember”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+警告 6002: 表/视图“ChineseChatTest.dbo.View_UserLeftJoinMember”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
         <EntityType Name="View_UserLeftJoinMember">
           <Key>
             <PropertyRef Name="Id" />
-            <PropertyRef Name="Username" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="Username" Type="nvarchar" MaxLength="128" Nullable="false" />
@@ -624,6 +642,18 @@
             </Principal>
             <Dependent Role="Folder">
               <PropertyRef Name="LevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Folder_TargetId">
+          <End Role="Folder" Type="Self.Folder" Multiplicity="0..1" />
+          <End Role="Folder1" Type="Self.Folder" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Folder">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Folder1">
+              <PropertyRef Name="TargetId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -900,6 +930,21 @@
     [View_Document].[AuditDate] AS [AuditDate]
     FROM [dbo].[View_Document] AS [View_Document]</DefiningQuery>
           </EntitySet>
+          <EntitySet Name="View_Document_Lite" EntityType="Self.View_Document_Lite" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_Document_Lite].[Id] AS [Id], 
+    [View_Document_Lite].[Title] AS [Title], 
+    [View_Document_Lite].[TitleTwo] AS [TitleTwo], 
+    [View_Document_Lite].[TitleSubCn] AS [TitleSubCn], 
+    [View_Document_Lite].[TitleSubEn] AS [TitleSubEn], 
+    [View_Document_Lite].[AddDate] AS [AddDate], 
+    [View_Document_Lite].[AuditCase] AS [AuditCase], 
+    [View_Document_Lite].[AuditDate] AS [AuditDate], 
+    [View_Document_Lite].[Sort] AS [Sort], 
+    [View_Document_Lite].[LevelId] AS [LevelId], 
+    [View_Document_Lite].[FolderId] AS [FolderId]
+    FROM [dbo].[View_Document_Lite] AS [View_Document_Lite]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="View_Folder_LeftJoin_MemberFolder" EntityType="Self.View_Folder_LeftJoin_MemberFolder" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [View_Folder_LeftJoin_MemberFolder].[Id] AS [Id], 
@@ -912,6 +957,7 @@
     [View_Folder_LeftJoin_MemberFolder].[Cover] AS [Cover], 
     [View_Folder_LeftJoin_MemberFolder].[LevelId] AS [LevelId], 
     [View_Folder_LeftJoin_MemberFolder].[ParentId] AS [ParentId], 
+    [View_Folder_LeftJoin_MemberFolder].[TargetId] AS [TargetId], 
     [View_Folder_LeftJoin_MemberFolder].[MemberId] AS [MemberId], 
     [View_Folder_LeftJoin_MemberFolder].[DocsCount] AS [DocsCount], 
     [View_Folder_LeftJoin_MemberFolder].[KidsCount] AS [KidsCount]
@@ -1002,6 +1048,10 @@
           <AssociationSet Name="FK_Folder_Level" Association="Self.FK_Folder_Level">
             <End Role="Level" EntitySet="Level" />
             <End Role="Folder" EntitySet="Folder" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Folder_TargetId" Association="Self.FK_Folder_TargetId">
+            <End Role="Folder" EntitySet="Folder" />
+            <End Role="Folder1" EntitySet="Folder" />
           </AssociationSet>
           <AssociationSet Name="FK_Group_NimUser" Association="Self.FK_Group_NimUser">
             <End Role="NimUser" EntitySet="NimUser" />
@@ -1177,7 +1227,6 @@
             <End Role="X_Role" EntitySet="X_Role" />
             <End Role="X_User" EntitySet="X_User" />
           </AssociationSet>
-          <EntitySet Name="View_FolderWithLevel" EntityType="StudyOnline.View_FolderWithLevel" />
           <EntitySet Name="View_Folder_Member_User" EntityType="StudyOnline.View_Folder_Member_User" />
           <EntitySet Name="View_Chat_user" EntityType="StudyOnline.View_Chat_user" />
           <EntitySet Name="View_UserLeftJoinMember" EntityType="StudyOnline.View_UserLeftJoinMember" />
@@ -1192,6 +1241,11 @@
             <End Role="HskkQuestion" EntitySet="HskkQuestion" />
           </AssociationSet>
           <EntitySet Name="View_Folder_LeftJoin_MemberFolder" EntityType="StudyOnline.View_Folder_LeftJoin_MemberFolder" />
+          <AssociationSet Name="FK_Folder_TargetId" Association="StudyOnline.FK_Folder_TargetId">
+            <End Role="Folder" EntitySet="Folder" />
+            <End Role="Folder1" EntitySet="Folder" />
+          </AssociationSet>
+          <EntitySet Name="View_Document_Lite" EntityType="StudyOnline.View_Document_Lite" />
         </EntityContainer>
         <EntityType Name="Android">
           <Key>
@@ -1311,6 +1365,9 @@
           <Property Name="NameSubCn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="NameSubEn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="Show" Type="Int32" />
+          <Property Name="TargetId" Type="Int32" />
+          <NavigationProperty Name="Folder11" Relationship="StudyOnline.FK_Folder_TargetId" FromRole="Folder" ToRole="Folder1" />
+          <NavigationProperty Name="Folder3" Relationship="StudyOnline.FK_Folder_TargetId" FromRole="Folder1" ToRole="Folder" />
         </EntityType>
         <EntityType Name="Group">
           <Key>
@@ -1791,21 +1848,6 @@
           <End Type="StudyOnline.X_Role" Role="X_Role" Multiplicity="*" />
           <End Type="StudyOnline.X_User" Role="X_User" Multiplicity="*" />
         </Association>
-        <EntityType Name="View_FolderWithLevel">
-          <Key>
-            <PropertyRef Name="FolderId" />
-          </Key>
-          <Property Name="FolderId" Type="Int32" Nullable="false" />
-          <Property Name="FolderName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="FolderSort" Type="Int32" />
-          <Property Name="FolderCover" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="LevelId" Type="Int32" />
-          <Property Name="LevelName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="LevelSort" Type="Int32" />
-          <Property Name="LevelShow" Type="Int32" />
-          <Property Name="ShowBrowser" Type="Int32" />
-          <Property Name="ShowCover" Type="Int32" />
-        </EntityType>
         <EntityType Name="View_Folder_Member_User">
           <Key>
             <PropertyRef Name="MemberId" />
@@ -1838,7 +1880,6 @@
         <EntityType Name="View_UserLeftJoinMember">
           <Key>
             <PropertyRef Name="Id" />
-            <PropertyRef Name="Username" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
           <Property Name="Username" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
@@ -1908,7 +1949,6 @@
         <EntityType Name="View_Folder_LeftJoin_MemberFolder">
           <Key>
             <PropertyRef Name="Id" />
-            <PropertyRef Name="Name" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1923,6 +1963,35 @@
           <Property Name="MemberId" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
           <Property Name="DocsCount" Type="Int32" />
           <Property Name="KidsCount" Type="Int32" />
+          <Property Name="TargetId" Type="Int32" />
+        </EntityType>
+        <Association Name="FK_Folder_TargetId">
+          <End Type="StudyOnline.Folder" Role="Folder" Multiplicity="0..1" />
+          <End Type="StudyOnline.Folder" Role="Folder1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Folder">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Folder1">
+              <PropertyRef Name="TargetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="View_Document_Lite">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="TitleTwo" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="TitleSubCn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="TitleSubEn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="AddDate" Type="DateTime" Precision="3" />
+          <Property Name="AuditCase" Type="Int32" />
+          <Property Name="AuditDate" Type="DateTime" Precision="3" />
+          <Property Name="Sort" Type="Double" />
+          <Property Name="LevelId" Type="Int32" Nullable="false" />
+          <Property Name="FolderId" Type="Int32" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -2033,6 +2102,7 @@
           <EntitySetMapping Name="Folder">
             <EntityTypeMapping TypeName="StudyOnline.Folder">
               <MappingFragment StoreEntitySet="Folder">
+                <ScalarProperty Name="TargetId" ColumnName="TargetId" />
                 <ScalarProperty Name="Show" ColumnName="Show" />
                 <ScalarProperty Name="NameSubEn" ColumnName="NameSubEn" />
                 <ScalarProperty Name="NameSubCn" ColumnName="NameSubCn" />
@@ -2362,22 +2432,6 @@
               <ScalarProperty Name="Id" ColumnName="Id_Role" />
             </EndProperty>
           </AssociationSetMapping>
-          <EntitySetMapping Name="View_FolderWithLevel">
-            <EntityTypeMapping TypeName="StudyOnline.View_FolderWithLevel">
-              <MappingFragment StoreEntitySet="View_FolderWithLevel">
-                <ScalarProperty Name="ShowCover" ColumnName="ShowCover" />
-                <ScalarProperty Name="ShowBrowser" ColumnName="ShowBrowser" />
-                <ScalarProperty Name="LevelShow" ColumnName="LevelShow" />
-                <ScalarProperty Name="LevelSort" ColumnName="LevelSort" />
-                <ScalarProperty Name="LevelName" ColumnName="LevelName" />
-                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
-                <ScalarProperty Name="FolderCover" ColumnName="FolderCover" />
-                <ScalarProperty Name="FolderSort" ColumnName="FolderSort" />
-                <ScalarProperty Name="FolderName" ColumnName="FolderName" />
-                <ScalarProperty Name="FolderId" ColumnName="FolderId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="View_Folder_Member_User">
             <EntityTypeMapping TypeName="StudyOnline.View_Folder_Member_User">
               <MappingFragment StoreEntitySet="View_Folder_Member_User">
@@ -2456,6 +2510,7 @@
           <EntitySetMapping Name="View_Folder_LeftJoin_MemberFolder">
             <EntityTypeMapping TypeName="StudyOnline.View_Folder_LeftJoin_MemberFolder">
               <MappingFragment StoreEntitySet="View_Folder_LeftJoin_MemberFolder">
+                <ScalarProperty Name="TargetId" ColumnName="TargetId" />
                 <ScalarProperty Name="KidsCount" ColumnName="KidsCount" />
                 <ScalarProperty Name="DocsCount" ColumnName="DocsCount" />
                 <ScalarProperty Name="MemberId" ColumnName="MemberId" />
@@ -2468,6 +2523,23 @@
                 <ScalarProperty Name="NameSubCn" ColumnName="NameSubCn" />
                 <ScalarProperty Name="NameEn" ColumnName="NameEn" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="View_Document_Lite">
+            <EntityTypeMapping TypeName="StudyOnline.View_Document_Lite">
+              <MappingFragment StoreEntitySet="View_Document_Lite">
+                <ScalarProperty Name="FolderId" ColumnName="FolderId" />
+                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
+                <ScalarProperty Name="Sort" ColumnName="Sort" />
+                <ScalarProperty Name="AuditDate" ColumnName="AuditDate" />
+                <ScalarProperty Name="AuditCase" ColumnName="AuditCase" />
+                <ScalarProperty Name="AddDate" ColumnName="AddDate" />
+                <ScalarProperty Name="TitleSubEn" ColumnName="TitleSubEn" />
+                <ScalarProperty Name="TitleSubCn" ColumnName="TitleSubCn" />
+                <ScalarProperty Name="TitleTwo" ColumnName="TitleTwo" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

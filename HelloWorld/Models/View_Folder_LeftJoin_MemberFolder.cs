@@ -26,5 +26,6 @@ namespace StudyOnline.Models
         public string MemberId { get; set; }
         public Nullable<int> DocsCount { get; set; }
         public Nullable<int> KidsCount { get; set; }
+        public Nullable<int> TargetId { get; set; }
     }
 }

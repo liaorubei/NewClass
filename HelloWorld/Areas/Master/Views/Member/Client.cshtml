@@ -1,4 +1,4 @@
-﻿@model PagedList<View_UserLeftJoinMember>
+﻿@model PagedList<View_User>
 @{
     Layout = null;
 }
@@ -42,11 +42,6 @@
                 <th>昵称</th>
                 <th>邮箱</th>
                 <th width="35" align="center">昵称</th>
-                @if ("remove".Equals(ViewBag.Operate))
-                {
-                    <th>From</th>
-                    <th>To</th>
-                }
             </tr>
         </thead>
         <tbody>
@@ -60,11 +55,7 @@
                     <td>@item.Nickname</td>
                     <td>@item.Email</td>
                     <td align="center">@(item.Category == 0 ? "学生" : item.Category == 1 ? "教师" : "未知")</td>
-                    @if ("remove".Equals(ViewBag.Operate))
-                    {
-                        <td>@item.From.Value.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                        <td>@item.To.Value.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    }
+
                 </tr>
             }
         </tbody>

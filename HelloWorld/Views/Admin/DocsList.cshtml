@@ -1,11 +1,9 @@
-﻿@using StudyOnline.Models;
-@using Webdiyer.WebControls.Mvc;
-@using StudyOnline.Utils;
-@model StudyOnline.Models.Document
+﻿@using StudyOnline.Utils;
+
 
 @{
     Layout = null;
-    PagedList<Document> docs = ViewBag.Docs;
+    PagedList<View_Document_Lite> docs = ViewBag.Docs;
     List<Level> levels = ViewBag.Levels;
     List<Folder> folders = ViewBag.Folders;
     List<SelectListItem> dropLevel = new List<SelectListItem>();

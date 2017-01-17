@@ -10,7 +10,7 @@
     <form id="pagerForm" onsubmit="return navTabSearch(this);" action='@Url.Action("Select")' method="post">
         <input type="hidden" name="pageNum" value="@Model.CurrentPageIndex" />
         <input type="hidden" name="numPerPage" value="@Model.PageSize" />
-        <div class="searchBar">
+        @*<div class="searchBar">
             <ul class="searchContent">
                 <li>
                     <label>我的客户：</label>
@@ -27,14 +27,14 @@
                     </select>
                 </li>
             </ul>
-
             <div class="subBar">
                 <ul>
                     <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
                     <li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>
                 </ul>
             </div>
-        </div>
+        </div>*@
+
     </form>
 </div>
 <div class="pageContent">
@@ -57,7 +57,8 @@
             <tr>
                 <th width="35" align="center">序号</th>
                 <th align="center">会员类型</th>
-                <th>有效期</th>
+                <th>文件夹</th>
+                <th>用户</th>
                 @*<th width="100">客户类型</th>
                     <th width="150">证件号码</th>
                     <th width="80" align="center">信用等级</th>
@@ -74,7 +75,8 @@
                 <tr target="id" rel="@item.Id">
                     <td align="center">@(++i)</td>
                     <td>@item.Name</td>
-                    <td align="center">@item.Month</td>
+                    <td align="center"><a href="@Url.Action("")" target="dialog" mask="true" width="800" height="600" title="文件夹"><span>@item.Folder.Count</span></a></td>
+                    <td>@item.Member_User.Count</td>
                     @*<td>联社营业部</td>
                         <td>29385739203816293</td>
                         <td>5级</td>

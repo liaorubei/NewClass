@@ -1,7 +1,7 @@
 ﻿@model Member
 @{
     Layout = null;
-    List<View_FolderWithLevel> folders = ViewBag.Folders;
+    List<Folder> folders = ViewBag.Folders;
 }
 
 
@@ -10,13 +10,12 @@
     <form method="post" action='@Url.Action("Folder")' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
         <div class="pageFormContent " layoutH="58">
             <input type="hidden" name="Id" value="@Model.Id" />
-            <table class="list" layoutH="88">
+            <table class="list" layoutH="58">
                 <thead>
                     <tr>
                         <th align="center">序号</th>
                         <th align="center"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
-                        <th >文件夹名称</th>
-                        <th >类别名称</th>        
+                        <th>文件夹名称</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -24,17 +23,17 @@
                     @foreach (var item in folders)
                     {
 
-                        <tr>
-                            <td align="center">@(++i)</td>
-                            <td align="center"><input name="ids" value="@item.FolderId" type="checkbox" @(Model.Folder.Select(o=>o.Id).Contains(item.FolderId)?"checked=\"checked\"":"") ></td>
-                            <td>@item.FolderName</td>
-                            <td>@item.LevelName</td>     
+                    <tr>
+                        <td align="center">@(++i)</td>
+                        <td align="center"><input name="ids" value="@item.Id" type="checkbox" @(Model.Folder.Select(o=>o.Id).Contains(item.Id)?"checked=\"checked\"":"")></td>
+                        <td>@item.Name</td>
                         </tr>
                     }
 
                 </tbody>
             </table>
-            <div class="panelBar">
+           
+             @*<div class="panelBar">
                 <div class="pages">
                     <span>显示</span>
                     <select class="combox" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
@@ -45,10 +44,8 @@
                     </select>
                     <span>条，共@(folders.Count)条</span>
                 </div>
-
                 <div class="pagination" targetType="dialog" totalCount="@(folders.Count)" numPerPage="@(folders.Count)" pageNumShown="10" currentPage="1"></div>
-
-            </div>
+            </div>*@
         </div>
         <div class="formBar">
             <ul>

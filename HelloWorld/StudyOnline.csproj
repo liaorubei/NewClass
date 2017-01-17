@@ -258,6 +258,7 @@
     <Compile Include="Areas\Master\Controllers\BaseController.cs" />
     <Compile Include="Areas\Master\Controllers\DocumentController.cs" />
     <Compile Include="Areas\Master\Controllers\FeedbackController.cs" />
+    <Compile Include="Areas\Master\Controllers\FolderController.cs" />
     <Compile Include="Areas\Master\Controllers\HskkController.cs" />
     <Compile Include="Areas\Master\Controllers\MemberController.cs" />
     <Compile Include="Areas\Master\Controllers\SystemController.cs" />
@@ -373,7 +374,7 @@
     <Compile Include="Models\View_Document.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\View_FolderWithLevel.cs">
+    <Compile Include="Models\View_Document_Lite.cs">
       <DependentUpon>StudyOnline.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\View_Folder_LeftJoin_MemberFolder.cs">
@@ -837,6 +838,7 @@
     <Content Include="Areas\Master\Views\Hskk\Part.cshtml" />
     <Content Include="Areas\Master\Views\Hskk\Question.cshtml" />
     <Content Include="Areas\Master\Views\Hskk\AttachmentLookup.cshtml" />
+    <Content Include="Areas\Master\Views\Folder\Member.cshtml" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>

@@ -64,13 +64,13 @@ namespace StudyOnline.Controllers
         public ActionResult DocsList(String keyword, Int32? levelId, Int32? folderId, Int32? pageNum, Int32? numPerPage, String orderField, String orderDirection)
         {
             //检索处理
-            Func<Document, bool> predicateKeyWord = d => true;
-            Func<Document, bool> predicateLevelId = d => true;
-            Func<Document, bool> predicateFolderId = o => true;
+            Expression<Func<View_Document_Lite, bool>> predicateKeyWord = d => true;
+            Expression<Func<View_Document_Lite, bool>> predicateLevelId = d => true;
+            Expression<Func<View_Document_Lite, bool>> predicateFolderId = o => true;
 
             if (!String.IsNullOrEmpty(keyword))
             {
-                predicateKeyWord = o => o.Title.Contains(keyword) || (o.TitleSubCn ?? "").Contains(keyword);
+                predicateKeyWord = o => o.Title.Contains(keyword) || o.TitleSubCn.Contains(keyword);
             }
 
             if (levelId.HasValue && levelId > 0)
@@ -83,7 +83,7 @@ namespace StudyOnline.Controllers
                 predicateFolderId = o => o.FolderId == folderId;
             }
 
-            Func<Document, object> keySelector = o => o.Sort;
+            Func<View_Document_Lite, object> keySelector = o => o.Sort;
             if (!String.IsNullOrEmpty(orderField))
             {
                 if ("AddDate".Equals(orderField))
@@ -101,11 +101,11 @@ namespace StudyOnline.Controllers
             }
 
             //数据和分页检索条件处理
-            PagedList<Document> docs = entities.Document.Where(predicateKeyWord).Where(predicateLevelId).Where(predicateFolderId).OrderByDescending(keySelector).ToList().ToPagedList(pageNum ?? 0, numPerPage ?? 20);
+            PagedList<View_Document_Lite> docs = entities.View_Document_Lite.Where(predicateKeyWord).Where(predicateLevelId).Where(predicateFolderId).OrderByDescending(keySelector).ToPagedList(pageNum ?? 0, numPerPage ?? 20);
             ViewBag.Docs = docs;
 
             List<Level> levels = entities.Level.OrderBy(o => o.Name).ToList();
-            List<Folder> folders = entities.Folder.OrderBy(o => o.Name).ToList();
+            List<Folder> folders = entities.Folder.Where(o => o.TargetId == null).OrderBy(o => o.Name).ToList();
 
             ViewBag.Levels = levels;
             ViewBag.Folders = folders;
@@ -123,8 +123,8 @@ namespace StudyOnline.Controllers
             int pageIndex = ConvertUtil.ToInt32(form["pageNum"], 1);
 
             //检索处理
-            Func<Document, bool> predicateKeyWord = d => true;
-            Func<Document, bool> predicateLevelId = d => true;
+            Expression<Func<Document, bool>> predicateKeyWord = d => true;
+            Expression<Func<Document, bool>> predicateLevelId = d => true;
             String keyword = form["keyword"];
             if (!String.IsNullOrEmpty(keyword))
             {
@@ -390,7 +390,16 @@ namespace StudyOnline.Controllers
             return View();
         }
 
-        public ActionResult FolderLookup(Int32 id, Int32? pageNum, Int32? numPerPage, String keyword)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="pageNum"></param>
+        /// <param name="numPerPage"></param>
+        /// <param name="keyword"></param>
+        /// <param name="mode"></param>
+        /// <returns></returns>
+        public ActionResult FolderLookup(Int32 id, Int32? pageNum, Int32? numPerPage, String keyword, String mode)
         {
             Expression<Func<Folder, bool>> predicate = o => true;
             if (!String.IsNullOrEmpty(keyword))
@@ -401,6 +410,7 @@ namespace StudyOnline.Controllers
             ViewData.Model = entities.Folder.Where(o => o.Id != id).Where(predicate).OrderBy(o => o.LevelId).ThenBy(o => o.Sort).ToPagedList(pageNum ?? 0, numPerPage ?? 25);
             ViewBag.Id = id;
             ViewBag.Keyword = keyword;
+            ViewBag.Mode = mode;
             return View();
         }
 
