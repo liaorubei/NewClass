@@ -215,5 +215,16 @@ namespace StudyOnline.Controllers
 
         }
 
+        public ActionResult Lock(Int32 chatId) {
+
+
+
+
+
+
+
+            return null;
+        }
+
     }
 }

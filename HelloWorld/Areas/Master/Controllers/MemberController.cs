@@ -115,7 +115,7 @@ namespace StudyOnline.Areas.Master.Controllers
             System.Linq.Expressions.Expression<Func<View_User, bool>> predicateKeyword = o => true;
             if (!String.IsNullOrEmpty(keyword))
             {
-                predicateKeyword = o => o.Username.Contains(keyword);
+                predicateKeyword = o => o.Username.Contains(keyword)||o.Nickname.Contains(keyword)||o.Email.Contains(keyword);
             }
 
             System.Linq.Expressions.Expression<Func<View_User, bool>> predicateCategory = o => true;

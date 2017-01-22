@@ -22,7 +22,7 @@ namespace StudyOnline.Results
         {
             base.Data = data;
             base.JsonRequestBehavior = behavior;
-            this.DateTimeFormat = "yyyy-MM-dd hh:mm:ss";
+            this.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
         }
         public DateTimeSEJsonResult(object data, String dateTimeFormat)
         {

@@ -1479,7 +1479,7 @@
           <Property Name="Job" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="About" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
           <Property Name="Voice" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <Property Name="Coins" Type="Int32" />
+          <Property Name="Coins" Type="Int32" ConcurrencyMode="Fixed" />
           <Property Name="Score" Type="Double" />
           <Property Name="School" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="Spoken" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />

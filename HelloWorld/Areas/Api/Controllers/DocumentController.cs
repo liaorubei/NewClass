@@ -51,6 +51,7 @@ namespace StudyOnline.Areas.Api.Controllers
                 o.Contents,
                 o.FolderId,
                 o.LevelId,
+                AuditDate = (o.AuditDate.HasValue ? o.AuditDate.Value.ToString("yyyy-MM-dd HH:mm:ss") : null),
                 Date = (o.AuditDate.HasValue ? o.AuditDate.Value.ToString("yyyy-MM-dd") : null),
                 Size = o.Length,
                 Time = o.Duration

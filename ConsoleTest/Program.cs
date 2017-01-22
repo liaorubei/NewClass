@@ -11,15 +11,79 @@ using System.Threading;
 
 namespace ConsoleTest
 {
+    // using System.Threading;
+
+    class Account
+    {
+        private Object thisLock = new Object();
+        int balance;
+
+        Random r = new Random();
+
+        public Account(int initial)
+        {
+            balance = initial;
+        }
+
+        int Withdraw(int amount)
+        {
+
+            // This condition never is true unless the lock statement
+            // is commented out.
+            if (balance < 0)
+            {
+                throw new Exception("Negative Balance");
+            }
+
+            // Comment out the next line to see the effect of leaving out 
+            // the lock keyword.
+            lock (thisLock)
+            {
+                Console.WriteLine("Name=" + Thread.CurrentThread.Name + "_top");
+                if (balance >= amount)
+                {
+                    Console.WriteLine("Name=" + Thread.CurrentThread.Name + " Balance before Withdrawal :  " + balance);
+                    Console.WriteLine("Name=" + Thread.CurrentThread.Name + "Amount to Withdraw        : -" + amount);
+                    balance = balance - amount;
+                    Console.WriteLine("Name=" + Thread.CurrentThread.Name + "Balance after Withdrawal  :  " + balance);
+                    Console.WriteLine("Name=" + Thread.CurrentThread.Name + "_end");
+                    return amount;
+                }
+                else
+                {
+                    Console.WriteLine("Name=" + Thread.CurrentThread.Name + "_end");
+                    return 0; // transaction rejected
+                }
+            }
+        }
+
+        public void DoTransactions()
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                Withdraw(r.Next(1, 100));
+            }
+        }
+    }
+
     class Program
     {
+
         static void Main(string[] args)
         {
 
-            var now = DateTime.Now;
-
-            Console.WriteLine(now.ToString("o"));
-            Console.WriteLine(now.ToString("O"));
+            Thread[] threads = new Thread[10];
+            Account acc = new Account(1000);
+            for (int i = 0; i < 9; i++)
+            {
+                Thread t = new Thread(new ThreadStart(acc.DoTransactions));
+                t.Name = "__" + i + "__";
+                threads[i] = t;
+            }
+            for (int i = 0; i < 9; i++)
+            {
+                threads[i].Start();
+            }
             Console.Read();
         }
 

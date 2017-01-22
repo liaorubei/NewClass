@@ -3,8 +3,10 @@ using StudyOnline.Results;
 using StudyOnline.Utils;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 
@@ -27,50 +29,78 @@ namespace StudyOnline.Areas.Api.Controllers
         [HttpPost]
         public ActionResult Start(Int64 chatId, Int32 chatType, Int32 source, Int32 target, Int32? userId)
         {
-            //try
+            CallLog model = null;
+            Int32 code = 200;
+            String desc = "创建过了";
+            DateTime now = DateTime.Now;
+            String insertLock = String.Format("{0}", chatId);
+
+            //创建聊天记录 
+            //lock (insertLock)
             //{
-            //    NimUser e = new NimUser();
-            //    e.Id = target;
-            //    entities.Entry(e).State = System.Data.Entity.EntityState.Modified;
-
-            //}
-            //catch (Exception)
-            //{
-            //    logger.Debug(String.Format("通话创建失败:chatId={0}, chatType={1}, source={2}, target={3} and message:\r\n", chatId, chatType, source, target) + ex.Message + " \r\nStackTrace:\r\n" + ex.StackTrace + " \r\nInnerException \r\n" + ex.InnerException.StackTrace);
-            //    throw;
-            //}
-
-            CallLog chat = entities.CallLog.SingleOrDefault(o => o.ChatId == chatId);
-            NimUser teacher = entities.NimUser.Find(target);
-
-            if (chat == null)
+            //logger.Debug(String.Format("lock_top userI={1} chatId={0}", insertLock, userId));
+            model = entities.CallLog.SingleOrDefault(o => o.ChatId == chatId);
+            if (model == null)
             {
+                model = new CallLog() { Price = 0, Duration = 0, Coins = 0, IsBalance = 0, BalanceS = 0, BalanceT = 0 };
+                model.Id = Guid.NewGuid().ToString().Replace("-", "");
+                model.Source = source;
+                model.Target = target;
+                model.ChatId = chatId;
+                model.ChatType = chatType;
+                model.Start = now;
+                model.Refresh = now;
                 try
                 {
-                    chat = new CallLog() { Coins = 0, IsBalance = 0, Duration = 0, Price = 0, BalanceS = 0, BalanceT = 0 };
-                    chat.Id = Guid.NewGuid().ToString().Replace("-", "");
-                    chat.ChatId = chatId;
-                    chat.ChatType = chatType;
-                    chat.Source = source;
-                    chat.Target = target;
-                    chat.Start = DateTime.Now;
-                    chat.Refresh = chat.Start;
-
-                    entities.CallLog.Add(chat);
-
-                    //20160630创建对话的同时,把教师设置成忙状态
-                    teacher.IsEnable = 0;
+                    entities.CallLog.Add(model);
+                    logger.Debug("save " + model.Id);
                     entities.SaveChanges();
-                    logger.Debug(String.Format("通话创建:chatId={0}, chatType={1}, source={2}, target={3}, userId={4}", chatId, chatType, source, target, userId));
+                    code = 200;
+                    desc = "创建成功";
                 }
                 catch (Exception ex)
                 {
-                    logger.Debug(String.Format("通话创建失败:chatId={0}, chatType={1}, source={2}, target={3} and message:\r\n", chatId, chatType, source, target) + ex.Message + " \r\nStackTrace:\r\n" + ex.StackTrace + " \r\nInnerException \r\n" + ex.InnerException.StackTrace);
-                    return Json(new { code = 201, desc = "创建失败", info = new { chat.Id, chat.Source, chat.Target } });
+                    model = entities.CallLog.SingleOrDefault(o => o.ChatId == chatId);
+                    code = model == null ? 201 : 200;
+                    desc = model == null ? "创建失败" : "创建过啦";
+                    logger.Debug(String.Format("Message={0},\r\nStackTrace={1},\r\nInnerException={2}", ex.Message, ex.StackTrace, ex.InnerException));
                 }
             }
+            logger.Debug(String.Format("{0}:chatId={1},userId={2},callId={3}", desc, chatId, userId, model.Id));
+            //logger.Debug("lock_end");
+            //}
+            return Json(new { code = code, desc = desc, info = new { model.Id, model.Score, model.Target, model.ChatId, model.ChatType } });
 
-            return Json(new { code = 200, desc = "创建成功", info = new { chat.Id, chat.Source, chat.Target } });
+            //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            //NimUser teacher = entities.NimUser.Find(target);
+
+            //if (chat == null)
+            //{
+            //    try
+            //    {
+            //        chat = new CallLog() { Coins = 0, IsBalance = 0, Duration = 0, Price = 0, BalanceS = 0, BalanceT = 0 };
+            //        chat.Id = Guid.NewGuid().ToString().Replace("-", "");
+            //        chat.ChatId = chatId;
+            //        chat.ChatType = chatType;
+            //        chat.Source = source;
+            //        chat.Target = target;
+            //        chat.Start = DateTime.Now;
+            //        chat.Refresh = chat.Start;
+            //        entities.CallLog.Add(chat);
+
+            //        //20160630创建对话的同时,把教师设置成忙状态
+            //        teacher.IsEnable = 0;
+            //        entities.SaveChanges();
+            //        logger.Debug(String.Format("通话创建:chatId={0}, chatType={1}, source={2}, target={3}, userId={4}", chatId, chatType, source, target, userId));
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        logger.Debug(String.Format("通话创建失败:chatId={0}, chatType={1}, source={2}, target={3} and message:\r\n", chatId, chatType, source, target) + ex.Message + " \r\nStackTrace:\r\n" + ex.StackTrace + " \r\nInnerException \r\n" + ex.InnerException.StackTrace);
+            //        return Json(new { code = 201, desc = "创建失败", info = new { chat.Id, chat.Source, chat.Target } });
+            //    }
+            //}
+
+            //return Json(new { code = 200, desc = "创建成功", info = new { chat.Id, chat.Source, chat.Target } });
         }
 
         /// <summary>
@@ -149,12 +179,15 @@ namespace StudyOnline.Areas.Api.Controllers
             //    chat.BalanceT = 0;//统计老师课时
             //}
 
-            if (chat.BalanceS != 1)
+            lock (callId)
             {
-                logger.Debug(String.Format("通话结束:chatId={0} coins={1} userId={2}", chat.ChatId, chat.NimUser.NimUserEx.Coins, userId));
-                Balance(chat);
+                logger.Debug(String.Format("通话结束:chatId={0},balance={1},coins={2} userId={3}", chat.ChatId, chat.BalanceS, chat.NimUser.NimUserEx.Coins, userId));
+                if (chat.BalanceS != 1)
+                {
+                    Balance(chat);
+                    entities.SaveChanges();
+                }
             }
-
             //老师重新入队
             teacher.IsEnable = 1;
             teacher.IsOnline = 1;
@@ -266,7 +299,7 @@ namespace StudyOnline.Areas.Api.Controllers
             }
             catch (Exception ex)
             {
-                logger.Debug(String.Format("callId={0}, ex={1}", callId, ex.StackTrace));
+                logger.Debug(String.Format("callId={0}, StackTrace={1} \r\n InnerException={2} \r\n Message={3}", callId, ex.StackTrace, ex.InnerException, ex.Message));
                 return Json(new
                 {
                     code = 201,
@@ -630,19 +663,23 @@ namespace StudyOnline.Areas.Api.Controllers
                 Theme theme = entities.Theme.Find(themeId);
                 var questions = theme.Question.OrderBy(o => o.Sort).ToList();
 
-                LogTheme model = new LogTheme();
-                model.ChatId = chatId;
-                model.ThemeId = themeId;
-                entities.LogTheme.Add(model);
-                entities.SaveChanges();
+                if (!theme.LogTheme.Any(o => o.ChatId == chatId))
+                {
+                    LogTheme model = new LogTheme();
+                    model.ChatId = chatId;
+                    model.ThemeId = themeId;
+                    entities.LogTheme.Add(model);
+                    entities.SaveChanges();
+                }
+
                 return Json(new
                 {
                     code = 200,
                     desc = "添加成功",
                     info = new
                     {
-                        model.ChatId,
-                        model.ThemeId,
+                        ChatId = chatId,
+                        ThemeId = themeId,
                         theme.Id,
                         theme.Name,
                         theme.NameEn,

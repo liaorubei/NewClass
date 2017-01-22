@@ -15,7 +15,7 @@ namespace StudyOnline.Quartz
         log4net.ILog log = log4net.LogManager.GetLogger("TeacherRefreshJob");
         public void Execute(IJobExecutionContext context)
         {
-            log.Info("现在异步处理教师在线情况");
+            //log.Info("现在异步处理教师在线情况");
             StudyOnlineEntities entities = new StudyOnlineEntities();
             //只刷新安卓端,手机系统,安卓为1,苹果为2,其它为0
             var a = DateTime.Now.AddMinutes(-5);

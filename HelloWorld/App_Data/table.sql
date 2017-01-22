@@ -474,8 +474,8 @@ SELECT
 [Folder].[ParentId],
 [Folder].[TargetId],
 [Member_Folder].[MemberId],
-(SELECT COUNT(FolderId) FROM Document AS D WHERE D.FolderId=(case when [Folder].[TargetId]>0 then [Folder].[TargetId] else [Folder].[Id] end)) AS DocsCount,--因为添加了TargetId的原因，所以在这里做一个三元运算
-(SELECT COUNT(ParentId) FROM Folder   AS F WHERE F.ParentId=(case when [Folder].[TargetId]>0 then [Folder].[TargetId] else [Folder].[Id] end)) AS KidsCount --因为有TargetId之后，原数据就成了指向性内容，其本身没有内容
+(SELECT COUNT(FolderId) FROM Document AS D WHERE D.FolderId=(case when [Folder].[TargetId]>0 then [Folder].[TargetId] else [Folder].[Id] end) AND D.[AuditCase]=2) AS DocsCount,--因为添加了TargetId的原因，所以在这里做一个三元运算
+(SELECT COUNT(ParentId) FROM Folder   AS F WHERE F.ParentId=(case when [Folder].[TargetId]>0 then [Folder].[TargetId] else [Folder].[Id] end) AND (F.[Show] IS NULL OR F.[Show]=1)) AS KidsCount --因为有TargetId之后，原数据就成了指向性内容，其本身没有内容
 FROM [Folder] LEFT JOIN [Member_Folder] ON [Folder].[Id]=[Member_Folder].[FolderId]
 )
 
