@@ -528,7 +528,7 @@ fieldset legend:hover { background-color: #dddddd; }
 .divider { clear: both; display: block; overflow: hidden; text-indent: -1000px; width: auto; height: 1px; padding: 4px 0 0 0; margin-bottom: 5px; border-style: dotted; border-width: 0 0 1px 0; }
 
 /* Pages dialog */
-.dialog .pageHeader { border-style: solid; border-width: 1px; margin: 0; }
+.dialog .pageHeader { /*border-style: solid;*/ border-width: 1px; /*margin: 0;*/ }
 .dialog .pageContent { border-style: solid; border-width: 0 1px; background-color: #fff; }
 .dialog .pageFormContent, .dialog .viewInfo { border-style: solid; border-width: 1px 0 0 0; }
 .dialog .formBar { border-style: solid; border-width: 1px 0; }

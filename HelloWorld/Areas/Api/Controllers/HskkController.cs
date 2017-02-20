@@ -82,5 +82,20 @@ namespace StudyOnline.Areas.Api.Controllers
                 })
             });
         }
+
+        [AcceptVerbs("POST")]
+        [ActionName("Index")]
+        public ActionResult MyProperty(Int32 id)
+        {
+            Hskk hskk = entites.Hskk.Find(id);
+            return Json(new
+            {
+                hskk.Id,
+                hskk.Name,
+                hskk.Rank,
+                hskk.Part
+            });
+        }
+
     }
 }

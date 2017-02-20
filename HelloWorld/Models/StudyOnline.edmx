@@ -46,6 +46,16 @@
           <Property Name="BalanceS" Type="int" />
           <Property Name="BalanceT" Type="int" />
         </EntityType>
+        <EntityType Name="ChatData">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="varchar" MaxLength="32" Nullable="false" />
+          <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="Time" Type="datetime" Nullable="false" />
+          <Property Name="ChatId" Type="bigint" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Comment">
           <Key>
             <PropertyRef Name="Id" />
@@ -193,6 +203,14 @@
           <Property Name="MemberId" Type="varchar" MaxLength="32" Nullable="false" />
           <Property Name="FolderId" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="Member_Product">
+          <Key>
+            <PropertyRef Name="MemberId" />
+            <PropertyRef Name="ProductId" />
+          </Key>
+          <Property Name="MemberId" Type="varchar" MaxLength="32" Nullable="false" />
+          <Property Name="ProductId" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Member_User">
           <Key>
             <PropertyRef Name="MemberId" />
@@ -272,6 +290,15 @@
           </Key>
           <Property Name="FileId" Type="int" Nullable="false" />
           <Property Name="UserId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Playlist">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="varchar" MaxLength="32" Nullable="false" />
+          <Property Name="DocumentId" Type="int" />
+          <Property Name="UserId" Type="int" />
+          <Property Name="PlayAt" Type="datetime" />
         </EntityType>
         <EntityType Name="Product">
           <Key>
@@ -450,6 +477,8 @@
         <EntityType Name="View_Document_Lite">
           <Key>
             <PropertyRef Name="Id" />
+            
+            
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Title" Type="nvarchar" MaxLength="250" Nullable="false" />
@@ -464,10 +493,31 @@
           <Property Name="FolderId" Type="int" />
         </EntityType>
         <!--生成过程中发现错误:
+警告 6002: 表/视图“ChineseChatTest.dbo.View_Document_PlayCount”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="View_Document_PlayCount">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Title" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="AddDate" Type="datetime" />
+          <Property Name="TitleTwo" Type="nvarchar" MaxLength="256" />
+          <Property Name="AuditDate" Type="datetime" />
+          <Property Name="AuditCase" Type="int" />
+          <Property Name="Category" Type="int" />
+          <Property Name="TitlePy" Type="nvarchar" MaxLength="256" />
+          <Property Name="TitleSubCn" Type="nvarchar" MaxLength="256" />
+          <Property Name="TitleSubEn" Type="nvarchar" MaxLength="256" />
+          <Property Name="TitleSubPy" Type="nvarchar" MaxLength="256" />
+          <Property Name="PlayCount" Type="int" />
+        </EntityType>
+        <!--生成过程中发现错误:
 警告 6002: 表/视图“ChineseChatTest.dbo.View_Folder_LeftJoin_MemberFolder”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
         <EntityType Name="View_Folder_LeftJoin_MemberFolder">
           <Key>
             <PropertyRef Name="Id" />
+            
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
@@ -543,6 +593,7 @@
         <EntityType Name="View_UserLeftJoinMember">
           <Key>
             <PropertyRef Name="Id" />
+            
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="Username" Type="nvarchar" MaxLength="128" Nullable="false" />
@@ -580,6 +631,21 @@
             </Principal>
             <Dependent Role="CallLog">
               <PropertyRef Name="Target" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <!--生成过程中发现错误:
+警告 6035: 关系“FK_ChatData_Chat”在关系主端上有一些列不属于表的键的一部分。已排除了此关系。
+        <Association Name="FK_ChatData_Chat" />-->
+        <Association Name="FK_ChatData_User">
+          <End Role="NimUser" Type="Self.NimUser" Multiplicity="1" />
+          <End Role="ChatData" Type="Self.ChatData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ChatData">
+              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -720,6 +786,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Member_Product_Member">
+          <End Role="Member" Type="Self.Member" Multiplicity="1" />
+          <End Role="Member_Product" Type="Self.Member_Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Member_Product">
+              <PropertyRef Name="MemberId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Member_Product_Product">
+          <End Role="Product" Type="Self.Product" Multiplicity="1" />
+          <End Role="Member_Product" Type="Self.Member_Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Member_Product">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Member_User_Member">
           <End Role="Member" Type="Self.Member" Multiplicity="1" />
           <End Role="Member_User" Type="Self.Member_User" Multiplicity="*" />
@@ -779,6 +869,30 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Photo">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Playlist_Document">
+          <End Role="Document" Type="Self.Document" Multiplicity="0..1" />
+          <End Role="Playlist" Type="Self.Playlist" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Document">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Playlist">
+              <PropertyRef Name="DocumentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Playlist_User">
+          <End Role="NimUser" Type="Self.NimUser" Multiplicity="0..1" />
+          <End Role="Playlist" Type="Self.Playlist" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Playlist">
               <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
@@ -871,6 +985,7 @@
           <EntitySet Name="Android" EntityType="Self.Android" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AuthCode" EntityType="Self.AuthCode" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CallLog" EntityType="Self.CallLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ChatData" EntityType="Self.ChatData" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Comment" EntityType="Self.Comment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Device" EntityType="Self.Device" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Document" EntityType="Self.Document" Schema="dbo" store:Type="Tables" />
@@ -884,11 +999,13 @@
           <EntitySet Name="LogTheme" EntityType="Self.LogTheme" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Member" EntityType="Self.Member" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Member_Folder" EntityType="Self.Member_Folder" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Member_Product" EntityType="Self.Member_Product" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Member_User" EntityType="Self.Member_User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NimUser" EntityType="Self.NimUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NimUserEx" EntityType="Self.NimUserEx" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Photo" EntityType="Self.Photo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Playlist" EntityType="Self.Playlist" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Product" EntityType="Self.Product" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Question" EntityType="Self.Question" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Teacherreginfo" EntityType="Self.Teacherreginfo" Schema="dbo" store:Type="Tables" />
@@ -944,6 +1061,22 @@
     [View_Document_Lite].[LevelId] AS [LevelId], 
     [View_Document_Lite].[FolderId] AS [FolderId]
     FROM [dbo].[View_Document_Lite] AS [View_Document_Lite]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="View_Document_PlayCount" EntityType="Self.View_Document_PlayCount" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_Document_PlayCount].[Id] AS [Id], 
+    [View_Document_PlayCount].[Title] AS [Title], 
+    [View_Document_PlayCount].[AddDate] AS [AddDate], 
+    [View_Document_PlayCount].[TitleTwo] AS [TitleTwo], 
+    [View_Document_PlayCount].[AuditDate] AS [AuditDate], 
+    [View_Document_PlayCount].[AuditCase] AS [AuditCase], 
+    [View_Document_PlayCount].[Category] AS [Category], 
+    [View_Document_PlayCount].[TitlePy] AS [TitlePy], 
+    [View_Document_PlayCount].[TitleSubCn] AS [TitleSubCn], 
+    [View_Document_PlayCount].[TitleSubEn] AS [TitleSubEn], 
+    [View_Document_PlayCount].[TitleSubPy] AS [TitleSubPy], 
+    [View_Document_PlayCount].[PlayCount] AS [PlayCount]
+    FROM [dbo].[View_Document_PlayCount] AS [View_Document_PlayCount]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="View_Folder_LeftJoin_MemberFolder" EntityType="Self.View_Folder_LeftJoin_MemberFolder" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -1029,6 +1162,10 @@
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="CallLog" EntitySet="CallLog" />
           </AssociationSet>
+          <AssociationSet Name="FK_ChatData_User" Association="Self.FK_ChatData_User">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="ChatData" EntitySet="ChatData" />
+          </AssociationSet>
           <AssociationSet Name="FK_Comment_Document" Association="Self.FK_Comment_Document">
             <End Role="Document" EntitySet="Document" />
             <End Role="Comment" EntitySet="Comment" />
@@ -1073,6 +1210,14 @@
             <End Role="Member" EntitySet="Member" />
             <End Role="Member_Folder" EntitySet="Member_Folder" />
           </AssociationSet>
+          <AssociationSet Name="FK_Member_Product_Member" Association="Self.FK_Member_Product_Member">
+            <End Role="Member" EntitySet="Member" />
+            <End Role="Member_Product" EntitySet="Member_Product" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Member_Product_Product" Association="Self.FK_Member_Product_Product">
+            <End Role="Product" EntitySet="Product" />
+            <End Role="Member_Product" EntitySet="Member_Product" />
+          </AssociationSet>
           <AssociationSet Name="FK_Member_User_Member" Association="Self.FK_Member_User_Member">
             <End Role="Member" EntitySet="Member" />
             <End Role="Member_User" EntitySet="Member_User" />
@@ -1092,6 +1237,14 @@
           <AssociationSet Name="FK_Photo_User" Association="Self.FK_Photo_User">
             <End Role="NimUser" EntitySet="NimUser" />
             <End Role="Photo" EntitySet="Photo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Playlist_Document" Association="Self.FK_Playlist_Document">
+            <End Role="Document" EntitySet="Document" />
+            <End Role="Playlist" EntitySet="Playlist" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Playlist_User" Association="Self.FK_Playlist_User">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="Playlist" EntitySet="Playlist" />
           </AssociationSet>
           <AssociationSet Name="FK_Question_Theme" Association="Self.FK_Question_Theme">
             <End Role="Theme" EntitySet="Theme" />
@@ -1246,6 +1399,25 @@
             <End Role="Folder1" EntitySet="Folder" />
           </AssociationSet>
           <EntitySet Name="View_Document_Lite" EntityType="StudyOnline.View_Document_Lite" />
+          <EntitySet Name="Playlist" EntityType="StudyOnline.Playlist" />
+          <AssociationSet Name="FK_Playlist_Document" Association="StudyOnline.FK_Playlist_Document">
+            <End Role="Document" EntitySet="Document" />
+            <End Role="Playlist" EntitySet="Playlist" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Playlist_User" Association="StudyOnline.FK_Playlist_User">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="Playlist" EntitySet="Playlist" />
+          </AssociationSet>
+          <EntitySet Name="ChatData" EntityType="StudyOnline.ChatData" />
+          <AssociationSet Name="FK_ChatData_User" Association="StudyOnline.FK_ChatData_User">
+            <End Role="NimUser" EntitySet="NimUser" />
+            <End Role="ChatData" EntitySet="ChatData" />
+          </AssociationSet>
+          <AssociationSet Name="Member_Product" Association="StudyOnline.Member_Product">
+            <End Role="Member" EntitySet="Member" />
+            <End Role="Product" EntitySet="Product" />
+          </AssociationSet>
+          <EntitySet Name="View_Document_PlayCount" EntityType="StudyOnline.View_Document_PlayCount" />
         </EntityContainer>
         <EntityType Name="Android">
           <Key>
@@ -1336,6 +1508,7 @@
           <Property Name="Category" Type="Int32" />
           <Property Name="TitlePy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="Cover" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Playlist" Relationship="StudyOnline.FK_Playlist_Document" FromRole="Document" ToRole="Playlist" />
         </EntityType>
         <EntityType Name="Feedback">
           <Key>
@@ -1422,6 +1595,7 @@
           <Property Name="Month" Type="Int32" />
           <NavigationProperty Name="Member_User" Relationship="StudyOnline.FK_Member_User_Member" FromRole="Member" ToRole="Member_User" />
           <NavigationProperty Name="Folder" Relationship="StudyOnline.Member_Folder" FromRole="Member" ToRole="Folder" />
+          <NavigationProperty Name="Product" Relationship="StudyOnline.Member_Product" FromRole="Member" ToRole="Product" />
         </EntityType>
         <EntityType Name="Member_User">
           <Key>
@@ -1460,6 +1634,8 @@
           <NavigationProperty Name="Member_User" Relationship="StudyOnline.FK_Member_User_User" FromRole="NimUser" ToRole="Member_User" />
           <NavigationProperty Name="NimUserEx" Relationship="StudyOnline.FK_NimUserEx_NimUser" FromRole="NimUser" ToRole="NimUserEx" />
           <NavigationProperty Name="UploadFile" Relationship="StudyOnline.Photo" FromRole="NimUser" ToRole="UploadFile" />
+          <NavigationProperty Name="Playlist" Relationship="StudyOnline.FK_Playlist_User" FromRole="NimUser" ToRole="Playlist" />
+          <NavigationProperty Name="ChatData" Relationship="StudyOnline.FK_ChatData_User" FromRole="NimUser" ToRole="ChatData" />
         </EntityType>
         <EntityType Name="NimUserEx">
           <Key>
@@ -1516,6 +1692,7 @@
           <Property Name="Enabled" Type="Int32" />
           <Property Name="Createtime" Type="DateTime" Precision="3" />
           <Property Name="Hour" Type="Double" />
+          <NavigationProperty Name="Member" Relationship="StudyOnline.Member_Product" FromRole="Product" ToRole="Member" />
         </EntityType>
         <EntityType Name="Question">
           <Key>
@@ -1992,6 +2169,86 @@
           <Property Name="Sort" Type="Double" />
           <Property Name="LevelId" Type="Int32" Nullable="false" />
           <Property Name="FolderId" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Playlist">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="DocumentId" Type="Int32" />
+          <Property Name="UserId" Type="Int32" />
+          <Property Name="PlayAt" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Document" Relationship="StudyOnline.FK_Playlist_Document" FromRole="Playlist" ToRole="Document" />
+          <NavigationProperty Name="NimUser" Relationship="StudyOnline.FK_Playlist_User" FromRole="Playlist" ToRole="NimUser" />
+        </EntityType>
+        <Association Name="FK_Playlist_Document">
+          <End Type="StudyOnline.Document" Role="Document" Multiplicity="0..1" />
+          <End Type="StudyOnline.Playlist" Role="Playlist" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Document">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Playlist">
+              <PropertyRef Name="DocumentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Playlist_User">
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="0..1" />
+          <End Type="StudyOnline.Playlist" Role="Playlist" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Playlist">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ChatData">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ChatId" Type="Int64" Nullable="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="NimUser" Relationship="StudyOnline.FK_ChatData_User" FromRole="ChatData" ToRole="NimUser" />
+        </EntityType>
+        <Association Name="FK_ChatData_User">
+          <End Type="StudyOnline.NimUser" Role="NimUser" Multiplicity="1" />
+          <End Type="StudyOnline.ChatData" Role="ChatData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NimUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ChatData">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Member_Product">
+          <End Type="StudyOnline.Member" Role="Member" Multiplicity="*" />
+          <End Type="StudyOnline.Product" Role="Product" Multiplicity="*" />
+        </Association>
+        <EntityType Name="View_Document_PlayCount">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Title" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="AddDate" Type="DateTime" Precision="3" />
+          <Property Name="TitleTwo" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="AuditDate" Type="DateTime" Precision="3" />
+          <Property Name="AuditCase" Type="Int32" />
+          <Property Name="Category" Type="Int32" />
+          <Property Name="TitlePy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="TitleSubCn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="TitleSubEn" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="TitleSubPy" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="PlayCount" Type="Int32" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -2539,6 +2796,53 @@
                 <ScalarProperty Name="TitleSubEn" ColumnName="TitleSubEn" />
                 <ScalarProperty Name="TitleSubCn" ColumnName="TitleSubCn" />
                 <ScalarProperty Name="TitleTwo" ColumnName="TitleTwo" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Playlist">
+            <EntityTypeMapping TypeName="StudyOnline.Playlist">
+              <MappingFragment StoreEntitySet="Playlist">
+                <ScalarProperty Name="PlayAt" ColumnName="PlayAt" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ChatData">
+            <EntityTypeMapping TypeName="StudyOnline.ChatData">
+              <MappingFragment StoreEntitySet="ChatData">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ChatId" ColumnName="ChatId" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="Member_Product" TypeName="StudyOnline.Member_Product" StoreEntitySet="Member_Product">
+            <EndProperty Name="Product">
+              <ScalarProperty Name="Id" ColumnName="ProductId" />
+            </EndProperty>
+            <EndProperty Name="Member">
+              <ScalarProperty Name="Id" ColumnName="MemberId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <EntitySetMapping Name="View_Document_PlayCount">
+            <EntityTypeMapping TypeName="StudyOnline.View_Document_PlayCount">
+              <MappingFragment StoreEntitySet="View_Document_PlayCount">
+                <ScalarProperty Name="PlayCount" ColumnName="PlayCount" />
+                <ScalarProperty Name="TitleSubPy" ColumnName="TitleSubPy" />
+                <ScalarProperty Name="TitleSubEn" ColumnName="TitleSubEn" />
+                <ScalarProperty Name="TitleSubCn" ColumnName="TitleSubCn" />
+                <ScalarProperty Name="TitlePy" ColumnName="TitlePy" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="AuditCase" ColumnName="AuditCase" />
+                <ScalarProperty Name="AuditDate" ColumnName="AuditDate" />
+                <ScalarProperty Name="TitleTwo" ColumnName="TitleTwo" />
+                <ScalarProperty Name="AddDate" ColumnName="AddDate" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

@@ -61,6 +61,13 @@
         <EntityTypeShape EntityType="StudyOnline.View_Folder_LeftJoin_MemberFolder" Width="1.5" PointX="18.375" PointY="13.75" />
         <AssociationConnector Association="StudyOnline.FK_Folder_TargetId" />
         <EntityTypeShape EntityType="StudyOnline.View_Document_Lite" Width="1.5" PointX="11.375" PointY="0.75" />
+        <EntityTypeShape EntityType="StudyOnline.Playlist" Width="1.5" PointX="14.25" PointY="1" />
+        <AssociationConnector Association="StudyOnline.FK_Playlist_Document" />
+        <AssociationConnector Association="StudyOnline.FK_Playlist_User" />
+        <EntityTypeShape EntityType="StudyOnline.ChatData" Width="1.5" PointX="5.25" PointY="22.875" />
+        <AssociationConnector Association="StudyOnline.FK_ChatData_User" />
+        <AssociationConnector Association="StudyOnline.Member_Product" />
+        <EntityTypeShape EntityType="StudyOnline.View_Document_PlayCount" Width="1.5" PointX="18.375" PointY="19" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

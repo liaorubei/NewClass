@@ -1,0 +1,72 @@
+﻿
+@{
+    Layout = null;
+}
+
+
+<div class="pageContent">
+
+    <form method="post" action='@Url.Action("BatchCreate")' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent " layoutH="58">
+
+            <ul style="float:right;width:150px;list-style:none;">
+                <li><a class="button" href='@Url.Action("UploadUsersExcel")' target="dialog" rel="MasterNimUserUploadUsersExcel" mask="true" width="640" height="480" title="附件"><span>上传</span></a></li>
+                <li style="margin-left:5px;float:right;"><div class="button"><div class="buttonContent"><button type="button" onclick="addNewRow();">模板下载</button></div></div></li>
+            </ul>
+
+            <table class="list itemDetail" addButton="新增" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th type="text" name="users[#index#].Username" fieldClass="required">用户名</th>
+                        <th type="text" name="users[#index#].Password" fieldClass="required">密码  </th>
+                        <th type="text" name="users[#index#].Category">用户类型</th>
+                        <th type="text" name="users[#index#].IsActive">是否激活</th>
+                        <th>其他 </th>
+                        <th>其他 </th>
+                    </tr>
+                </thead>
+                <tbody id="newUserTbody"></tbody>
+            </table>
+
+
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+
+</div>
+<script>
+    function addNewRow() {
+        var user = "<td><input type='text' name='users[0].Username' class='required' /></td>" +
+            "<td><input type='text' name='users[0].Password' class='required' /></td>" +
+            "<td><select name='users[0].Category'><option value='0'>学生</option><option value='1'>教师</option></select></td>" +
+    "<td><select name='users[0].IsActive'><option value='0'>否</option><option value='1'>是</option></select></td><td></td><td></td>";
+        var tr = $("<tr></tr>");
+
+        //添加
+        $("#newUserTbody").append(tr.append(user));
+        //下标
+        $("#newUserTbody tr").each(function (index) {
+            //所有的表单元素,text,select,textarea,button
+            $(":input", this).each(function () {
+                var $input = $(this);
+                var name = $input.attr("name");
+                if (name) {
+                    $input.attr("name", name.replace(/\[\d+\]/, "[" + index + "]"));
+                }
+            });
+        });
+    }
+
+    function excelUplpadCallback(json) {
+        $.pdialog.closeCurrent();
+        for (var i = 0; i < json.length; i++) {
+            console.log(json[i].Username);
+
+        }
+    }
+</script>

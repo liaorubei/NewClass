@@ -497,3 +497,39 @@ SELECT
 [Document].[FolderId]
 FROM [Document]
 )
+
+--文档播放记录表,用来统计某文档的在客户端的播放次数
+Drop table Playlist -- if exists(Playlist)
+CREATE TABLE Playlist
+(
+[Id]          VARCHAR(32),
+[DocumentId]  INT,
+[UserId]      INT,
+[PlayAt]      DATETIME,
+CONSTRAINT PK_Playlist          PRIMARY KEY ([Id]),
+CONSTRAINT FK_Playlist_Document FOREIGN KEY ([DocumentId]) REFERENCES [Document]([Id]),
+CONSTRAINT FK_Playlist_User     FOREIGN KEY ([UserId])     REFERENCES [NimUser]([Id])
+)
+
+--通话记录附加表,用来记录通话的结束时间和结束人员的
+CREATE TABLE [ChatData]
+(
+[Id]     VARCHAR(32) not null,
+[Type]   INT         not null,
+[Time]   DATETIME    not null,
+[ChatId] BIGINT      not null,
+[UserId] INT         not null,
+CONSTRAINT PK_ChatData      PRIMARY KEY ([Id]),
+CONSTRAINT FK_ChatData_Chat FOREIGN KEY ([ChatId]) REFERENCES [Calllog]([ChatId]),
+CONSTRAINT FK_ChatData_User FOREIGN KEY ([UserId]) REFERENCES [Nimuser]([Id])
+)
+
+--机构相关价格表,用于单独机构的单独价格表
+CREATE TABLE Member_Product
+(
+[MemberId]  VARCHAR(32) NOT NULL,
+[ProductId] INT		  NOT NULL,
+CONSTRAINT  PK_Member_Product         PRIMARY KEY ([MemberId],[ProductId]),
+CONSTRAINT  FK_Member_Product_Member  FOREIGN KEY ([MemberId])  REFERENCES [Member] ([Id]),
+CONSTRAINT  FK_Member_Product_Product FOREIGN KEY ([ProductId]) REFERENCES [Product]([Id])
+)

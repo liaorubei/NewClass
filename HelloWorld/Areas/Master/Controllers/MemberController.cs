@@ -115,7 +115,7 @@ namespace StudyOnline.Areas.Master.Controllers
             System.Linq.Expressions.Expression<Func<View_User, bool>> predicateKeyword = o => true;
             if (!String.IsNullOrEmpty(keyword))
             {
-                predicateKeyword = o => o.Username.Contains(keyword)||o.Nickname.Contains(keyword)||o.Email.Contains(keyword);
+                predicateKeyword = o => o.Username.Contains(keyword) || o.Nickname.Contains(keyword) || o.Email.Contains(keyword);
             }
 
             System.Linq.Expressions.Expression<Func<View_User, bool>> predicateCategory = o => true;
@@ -167,8 +167,79 @@ namespace StudyOnline.Areas.Master.Controllers
             }
         }
 
+        public ActionResult Product(String id, String keyword, Int32? pageNum, Int32? numPerPage, String operate)
+        {
+            //取出当然机构,会员类型包括了那些价格
 
+            //todo:
+            var model = entities.Product.OrderBy(o => o.Sort).ToPagedList(pageNum ?? 0, numPerPage ?? 25);
 
+            ViewBag.Keyword = keyword;
+            ViewBag.Operate = operate;
+            ViewBag.Id = id;
 
+            ViewData.Model = model;
+            return View();
+        }
+
+        /// <summary>
+        /// 提交对会员表与价格表的相关操作,包括添加关联,移除关联
+        /// </summary>
+        /// <param name="id">会员,机构Id</param>
+        /// <param name="operate">操作方式,是添加还是移除</param>
+        /// <param name="ids">要求操作的价格表</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ProductOperate(String id, String operate, Int32[] ids)
+        {
+            ResponseModel response = new ResponseModel();
+            if (String.IsNullOrEmpty(id) || String.IsNullOrEmpty(operate) || ids == null || ids.Length < 1)
+            {
+                response.statusCode = "300";
+                response.message = "数据不合格";
+                return Json(response);
+            }
+
+            switch (operate)
+            {
+                case "append":
+                    {
+                        StringBuilder appendSQL = new StringBuilder();
+                        foreach (var item in ids)
+                        {
+                            appendSQL.AppendLine(String.Format(" INSERT INTO [Member_Product]([MemberId],[ProductId]) VALUES('{0}',{1})", id, item));
+                        }
+                        entities.Database.ExecuteSqlCommand(appendSQL.ToString());
+                        response.statusCode = "200";
+                        response.message = "添加成功";
+                        response.callbackType = "closeCurrent";
+                        response.navTabId = "MasterMemberSelect";
+                    }
+                    break;
+
+                case "remove":
+                    {
+                        StringBuilder removeSQL = new StringBuilder();
+                        foreach (var item in ids)
+                        {
+                            removeSQL.AppendLine(String.Format("DELETE FROM [Member_Product] WHERE [MemberId]='{0}' AND [ProductId]={1}", id, item));
+                        }
+                        entities.Database.ExecuteSqlCommand(removeSQL.ToString());
+                        response.statusCode = "200";
+                        response.message = "移除成功";
+                        response.callbackType = "closeCurrent";
+                        response.navTabId = "MasterMemberSelect";
+                    }
+                    break;
+
+                default:
+                    response.statusCode = "300";
+                    response.message = "操作失败";
+                    //response.callbackType = "closeCurrent";
+                    //response.navTabId = "MasterMemberSelect";
+                    break;
+            }
+            return Json(response);
+        }
     }
 }

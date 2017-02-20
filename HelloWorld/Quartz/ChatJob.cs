@@ -20,8 +20,8 @@ namespace StudyOnline.Quartz
             log.Info("----------now sync calllog----------");
             StudyOnlineEntities entities = new StudyOnlineEntities();
 
-            //过滤条件要求是在当前时间8个小时之前的数据才处理,防止和现在的正在进行的通话冲突处理,因为如果此时正有一个通话,那么他的学生平衡就是不为1的
-            DateTime deadlineTime = DateTime.Now.AddHours(-8);
+            //过滤条件要求是在当前时间2个小时之前的数据才处理,防止和现在的正在进行的通话冲突处理,因为如果此时正有一个通话,那么他的学生平衡就是不为1的
+            DateTime deadlineTime = DateTime.Now.AddHours(-2);
             List<CallLog> chats = entities.CallLog.OrderByDescending(o => o.Start).Where(o => o.Start < deadlineTime && o.Finish == null && o.Refresh != null).ToList();
             log.Info("deadlineTime" + deadlineTime.ToString("yyyy-MM-dd HH:mm:ss"));
 

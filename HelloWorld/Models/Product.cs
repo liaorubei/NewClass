@@ -13,6 +13,12 @@ namespace StudyOnline.Models
     
     public partial class Product
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Product()
+        {
+            this.Member = new HashSet<Member>();
+        }
+    
         public int Id { get; set; }
         public Nullable<double> Coin { get; set; }
         public Nullable<decimal> USD { get; set; }
@@ -21,5 +27,8 @@ namespace StudyOnline.Models
         public Nullable<int> Enabled { get; set; }
         public Nullable<System.DateTime> Createtime { get; set; }
         public Nullable<double> Hour { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Member> Member { get; set; }
     }
 }

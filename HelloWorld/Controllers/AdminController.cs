@@ -1,6 +1,4 @@
-﻿using NAudio.Wave;
-using Newtonsoft.Json.Linq;
-using StudyOnline.Filters;
+﻿using StudyOnline.Filters;
 using StudyOnline.Models;
 using StudyOnline.Utils;
 using System;
@@ -591,9 +589,6 @@ namespace StudyOnline.Controllers
             entities.SaveChanges();
             return Json(new { statusCode = "200", message = "操作成功", navTabId = "AdminNimUserIndex", rel = "", callbackType = "closeCurrent", forwardUrl = "" });
         }
-
-
-
         #endregion
 
         #region 教师管理
@@ -988,12 +983,9 @@ namespace StudyOnline.Controllers
                 fileInfo.Directory.Create();
             }
 
-            Mp3FileReader reader = new Mp3FileReader(file.InputStream);
-            double Duration = reader.TotalTime.TotalMilliseconds;
-
             fileName = file.FileName;
             file.SaveAs(fileInfo.FullName);
-            var data = new { fileName = fileName, filePath = filePath, Duration, Length = file.ContentLength };
+            var data = new { fileName = fileName, filePath = filePath, Length = file.ContentLength };
             return Json(data);
         }
 
@@ -1013,7 +1005,6 @@ namespace StudyOnline.Controllers
             var data = new { fileName = fileName, filePath = filePath, Size = file.ContentLength, Extension = Path.GetExtension(file.FileName) };
             return Json(data);
         }
-
 
         #region 安卓管理
         public ActionResult AndroidIndex(FormCollection form)
@@ -1102,7 +1093,6 @@ namespace StudyOnline.Controllers
             return Json(data);
         }
         #endregion
-
 
         public ActionResult ApkIndex()
         {
@@ -1194,7 +1184,6 @@ namespace StudyOnline.Controllers
 
         }
 
-
         #region 单文件上传
         /// <summary>
         /// 单文件上传界面
@@ -1231,7 +1220,5 @@ namespace StudyOnline.Controllers
         }
 
         #endregion
-
-
     }
 }

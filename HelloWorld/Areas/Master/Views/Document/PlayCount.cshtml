@@ -1,0 +1,53 @@
+﻿@model PagedList<Playlist>
+@{
+    Layout = null;
+}
+
+@*<div class="pageHeader">*@
+    <form id="pagerForm" onsubmit="return dialogSearch(this);" action='@Url.Action("PlayCount")' method="post">
+        <input type="hidden" name="pageNum" value="@Model.CurrentPageIndex" />
+        <input type="hidden" name="numPerPage" value="@Model.PageSize" />
+        <input type="hidden" name="id" value="@ViewBag.Id" />
+        @*<div class="searchBar">
+            <table class="searchContent">
+                <tr>
+                    <td>
+                        <input type="text" name="keyword" value="@ViewBag.Keyword" placeholder="关键字" />
+                    </td>
+                    <td>
+                        <div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div>
+                    </td>
+                </tr>
+            </table>
+        </div>*@
+    </form>
+@*</div>*@
+<div class="pageContent">
+    @*<div class="panelBar">
+            <ul class="toolBar">
+                <li><a class="create" href='@Url.Action("ProductOperate", new { id = ViewBag.Id, operate = ViewBag.Operate })' target="selectedTodo" targetType="dialog" rel="ids" title="确定要继续吗?"><span>@("append".Equals(ViewBag.Operate) ? "添加" : "移除")</span></a></li>
+            </ul>
+        </div>*@
+    <table class="list" layoutH="28">
+        <thead>
+            <tr>
+                <th align="center" width="25">序号</th>
+                <th align="center">播放时间</th>
+                <th align="center">播放用户</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{Int32 i = 0;}
+            @foreach (var item in Model)
+            {
+                <tr target="id" rel="@item.Id">
+                    <td align="center">@(++i)</td>
+                    <td align="right">@item.PlayAt</td>
+                    <td align="right">@(item.UserId.HasValue?item.NimUser.Username:"游客")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @Html.NavTabPages(Model, 10, "dialog")
+</div>
+

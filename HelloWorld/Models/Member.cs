@@ -18,6 +18,7 @@ namespace StudyOnline.Models
         {
             this.Member_User = new HashSet<Member_User>();
             this.Folder = new HashSet<Folder>();
+            this.Product = new HashSet<Product>();
         }
     
         public string Id { get; set; }
@@ -28,5 +29,7 @@ namespace StudyOnline.Models
         public virtual ICollection<Member_User> Member_User { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Folder> Folder { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Product> Product { get; set; }
     }
 }

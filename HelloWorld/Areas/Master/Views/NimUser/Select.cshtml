@@ -3,9 +3,6 @@
     Layout = null;
 }
 
-
-
-
 <div class="pageHeader">
     <form id="pagerForm" onsubmit="return navTabSearch(this);" action='@Url.Action("Select")' method="post">
         <input type="hidden" name="pageNum" value="@Model.CurrentPageIndex" />
@@ -13,7 +10,7 @@
         <div class="searchBar">
             <ul class="searchContent">
                 <li>
-                    <label>我的客户：</label>
+                    <label>关键字：</label>
                     <input type="text" name="keyword" value="@ViewBag.Keyword" />
                 </li>
                 <li>
@@ -36,6 +33,7 @@
 <div class="pageContent">
     <div class="panelBar">
         <ul class="toolBar">
+            <li><a class="create" href='@Url.Action("BatchCreate")' target="dialog" mask="true" width="800" height="600"><span>批量添加</span></a></li>
             <li><a class="delete" href='@Url.Action("Freeze", new { id="{id}"})' target="ajaxTodo" title="确定要冻结吗?" warn="请选择要冻结的记录"><span>冻结帐号</span></a></li>
             @*<li><a class="create" href='@Url.Action("")' target="dialog" mask="true"><span>添加</span></a></li>
                 <li><a class="update" href='@Url.Action("",new{id="{id}"})' target="dialog" mask="true"><span>修改</span></a></li>

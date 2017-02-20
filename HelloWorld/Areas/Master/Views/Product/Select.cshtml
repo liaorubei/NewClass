@@ -1,3 +1,8 @@
+﻿@model PagedList<Product>
+@{
+    Layout = null;
+}
+
 
 
 
@@ -35,9 +40,9 @@
 <div class="pageContent">
     <div class="panelBar">
         <ul class="toolBar">
-            <li><a class="create" href='@Url.Action("")' target="dialog" mask="true"><span>添加</span></a></li>
-            <li><a class="delete" href="demo/common/ajaxDone.html?uid={sid_user}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
-            <li><a class="update" href='@Url.Action("",new{id="{id}"})' target="dialog" mask="true"><span>修改</span></a></li>
+            <li><a class="create" href='@Url.Action("Create")' target="dialog" mask="true"><span>添加</span></a></li>
+            <li><a class="delete" href="" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
+            <li><a class="update" href='@Url.Action("Create", new { id = "{id}" })' target="dialog" mask="true"><span>修改</span></a></li>
             <li class="line">line</li>
             <li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targetType="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
         </ul>
@@ -45,29 +50,32 @@
     <table class="list" layoutH="115">
         <thead>
             <tr>
-                <th width="35" align="center">序号</th>
-                <th width="120" align="center">客户号</th>
-                <th width="150" align="center">客户名称</th>
-                <th width="100" align="center">客户类型</th>
-                <th width="150" align="center">证件号码</th>
-                <th width="80" align="center">信用等级</th>
-                <th width="80">所属行业</th>
-                <th width="80">建档日期</th>
+                <th align="center" width="35">序号</th>
+                <th align="center" width="75">学币</th>
+                <th align="center" width="75">时长</th>
+                <th align="center" width="75">RMB</th>
+                <th align="center" width="75">USD</th>
+                <th align="center" width="75">排序</th>
+                <th align="center" width="75">可用</th>
+                <th align="center" width="150">机构</th>
+                <th align="center" width="150">创建日期</th>
             </tr>
         </thead>
         <tbody>
-            @{Int32 i=0;}
-            @foreach(var item in Model){
-            <tr target="id" rel="@item.Id">
-                <td align="center">@(++i)</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
+            @{ Int32 i = 0;}
+            @foreach (var item in Model)
+            {
+                <tr target="id" rel="@item.Id">
+                    <td align="center">@(++i)</td>
+                    <td align="right">@item.Coin</td>
+                    <td align="right">@item.Hour</td>
+                    <td align="right">@item.CNY</td>
+                    <td align="right">@item.USD</td>
+                    <td align="center">@item.Sort</td>
+                    <td align="center">@Html.Raw(item.Enabled == 1 ? "<span style='color:green;'>是</span>" : "<span style='color:red;'>否</span>")</td>
+                    <td align="center">@Html.Raw(String.Join(",", item.Member.Select(o => String.Format("<span>{0}</span>", Html.ActionLink(o.Name, "sdfsdf")))))</td>
+                    <td>@item.Createtime</td>
+                </tr>
             }
         </tbody>
     </table>

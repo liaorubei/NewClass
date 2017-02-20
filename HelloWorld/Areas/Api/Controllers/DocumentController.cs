@@ -222,5 +222,20 @@ namespace StudyOnline.Areas.Api.Controllers
                 }
             });
         }
+
+        /// <summary>
+        /// 文档播放统计
+        /// </summary>
+        /// <param name="id">文档Id</param>
+        /// <param name="userId">用户Id</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Count(Int32 id, Int32? userId)
+        {
+            Playlist playlist = new Playlist() { Id = Guid.NewGuid().ToString().Replace("-", ""), DocumentId = id, UserId = userId.HasValue && userId.Value > 0 ? userId : null, PlayAt = DateTime.Now };
+            entities.Playlist.Add(playlist);
+            entities.SaveChanges();
+            return Json(new { code = 200, desc = "统计成功" });
+        }
     }
 }

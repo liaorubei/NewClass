@@ -23,6 +23,10 @@ namespace StudyOnline
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
 
+            //web api 路由注册
+            //GlobalConfiguration.Configure(WebApiConfig.Register);
+
+
             log4net.Config.XmlConfigurator.Configure(new FileInfo(Server.MapPath("~/Web.config")));
 
             // Grab the Scheduler instance from the Factory 

@@ -21,6 +21,8 @@ namespace StudyOnline.Models
             this.Group = new HashSet<Group>();
             this.Member_User = new HashSet<Member_User>();
             this.UploadFile = new HashSet<UploadFile>();
+            this.Playlist = new HashSet<Playlist>();
+            this.ChatData = new HashSet<ChatData>();
         }
     
         public int Id { get; set; }
@@ -50,5 +52,9 @@ namespace StudyOnline.Models
         public virtual NimUserEx NimUserEx { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UploadFile> UploadFile { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Playlist> Playlist { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ChatData> ChatData { get; set; }
     }
 }

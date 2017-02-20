@@ -1,0 +1,61 @@
+﻿@model Product
+@{
+    Layout = null;
+    List<SelectListItem> items = new List<SelectListItem>();
+    items.Add(new SelectListItem() { Text = "不可用", Value = "0", Selected = Model.Enabled != 1 });
+    items.Add(new SelectListItem() { Text = "可用", Value = "1", Selected = Model.Enabled == 1 });
+}
+
+
+<div class="pageContent">
+    <form method="post" action='@Url.Action("Create")' class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent " layoutH="58">
+            <dl>
+                <dt>学币：</dt>
+                <dd>
+                    <input type="text" name="Coin" class="digits required" value="@Model.Coin" />
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <input type="hidden" name="Createtime" value="@Model.Createtime" />
+                </dd>
+            </dl>
+            <dl>
+                <dt>学时（分钟）：</dt>
+                <dd>
+                    <input type="text" name="Hour" class="digits required" value="@Model.Hour" />
+                </dd>
+            </dl>
+            <dl>
+                <dt>RMB：</dt>
+                <dd>
+                    <input type="text" name="CNY" class="digits" value="@Model.CNY" />
+                </dd>
+            </dl>
+            <dl>
+                <dt>USD：</dt>
+                <dd>
+                    <input type="text" name="USD" class="digits" value="@Model.USD" />
+                </dd>
+            </dl>
+
+            <dl>
+                <dt>排序：</dt>
+                <dd>
+                    <input type="text" name="Sort" class="digits" value="@Model.Sort" />
+                </dd>
+            </dl>
+            <dl>
+                <dt>可用：</dt>
+                <dd>
+                    @Html.DropDownList("Enabled", items, new { @class = "combox" })
+                </dd>
+            </dl>
+
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">提交</button></div></div></li>
+                <li><div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div></li>
+            </ul>
+        </div>
+    </form>
+</div>

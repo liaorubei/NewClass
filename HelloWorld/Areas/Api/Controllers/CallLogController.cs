@@ -69,6 +69,10 @@ namespace StudyOnline.Areas.Api.Controllers
             logger.Debug(String.Format("{0}:chatId={1},userId={2},callId={3}", desc, chatId, userId, model.Id));
             //logger.Debug("lock_end");
             //}
+
+            //同时把教师设成忙的状态
+            entities.Database.ExecuteSqlCommand("UPDATE [NimUser] SET [IsEnable]=0 WHERE [Id]=@id", new SqlParameter("@id", target));
+
             return Json(new { code = code, desc = desc, info = new { model.Id, model.Score, model.Target, model.ChatId, model.ChatType } });
 
             //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -179,15 +183,21 @@ namespace StudyOnline.Areas.Api.Controllers
             //    chat.BalanceT = 0;//统计老师课时
             //}
 
-            lock (callId)
+            //记录该通话的结束时间和结束人员
+            if (userId != null && chat.ChatId.HasValue)
+            {
+                ChatData data = new ChatData() { Id = Guid.NewGuid().ToString().Replace("-", ""), ChatId = chat.ChatId.Value, UserId = userId.Value, Type = (Int32)ChatType.通话结束, Time = DateTime.Now };
+                entities.ChatData.Add(data);
+            }
+
+            //只有通话记录没有平衡时,并且当前用户不是教师的时候才计算(包括学生和userId为空的用户)
+            if (chat.BalanceS != 1 && chat.Target != userId)
             {
                 logger.Debug(String.Format("通话结束:chatId={0},balance={1},coins={2} userId={3}", chat.ChatId, chat.BalanceS, chat.NimUser.NimUserEx.Coins, userId));
-                if (chat.BalanceS != 1)
-                {
-                    Balance(chat);
-                    entities.SaveChanges();
-                }
+                Balance(chat);
+                entities.SaveChanges();
             }
+
             //老师重新入队
             teacher.IsEnable = 1;
             teacher.IsOnline = 1;

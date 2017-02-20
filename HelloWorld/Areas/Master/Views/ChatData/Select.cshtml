@@ -1,0 +1,73 @@
+﻿@model PagedList<CallLog>
+@{
+    Layout = null;
+}
+<div class="pageHeader">
+    <form id="pagerForm" method="post" onsubmit="return navTabSearch(this);">
+        <input type="hidden" name="pageNum" value="@Model.CurrentPageIndex" />
+        <input type="hidden" name="numPerPage" value="@Model.PageSize" />
+        <div class="searchBar">
+            <ul class="searchContent">
+                <li>
+                    <label>关键字：</label>
+                    <input type="text" name="keyword" value="@ViewBag.Keyword" />
+                </li>
+                @*<li>
+                        <select class="combox" name="province">
+                            <option value="">所有省市</option>
+                            <option value="北京">北京</option>
+                            <option value="上海">上海</option>
+                            <option value="天津">天津</option>
+                            <option value="重庆">重庆</option>
+                            <option value="广东">广东</option>
+                        </select>
+                    </li>*@
+            </ul>
+
+            <div class="subBar">
+                <ul>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
+                    @*<li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>*@
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+    @*<div class="panelBar">
+            <ul class="toolBar">
+                <li><a class="create" href='@Url.Action("")' target="dialog" mask="true"><span>添加</span></a></li>
+                <li><a class="delete" href="demo/common/ajaxDone.html?uid={sid_user}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
+                <li><a class="update" href='@Url.Action("",new{id="{id}"})' target="dialog" mask="true"><span>修改</span></a></li>
+                <li class="line">line</li>
+                <li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targetType="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
+            </ul>
+        </div>*@
+    <table class="list" layoutH="88">
+        <thead>
+            <tr>
+                <th width="35" align="center">序号</th>
+                <th width="150" align="center">开始时间</th>
+                <th width="150" align="center">结束时间</th>
+                <th width="150" align="center">学生</th>
+                <th width="150" align="center">教师</th>
+                <th width="150" align="center">时长(分钟)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{Int32 i = 0;}
+            @foreach (var item in Model)
+            {
+            <tr target="id" rel="@item.Id">
+                <td align="center">@(++i)</td>
+                <td align="center">@(item.Start.Value.ToString("yyyy-MM-dd HH:mm:ss"))</td>
+                <td align="center">@(item.Finish.HasValue ? item.Finish.Value.ToString("yyyy-MM-dd HH:mm:ss") : "")</td>
+                <td>@item.NimUser.Username</td>
+                <td>@item.NimUser1.Username</td>
+                <td>@item.Duration</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    @Html.NavTabPages(Model, 10)
+</div>

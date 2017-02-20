@@ -1,0 +1,67 @@
+﻿@model PagedList<Product>
+@{
+    Layout = null;
+}
+<div class="pageHeader">
+    <form id="pagerForm" onsubmit="return dialogSearch(this);" action='@Url.Action("Product")' method="post">
+        <input type="hidden" name="pageNum" value="@Model.CurrentPageIndex" />
+        <input type="hidden" name="numPerPage" value="@Model.PageSize" />
+        <input type="hidden" name="id" value="@ViewBag.Id" />
+        <input type="hidden" name="operate" value="@ViewBag.Operate" />
+        <div class="searchBar">
+            <table class="searchContent">
+                <tr>
+                    <td>
+                        <input type="text" name="keyword" value="@ViewBag.Keyword" placeholder="关键字" />
+                    </td>
+                    <td>
+                        @*@Html.DropDownList("category", (List<SelectListItem>)ViewBag.Category, new { @class = "combox" })*@
+                    </td>
+                    <td>
+                        <div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+    <div class="panelBar">
+        <ul class="toolBar">
+            <li><a class="create" href='@Url.Action("ProductOperate", new { id = ViewBag.Id, operate = ViewBag.Operate })' target="selectedTodo" targetType="dialog" rel="ids" title="确定要继续吗?"><span>@("append".Equals(ViewBag.Operate) ? "添加" : "移除")</span></a></li>
+        </ul>
+    </div>
+    <table class="list" layoutH="92">
+        <thead>
+            <tr>
+                <th align="center" width="25"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
+                <th align="center" width="25">序号</th>
+                <th align="center" width="75">RMB</th>
+                <th align="center" width="75">USD</th>
+                <th align="center" width="75">学币</th>
+                <th align="center" width="75">学时</th>
+                <th align="center" width="75">可用</th>
+                <th align="center" width="150">涉及</th>
+                <th align="center" width="75">创建日期</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{Int32 i = 0;}
+            @foreach (var item in Model)
+            {
+                <tr target="id" rel="@item.Id">
+                    <td align="center"><input name="ids" value="@item.Id" type="checkbox"></td>
+                    <td align="center">@(++i)</td>
+                    <td align="right">@item.CNY</td>
+                    <td align="right">@item.USD</td>
+                    <td align="right">@item.Coin</td>
+                    <td align="right">@item.Hour</td>
+                    <td align="center">@Html.Raw(item.Enabled == 1 ? "<span style='color:green;'>是</span>" : "<span style='color:red;'>否</span>")</td>
+                    <td align="center">@Html.Raw(String.Join(",", item.Member.Select(o => o.Name)))</td>
+                    <td align="center">@item.Createtime</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @Html.NavTabPages(Model, 10, "dialog")
+</div>

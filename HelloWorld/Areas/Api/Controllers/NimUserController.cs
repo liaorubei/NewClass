@@ -250,6 +250,7 @@ namespace StudyOnline.Areas.Api.Controllers
             }
 
             //初始注册时,送学币逻辑,在同设备上,第一次送300,第二次送200,第三次送100,大于第三次送0
+            //初始注册送学币情况在20170209时开始第一次送150个学币,第二次不送,
             int coins = 0;
             if (!String.IsNullOrEmpty(deviceId))
             {
@@ -258,13 +259,18 @@ namespace StudyOnline.Areas.Api.Controllers
                 {
                     device = new Device() { Id = deviceId, Time = 0, Type = deviceType ?? "" };
                     entities.Device.Add(device);
+
+                    //20170209只送一次学币
+                    coins = 150;
                 }
 
-                coins = 300 - (device.Time * 100);
-                if (coins < 0)
-                {
-                    coins = 0;
-                }
+                //不送学币了
+                //coins = 300 - (device.Time * 100);
+                //if (coins < 0)
+                //{
+                //    coins = 0;
+                //}
+
                 device.Time++;
             }
 
@@ -1798,6 +1804,70 @@ namespace StudyOnline.Areas.Api.Controllers
                     desc = ex.Message
                 });
             }
+        }
+
+        /// <summary>
+        /// 教师注册接口，
+        /// </summary>
+        /// <param name="device">注册手机，包括IMEI，手机系统，系统版本，型号，等</param>
+        /// <param name="username">用户名（邮箱格式）</param>
+        /// <param name="password">密码</param>
+        /// <param name="realname">真名</param>
+        /// <param name="languag">掌握的语种</param>
+        /// <param name="mobile">手机号码</param>
+        /// <param name="wechat">微信号码</param>
+        /// <param name="school">毕业院校</param>
+        /// <param name="length">中文授课时长（授课经验）</param>
+        /// <param name="avatar">教师头像</param>
+        /// <param name="card_a">身份证正面</param>
+        /// <param name="card_b">身份证反面</param>
+        /// <param name="proofs">学历证明（如毕业证书，学位证书等）</param>
+        /// <param name="record">音频文件（试读音频）</param>
+        /// <param name="others">其他证明材料（如果在手机端注册，应该就是图片了）</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult TeacherRegister(String device
+            , String username, String password, String realname, String languag
+            , String mobile, String wechat, String school, String length
+            , HttpPostedFileBase avatar, HttpPostedFileBase card_a, HttpPostedFileBase card_b
+            , HttpPostedFileBase proofs, HttpPostedFileBase record, HttpPostedFileBase others)
+        {
+
+
+
+
+
+
+
+            return Json(new
+            {
+                code = 200,
+                desc = "创建成功",
+                info = new
+                {
+                    Device = device,
+                    Username = username,
+                    Password = password,
+                    RealName = realname,
+                    languag,
+                    mobile,
+                    wechat,
+                    school,
+                    length
+                    ,
+                    Avatar = avatar != null ? avatar.FileName : null
+                    ,
+                    Card_A = card_a != null ? card_a.FileName : null
+                    ,
+                    Card_B = card_b != null ? card_b.FileName : null
+                    ,
+                    Proofs = proofs != null ? proofs.FileName : null
+                    ,
+                    Record = record == null ? null : record.FileName
+                    ,
+                    Others = others == null ? null : others.FileName
+                }
+            });
         }
     }
 }
